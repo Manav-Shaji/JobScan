@@ -99,25 +99,6 @@ Trust Score + Scam Detection Results
 
 ---
 
-## Screenshots
-
-### Landing Page
-Add screenshot here
-
-### Dashboard
-Add screenshot here
-
-### Analyzer
-Add screenshot here
-
-### Browser Extension
-Add screenshot here
-
-### Mobile PWA
-Add screenshot here
-
----
-
 ## Installation
 
 ### Clone Repository
