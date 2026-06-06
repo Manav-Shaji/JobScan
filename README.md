@@ -1,72 +1,269 @@
-# JobScan
+# JobScan - AI-Powered Job Scam Detection Platform
 
-JobScan is a modern web application designed to help users identify and avoid job scams. By leveraging the power of the Google Gemini API, JobScan analyzes job postings, emails, and recruiter communications for potential threats and red flags.
+JobScan is an intelligent job verification platform that helps users identify fraudulent job opportunities using AI-powered analysis, OCR scanning, trust scoring, and scam pattern detection.
+
+Built as an MCA final-year project, JobScan combines modern web technologies, artificial intelligence, browser integration, and Progressive Web App capabilities to provide a complete job safety ecosystem.
+
+---
+
+## Features
+
+### AI Job Analysis
+- Analyze job descriptions using Google Gemini AI
+- Generate trust scores and risk levels
+- Detect suspicious recruitment patterns
+- Identify common scam indicators
+
+### OCR & Poster Scanning
+- Upload recruitment posters and advertisements
+- Extract text using OCR processing
+- Analyze extracted content for scam indicators
+- Detect fake hiring campaigns
+
+### Browser Extension
+- Chrome Manifest V3 extension
+- Analyze job listings directly from:
+  - LinkedIn
+  - Indeed
+  - Naukri
+  - Foundit
+  - Internshala
+- One-click trust analysis
+
+### Progressive Web App (PWA)
+- Installable on Desktop and Android
+- Offline support
+- Mobile-optimized experience
+- Native app-like interface
+
+### User Dashboard
+- Scan history tracking
+- Trust score monitoring
+- Scam reporting system
+- Profile management
+
+### Security Features
+- Secure authentication with NextAuth
+- Password hashing with bcryptjs
+- Rate-limited sensitive endpoints
+- Structured security logging
+
+---
 
 ## Tech Stack
 
-- **Framework:** [Next.js](https://nextjs.org) (App Router)
-- **Database:** PostgreSQL (with raw SQL queries via `pg`)
-- **Authentication:** [NextAuth.js v5](https://authjs.dev/)
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-- **UI Components:** [Radix UI](https://www.radix-ui.com/) + Lucide Icons
-- **AI Integration:** Google Gemini API (`@google/generative-ai`)
+### Frontend
+- Next.js 15
+- React
+- Tailwind CSS
+- Radix UI
+- Lucide Icons
 
-## Prerequisites
+### Backend
+- Next.js API Routes
+- PostgreSQL
+- Raw SQL Queries
+- NextAuth v5
 
-Before running the application locally, ensure you have the following installed:
-- Node.js (v18 or higher recommended)
-- PostgreSQL (running locally or accessible via your network)
-- A valid Google Gemini API Key
+### AI & Analysis
+- Google Gemini API
+- OCR Processing
+- Scam Pattern Detection Engine
 
-## Setup & Installation
+### Additional Platforms
+- Progressive Web App (PWA)
+- Chrome Extension (Manifest V3)
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+---
 
-2. **Configure Environment Variables:**
-   Create a `.env.local` file in the root directory based on the following template:
+## Architecture
 
-   ```env
-   # Application Port
-   PORT=3000
-   NODE_ENV=development
+```text
+User
+ │
+ ▼
+JobScan Web App / Browser Extension
+ │
+ ▼
+Next.js Backend
+ │
+ ├── PostgreSQL Database
+ │
+ ├── Gemini AI Analysis
+ │
+ └── OCR Processing
+ │
+ ▼
+Trust Score + Scam Detection Results
+```
 
-   # PostgreSQL Configuration
-   DB_USER=devuser
-   DB_HOST=localhost
-   DB_NAME=jobscan
-   DB_PASSWORD=devpass
-   DB_PORT=5435
+---
 
-   # NextAuth Setup
-   NEXTAUTH_URL=http://localhost:3000
-   NEXTAUTH_SECRET=your_generated_secret
-   AUTH_SECRET=your_generated_secret
+## Screenshots
 
-   # Google Gemini API
-   GEMINI_API_KEY=your_gemini_api_key
-   ```
+### Landing Page
+Add screenshot here
 
-3. **Initialize the Database:**
-   Ensure your PostgreSQL server is running and the database specified in `DB_NAME` exists. The application runs its database migrations and schema checks automatically during startup.
+### Dashboard
+Add screenshot here
 
-4. **Run the Development Server:**
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
+### Analyzer
+Add screenshot here
+
+### Browser Extension
+Add screenshot here
+
+### Mobile PWA
+Add screenshot here
+
+---
+
+## Installation
+
+### Clone Repository
+
+```bash
+git clone https://github.com/Manav-Shaji/JobScan.git
+
+cd JobScan
+```
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Configure Environment Variables
+
+Create:
+
+```env
+.env.local
+```
+
+Example:
+
+```env
+PORT=3000
+
+DB_USER=devuser
+DB_HOST=localhost
+DB_NAME=jobscan
+DB_PASSWORD=your_password
+DB_PORT=5435
+
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your_secret
+
+GEMINI_API_KEY=your_api_key
+```
+
+---
+
+## Database Setup
+
+Create PostgreSQL database:
+
+```sql
+CREATE DATABASE jobscan;
+```
+
+The application automatically initializes the schema during startup.
+
+---
+
+## Development
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+---
+
+## Browser Extension
+
+Location:
+
+```text
+extension/
+```
+
+Load manually:
+
+1. Open Chrome
+2. Navigate to:
+
+```text
+chrome://extensions
+```
+
+3. Enable Developer Mode
+4. Click Load Unpacked
+5. Select:
+
+```text
+extension/
+```
+
+---
+
+## PWA Installation
+
+Desktop:
+
+- Open JobScan
+- Click Install App
+
+Android:
+
+- Open in Chrome
+- Add to Home Screen
+
+---
 
 ## Project Structure
 
-- `src/app/` - Next.js App Router pages and layouts.
-- `src/backend/` - Server-side logic, API handlers, authentication, database migrations, and AI logic.
-- `src/frontend/` - React components, layouts, hooks, and UI assets.
-- `src/database/` - Database schemas and initial SQL files.
-- `src/scripts/` - Custom utility scripts (e.g., static icon generation).
-- `extension/` - Files related to the JobScan browser extension.
+```text
+src/
+├── app/
+├── backend/
+├── frontend/
 
-## Deployment
+extension/
+public/
+database/
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new). Make sure to configure your production environment variables (including your remote database connection details and Gemini API key) in the Vercel dashboard.
+---
+
+## Future Enhancements
+
+- Resume analysis
+- Recruiter reputation database
+- Community scam reporting
+- Push notifications
+- Multi-language support
+- Advanced AI fraud detection
+
+---
+
+## Author
+
+**Manav Shaji**
+
+MCA Final Year Project
+
+---
+
+## License
+
+This project is intended for academic and educational purposes.
