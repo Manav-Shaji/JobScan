@@ -1,4 +1,6 @@
-import { Switch } from "@/frontend/ui/forms/Switch";
+import { Switch } from "@/components/ui/forms";
+import { Skeleton } from "@/components/ui/layout";
+import { Separator } from "@/components/ui/layout";
 import { Bell, Shield, Eye, Database, Trash2, Download, Sun, Moon, Laptop, AppWindow, Globe, Smartphone } from 'lucide-react';
 import { useTheme } from "@/frontend/context/theme-context";
 import { useState } from "react";
@@ -12,15 +14,15 @@ export function Settings({ formData, setFormData, loading }) {
       <div className="max-w-3xl mx-auto px-4 py-6 flex flex-col gap-8">
         <div className="glass-card p-6 border border-[var(--hairline)] rounded-2xl shadow-xl space-y-6">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg skeleton flex-shrink-0" />
+            <Skeleton className="w-10 h-10 rounded-lg flex-shrink-0" />
             <div className="space-y-2 flex-1">
-              <div className="h-4 w-32 skeleton" />
-              <div className="h-3 w-48 skeleton" />
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-3 w-48" />
             </div>
           </div>
           <div className="space-y-4">
-            <div className="h-10 w-full skeleton" />
-            <div className="h-10 w-full skeleton" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
           </div>
         </div>
       </div>

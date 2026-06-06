@@ -6,7 +6,7 @@
 // 1. Set marker on document element so JobScan web app can detect the extension
 document.documentElement.setAttribute('data-jobscan-extension-installed', 'true');
 
-// 2. Listen for messages from the popup
+// 2. Listen for messages from the popup or background worker
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'PARSED_ACTIVE_PAGE') {
     try {
@@ -16,6 +16,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ success: false, error: e.message });
     }
     return true;
+  }
+  
+  if (message.action === 'URL_CHANGED') {
+    // Slight delay to allow SPA frameworks to render the new page
+    setTimeout(checkPage, 500);
   }
 });
 
@@ -379,9 +384,6 @@ function checkPage() {
     if (btn) btn.style.display = 'none';
   }
 }
-
-// Check every 1 second
-setInterval(checkPage, 1000);
 
 // 5. Initialize on load
 if (document.readyState === 'loading') {

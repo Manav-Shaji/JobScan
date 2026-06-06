@@ -2,9 +2,11 @@ import 'server-only';
 
 export const FIND_CACHED_SCAN = `
   SELECT s.*, 
-         (SELECT COALESCE(COUNT(*), 0) FROM scam_reports WHERE scan_id = s.id) AS community_reports
+         COALESCE(COUNT(r.id), 0) AS community_reports
   FROM job_scans s
+  LEFT JOIN scam_reports r ON r.scan_id = s.id
   WHERE s.content_hash = $1 AND s.created_at > NOW() - INTERVAL '24 hours'
+  GROUP BY s.id
   LIMIT 1
 `;
 

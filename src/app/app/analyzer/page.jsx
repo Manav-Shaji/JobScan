@@ -29,9 +29,12 @@ import {
     UploadCloud,
     X,
     ImageIcon,
-    FileSearch,
     CheckSquare
 } from 'lucide-react';
+import { Textarea } from "@/components/ui/forms";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/navigation";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/feedback";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/layout";
 
 export default function Analyzer() {
     const { setCurrentJobContext } = useJob();
@@ -346,8 +349,14 @@ export default function Analyzer() {
             </div>
 
             {/* --- Main Workspace (Input Area) --- */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div className="mb-6">
+                <Tabs defaultValue="text" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 mb-4 bg-[var(--surface-elevated)] border border-[var(--hairline)] rounded-xl p-1 h-auto">
+                        <TabsTrigger value="text" className="py-2.5 rounded-lg text-xs font-bold data-[state=active]:bg-blue-500 data-[state=active]:text-white transition-all flex items-center gap-2"><FileText size={14}/> Text Analysis</TabsTrigger>
+                        <TabsTrigger value="image" className="py-2.5 rounded-lg text-xs font-bold data-[state=active]:bg-purple-500 data-[state=active]:text-white transition-all flex items-center gap-2"><ImageIcon size={14}/> Poster Upload</TabsTrigger>
+                    </TabsList>
                 
+                <TabsContent value="text" className="mt-0 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300">
                 {/* SECTION 1: Text Input */}
                 <div className="glass-card premium-card-edge rounded-3xl p-5 md:p-6 shadow-xl relative overflow-hidden group flex flex-col">
                     <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-500/8 transition-colors duration-1000"></div>
@@ -367,14 +376,16 @@ export default function Analyzer() {
                             </button>
                         </div>
                     </div>
-                    <textarea
+                    <Textarea
                         className={`w-full flex-1 relative z-10 bg-[var(--surface-elevated)] text-[var(--on-dark)] placeholder-[var(--muted)] rounded-2xl p-4 text-sm leading-relaxed border focus:outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/20 transition-all resize-none h-[180px] md:h-auto md:min-h-[220px] shadow-inner ${inputError && !jobText && !posterFile ? 'border-red-500/40 shadow-[0_0_15px_rgba(239,68,68,0.15)]' : 'border-[var(--hairline)]'}`}
                         placeholder="Paste job description here..."
                         value={jobText}
                         onChange={(e) => setJobText(e.target.value)}
                     />
                 </div>
+                </TabsContent>
 
+                <TabsContent value="image" className="mt-0 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300">
                 {/* SECTION 2: Image Upload */}
                 <div className="glass-card premium-card-edge rounded-3xl p-5 md:p-6 shadow-xl relative overflow-hidden group flex flex-col">
                     <div className="absolute bottom-0 left-0 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-purple-500/8 transition-colors duration-1000"></div>
@@ -468,6 +479,8 @@ export default function Analyzer() {
                         )}
                     </div>
                 </div>
+                </TabsContent>
+                </Tabs>
             </div>
 
             {/* SECTION 3: Analyze Button (Desktop Only) */}
@@ -594,19 +607,19 @@ export default function Analyzer() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* 5. Detected Red Flags */}
-                        <div className="bg-red-500/5 border border-red-500/10 rounded-3xl p-6 shadow-lg hover-lift transition-all group">
-                            <h5 className="flex items-center gap-2.5 text-red-400 font-bold text-sm mb-4 tracking-tight">
-                                <div className="w-8 h-8 rounded-xl bg-red-500/10 flex items-center justify-center border border-red-500/20"><AlertTriangle size={16} /></div>
+                        <Alert variant="destructive" className="bg-red-500/5 border-red-500/10 rounded-3xl p-6 shadow-lg hover-lift transition-all group">
+                            <div className="w-8 h-8 rounded-xl bg-red-500/10 flex items-center justify-center border border-red-500/20 mb-4 text-red-400"><AlertTriangle size={16} /></div>
+                            <AlertTitle className="text-red-400 font-bold text-sm tracking-tight">
                                 Detected Red Flags ({result.redFlags?.length || 0})
-                            </h5>
-                            <div className="flex flex-col gap-2.5">
+                            </AlertTitle>
+                            <AlertDescription className="flex flex-col gap-2.5 mt-2">
                                 {result.redFlags?.length > 0 ? result.redFlags.map((flag, i) => (
                                     <div key={i} className="px-3.5 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-200 text-xs leading-relaxed flex items-start gap-2.5">
                                         <span className="status-dot red mt-1.5"></span><div className="font-medium">{flag}</div>
                                     </div>
                                 )) : <div className="text-xs text-[var(--muted)] italic p-2">No critical red flags identified.</div>}
-                            </div>
-                        </div>
+                            </AlertDescription>
+                        </Alert>
 
                         {/* 7. AI Summary */}
                         <div className="bg-blue-500/5 border border-blue-500/10 rounded-3xl p-6 shadow-lg hover-lift transition-all group h-full">
@@ -713,100 +726,92 @@ export default function Analyzer() {
                                 <p className="text-gray-300 text-[11px] leading-relaxed m-0 font-medium">{result.summary}</p>
                             </div>
 
-                            {/* Toggle Details View */}
-                            {!viewFullReport ? (
-                                <button 
-                                    className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider transition-colors border border-blue-500/20 shadow-lg flex items-center justify-center gap-1.5 active:scale-[0.98]"
-                                    onClick={() => setViewFullReport(true)}
-                                >
-                                    <Sparkles size={12} /> View Full Breakdown
-                                </button>
-                            ) : (
-                                <div className="space-y-4 animate-fade-in">
-                                    {/* Criteria Breakdown */}
-                                    <div className="glass-card rounded-2xl p-4 border border-white/5 bg-slate-900/40">
-                                        <h4 className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-1.5">
-                                            <Briefcase size={12} className="text-emerald-400"/> Analysis Criteria
-                                        </h4>
-                                        <div className="flex flex-col gap-2.5">
-                                            {(result.breakdown || []).map((item, i) => (
-                                                <div key={i} className="flex flex-col gap-1">
-                                                    <div className="flex justify-between items-center text-[10px] font-bold">
-                                                        <span className="text-gray-300">{item.label}</span>
-                                                        <span className={item.value < 40 ? 'text-red-400' : item.value < 75 ? 'text-amber-400' : 'text-emerald-400'}>{item.value}%</span>
-                                                    </div>
-                                                    <div className="h-1 bg-white/5 rounded-full overflow-hidden shadow-inner">
-                                                        <div className={`h-full rounded-full transition-all duration-1000 ${item.value < 40 ? 'bg-red-500' : item.value < 75 ? 'bg-amber-500' : 'bg-emerald-500'}`} style={{ width: `${item.value}%` }}></div>
-                                                    </div>
-                                                </div>
-                                            ))}
+                            {/* Toggle Details View Accordion */}
+                            <Accordion type="single" collapsible className="w-full">
+                                <AccordionItem value="details" className="border-b-0">
+                                    <AccordionTrigger className="w-full py-3 px-4 rounded-xl bg-slate-900/60 hover:bg-slate-900/80 text-gray-300 font-bold text-xs uppercase tracking-wider transition-colors border border-white/5 data-[state=open]:rounded-b-none outline-none">
+                                        <div className="flex items-center gap-2">
+                                            <Sparkles size={14} className="text-blue-400" /> View Full Breakdown
                                         </div>
-                                    </div>
-
-                                    {/* Scam Pattern Match */}
-                                    <div className="glass-card rounded-2xl p-4 border border-white/5 bg-slate-900/40">
-                                        <h4 className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-1.5">
-                                            <Fingerprint size={12} className="text-purple-400"/> Scam Pattern Match
-                                        </h4>
-                                        <div className="flex flex-col items-center justify-center py-2">
-                                            <div className={`px-3 py-1.5 rounded-lg border text-xs font-black text-center mb-2 bg-[#081124] ${result.patternName !== 'Unknown Pattern' && result.patternName !== 'None' ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'}`}>
-                                                {result.patternName}
-                                            </div>
-                                            <div className="text-[9px] uppercase font-bold text-gray-400 tracking-widest">
-                                                Confidence: <span className="text-white">{result.patternConfidence}%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Red Flags */}
-                                    <div className="bg-red-500/5 border border-red-500/10 rounded-2xl p-4">
-                                        <h5 className="flex items-center gap-1.5 text-red-400 font-bold text-xs mb-2.5 tracking-tight">
-                                            <AlertTriangle size={12} /> Detected Red Flags ({result.redFlags?.length || 0})
-                                        </h5>
-                                        <div className="flex flex-col gap-2">
-                                            {result.redFlags?.length > 0 ? result.redFlags.map((flag, i) => (
-                                                <div key={i} className="px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-200 text-[11px] leading-relaxed flex items-start gap-2">
-                                                    <span className="status-dot red mt-1.5"></span><div className="font-medium">{flag}</div>
-                                                </div>
-                                            )) : <div className="text-[10px] text-gray-400 italic">No critical red flags identified.</div>}
-                                        </div>
-                                    </div>
-
-                                    {/* Extracted Information OCR */}
-                                    {result.extractedText && (
+                                    </AccordionTrigger>
+                                    <AccordionContent className="pt-4 space-y-4 animate-fade-in border border-t-0 border-white/5 bg-slate-900/40 rounded-b-xl px-4 pb-4">
+                                        {/* Criteria Breakdown */}
                                         <div className="glass-card rounded-2xl p-4 border border-white/5 bg-slate-900/40">
-                                            <h4 className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-2 flex items-center gap-1.5">
-                                                <FileSearch size={12} className="text-blue-400"/> Extracted OCR Info
+                                            <h4 className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-1.5">
+                                                <Briefcase size={12} className="text-emerald-400"/> Analysis Criteria
                                             </h4>
-                                            <div className="p-3 rounded-lg bg-[#081124] border border-white/5 max-h-28 overflow-y-auto custom-scrollbar">
-                                                <p className="text-[10px] text-gray-300 font-mono leading-relaxed whitespace-pre-wrap">{result.extractedText}</p>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Positive Signals */}
-                                    {result.positiveSignals?.length > 0 && (
-                                        <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-4">
-                                            <h5 className="flex items-center gap-1.5 text-emerald-400 font-bold text-xs mb-2.5 tracking-tight">
-                                                <CheckSquare size={12} /> Positive Signals
-                                            </h5>
-                                            <div className="flex flex-col gap-1.5">
-                                                {result.positiveSignals.map((sig, i) => (
-                                                    <div key={i} className="text-[11px] text-gray-300 flex items-start gap-1.5"><span className="text-emerald-500">✓</span> {sig}</div>
+                                            <div className="flex flex-col gap-2.5">
+                                                {(result.breakdown || []).map((item, i) => (
+                                                    <div key={i} className="flex flex-col gap-1">
+                                                        <div className="flex justify-between items-center text-[10px] font-bold">
+                                                            <span className="text-gray-300">{item.label}</span>
+                                                            <span className={item.value < 40 ? 'text-red-400' : item.value < 75 ? 'text-amber-400' : 'text-emerald-400'}>{item.value}%</span>
+                                                        </div>
+                                                        <div className="h-1 bg-white/5 rounded-full overflow-hidden shadow-inner">
+                                                            <div className={`h-full rounded-full transition-all duration-1000 ${item.value < 40 ? 'bg-red-500' : item.value < 75 ? 'bg-amber-500' : 'bg-emerald-500'}`} style={{ width: `${item.value}%` }}></div>
+                                                        </div>
+                                                    </div>
                                                 ))}
                                             </div>
                                         </div>
-                                    )}
 
-                                    {/* Collapse Button */}
-                                    <button 
-                                        className="w-full py-3 px-4 rounded-xl bg-slate-900/60 hover:bg-slate-900/80 text-gray-300 font-bold text-xs uppercase tracking-wider transition-colors border border-white/5 flex items-center justify-center gap-1.5 active:scale-[0.98]"
-                                        onClick={() => setViewFullReport(false)}
-                                    >
-                                        Collapse Details
-                                    </button>
-                                </div>
-                            )}
+                                        {/* Scam Pattern Match */}
+                                        <div className="glass-card rounded-2xl p-4 border border-white/5 bg-slate-900/40">
+                                            <h4 className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-1.5">
+                                                <Fingerprint size={12} className="text-purple-400"/> Scam Pattern Match
+                                            </h4>
+                                            <div className="flex flex-col items-center justify-center py-2">
+                                                <div className={`px-3 py-1.5 rounded-lg border text-xs font-black text-center mb-2 bg-[#081124] ${result.patternName !== 'Unknown Pattern' && result.patternName !== 'None' ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'}`}>
+                                                    {result.patternName}
+                                                </div>
+                                                <div className="text-[9px] uppercase font-bold text-gray-400 tracking-widest">
+                                                    Confidence: <span className="text-white">{result.patternConfidence}%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Red Flags Alert */}
+                                        <Alert variant="destructive" className="bg-red-500/5 border-red-500/10 rounded-2xl p-4 shadow-none">
+                                            <AlertTitle className="flex items-center gap-1.5 text-red-400 font-bold text-xs mb-2.5 tracking-tight">
+                                                <AlertTriangle size={12} /> Detected Red Flags ({result.redFlags?.length || 0})
+                                            </AlertTitle>
+                                            <AlertDescription className="flex flex-col gap-2">
+                                                {result.redFlags?.length > 0 ? result.redFlags.map((flag, i) => (
+                                                    <div key={i} className="px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-200 text-[11px] leading-relaxed flex items-start gap-2">
+                                                        <span className="status-dot red mt-1.5"></span><div className="font-medium">{flag}</div>
+                                                    </div>
+                                                )) : <div className="text-[10px] text-gray-400 italic">No critical red flags identified.</div>}
+                                            </AlertDescription>
+                                        </Alert>
+
+                                        {/* Extracted Information OCR */}
+                                        {result.extractedText && (
+                                            <div className="glass-card rounded-2xl p-4 border border-white/5 bg-slate-900/40">
+                                                <h4 className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-2 flex items-center gap-1.5">
+                                                    <FileSearch size={12} className="text-blue-400"/> Extracted OCR Info
+                                                </h4>
+                                                <div className="p-3 rounded-lg bg-[#081124] border border-white/5 max-h-28 overflow-y-auto custom-scrollbar">
+                                                    <p className="text-[10px] text-gray-300 font-mono leading-relaxed whitespace-pre-wrap">{result.extractedText}</p>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Positive Signals */}
+                                        {result.positiveSignals?.length > 0 && (
+                                            <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-4">
+                                                <h5 className="flex items-center gap-1.5 text-emerald-400 font-bold text-xs mb-2.5 tracking-tight">
+                                                    <CheckSquare size={12} /> Positive Signals
+                                                </h5>
+                                                <div className="flex flex-col gap-1.5">
+                                                    {result.positiveSignals.map((sig, i) => (
+                                                        <div key={i} className="text-[11px] text-gray-300 flex items-start gap-1.5"><span className="text-emerald-500">✓</span> {sig}</div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </AccordionContent>
+                                </AccordionItem>
+                            </Accordion>
                         </div>
                     </div>
                 </div>

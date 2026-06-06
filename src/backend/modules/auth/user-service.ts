@@ -1,4 +1,5 @@
 import 'server-only';
+import { cache } from 'react';
 import { query } from '@/backend/db/db';
 import { logger } from '@/backend/logging/logger';
 import {
@@ -46,7 +47,7 @@ export async function updatePassword(userId: string, passwordHash: string) {
   }
 }
 
-export async function getUserStats(userId: string) {
+export const getUserStats = cache(async function(userId: string) {
   try {
     const res = await query(GET_USER_STATS, [userId]);
     const s = res.rows[0];
@@ -60,11 +61,11 @@ export async function getUserStats(userId: string) {
     logger.error('Database error fetching user stats', error, { userId });
     throw error;
   }
-}
+});
 
-export async function getUserHistory(userId: string) {
+export const getUserHistory = cache(async function(userId: string, limit: number = 10, offset: number = 0) {
   try {
-    const res = await query(GET_USER_HISTORY, [userId]);
+    const res = await query(GET_USER_HISTORY, [userId, limit, offset]);
     
     return res.rows.map(i => ({
       id: i.id,
@@ -77,7 +78,7 @@ export async function getUserHistory(userId: string) {
     logger.error('Database error fetching user history', error, { userId });
     throw error;
   }
-}
+});
 
 export async function updateRetentionDays(userId: string, days: number) {
   try {

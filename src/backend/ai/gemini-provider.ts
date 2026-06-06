@@ -1,5 +1,7 @@
 import 'server-only';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { z } from 'zod';
+import { logger } from '@/backend/logging/logger';
 import { jobScanSystemInstruction } from './prompts';
 
 const PRIMARY_MODEL = 'gemini-3.1-flash-lite'; // or 'gemini-2.5-flash' for vision? wait, both support vision.
@@ -67,36 +69,47 @@ function safeJsonPayload(raw: string) {
   return payload.replace(/,\s*([}\]])/g, '$1');
 }
 
+const ClampedScore = z.any().transform(v => {
+    const num = Number(v);
+    if (isNaN(num)) return 50;
+    return Math.max(0, Math.min(100, Math.round(num)));
+});
+
+const RiskEnum = z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).catch('MEDIUM');
+
+const ResponseSchema = z.object({
+  overallTrustScore: ClampedScore,
+  riskLevel: RiskEnum,
+  posterCredibilityScore: ClampedScore,
+  contactTrustScore: ClampedScore,
+  employerTrustScore: ClampedScore,
+  salaryRiskScore: ClampedScore,
+  urgencyRiskScore: ClampedScore,
+  patternName: z.string().catch('Unknown Pattern'),
+  patternConfidence: ClampedScore,
+  redFlags: z.array(z.string()).catch([]),
+  positiveSignals: z.array(z.string()).catch([]),
+  summary: z.string().catch(''),
+  extractedText: z.string().catch('')
+});
+
 function normalizeAnalysis(analysis: any) {
-  const ensureNumber = (value: any, fallback: number) => {
-    return Number.isFinite(value) ? Math.round(value) : fallback;
-  };
+  const result = ResponseSchema.safeParse(analysis);
+  let normalized;
+  
+  if (!result.success) {
+    logger.warn('Gemini response failed Zod validation, applying fallback normalizer', { error: result.error.message });
+    normalized = ResponseSchema.parse({}); // provides safe defaults
+  } else {
+    normalized = result.data;
+  }
 
-  const riskLevel = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].includes(analysis?.riskLevel)
-    ? analysis.riskLevel
-    : 'MEDIUM';
+  const final = { ...normalized } as any;
+  if (analysis?.fallbackUsed) final.fallbackUsed = true;
+  if (analysis?.source) final.source = analysis.source;
+  if (analysis?.fallbackReason) final.fallbackReason = analysis.fallbackReason;
 
-  const normalized = {
-    overallTrustScore: ensureNumber(analysis?.overallTrustScore, 50),
-    riskLevel,
-    posterCredibilityScore: ensureNumber(analysis?.posterCredibilityScore, 50),
-    contactTrustScore: ensureNumber(analysis?.contactTrustScore, 50),
-    employerTrustScore: ensureNumber(analysis?.employerTrustScore, 50),
-    salaryRiskScore: ensureNumber(analysis?.salaryRiskScore, 50),
-    urgencyRiskScore: ensureNumber(analysis?.urgencyRiskScore, 50),
-    patternName: String(analysis?.patternName || 'Unknown Pattern'),
-    patternConfidence: ensureNumber(analysis?.patternConfidence, 0),
-    redFlags: Array.isArray(analysis?.redFlags) ? analysis.redFlags.slice(0, 8).map(String) : [],
-    positiveSignals: Array.isArray(analysis?.positiveSignals) ? analysis.positiveSignals.slice(0, 8).map(String) : [],
-    summary: String(analysis?.summary || '').trim().slice(0, 300),
-    extractedText: String(analysis?.extractedText || '').trim(),
-  } as any;
-
-  if (analysis?.fallbackUsed) normalized.fallbackUsed = true;
-  if (analysis?.source) normalized.source = analysis.source;
-  if (analysis?.fallbackReason) normalized.fallbackReason = analysis.fallbackReason;
-
-  return normalized;
+  return final;
 }
 
 function buildTrustScore(normalized: any) {
@@ -180,6 +193,7 @@ function localFallbackAnalysis(jobText: string, reason: string) {
 async function requestModelResponse(parts: any[], modelName: string) {
   if (!genAI) throw new Error('Generative AI not configured');
 
+  const startTime = Date.now();
   const model = genAI.getGenerativeModel({
     model: modelName,
     systemInstruction: jobScanSystemInstruction,
@@ -192,7 +206,21 @@ async function requestModelResponse(parts: any[], modelName: string) {
   });
 
   const result = await withTimeout(model.generateContent(parts), MAX_AI_TIMEOUT_MS);
-  return result.response.text();
+  const durationMs = Date.now() - startTime;
+  const text = result.response.text();
+  const usage = result.response.usageMetadata;
+
+  if (usage) {
+    logger.logApp('Gemini token usage', {
+      model: modelName,
+      promptTokens: usage.promptTokenCount,
+      candidateTokens: usage.candidatesTokenCount,
+      totalTokens: usage.totalTokenCount,
+      durationMs
+    });
+  }
+
+  return text;
 }
 
 async function attemptModel(parts: any[], modelName: string) {
@@ -210,7 +238,7 @@ async function attemptModel(parts: any[], modelName: string) {
 
 export const geminiService = {
   async analyzeJobMultimodal(jobText: string, posterBase64?: string, posterMimeType?: string) {
-    const cacheKeyParts = [jobText.trim().replace(/\s+/g, ' ').toLowerCase()];
+    const cacheKeyParts = ['v2', jobText.trim().replace(/\s+/g, ' ').toLowerCase()];
     if (posterBase64) cacheKeyParts.push(posterBase64.substring(0, 150)); // Cache based on a prefix of the image
     const cacheKey = cacheKeyParts.join('|');
 
@@ -218,11 +246,12 @@ export const geminiService = {
     if (cached) return cached;
 
     const parts: any[] = [];
-    if (jobText) {
-      parts.push({ text: `Job description:\n${jobText}` });
-    } else {
-      parts.push({ text: "Please analyze the attached job poster." });
-    }
+    const scanType = posterBase64 && jobText ? 'combined' : posterBase64 ? 'image' : 'text';
+    const userPayload = {
+      jobText: jobText || "",
+      scanType: scanType
+    };
+    parts.push({ text: JSON.stringify(userPayload) });
 
     if (posterBase64 && posterMimeType) {
       parts.push({

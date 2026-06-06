@@ -1,5 +1,7 @@
 import { FileText, Search, Filter, ChevronDown, Calendar, AlertTriangle, MoreVertical, Briefcase } from 'lucide-react';
 import React, { useState, useMemo, useEffect } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/forms";
+import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious, PaginationLink } from "@/components/ui/navigation";
 
 const formatDate = (dateString) => {
   if (!dateString) return { date: 'N/A', time: '' };
@@ -83,7 +85,6 @@ export function History({ fullHistory, loading }) {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
-  const [filterOpen, setFilterOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const totalItems = fullHistory?.length || 0;
@@ -145,35 +146,22 @@ export function History({ fullHistory, loading }) {
               className="w-full bg-[var(--surface-elevated)] border border-[var(--hairline)] rounded-xl pl-9 pr-4 h-12 md:h-auto md:py-1.5 text-xs text-[var(--on-dark)] placeholder-[var(--muted)] focus:outline-none focus:border-blue-500/60 transition-colors"
             />
           </div>
-          <div className="relative w-full md:w-auto">
-            <button 
-              onClick={() => setFilterOpen(!filterOpen)}
-              className={`flex items-center justify-center md:justify-start w-full md:w-auto gap-1.5 bg-[var(--surface-elevated)] border rounded-xl px-3 h-12 md:h-auto md:py-1.5 text-xs text-[var(--on-dark)] transition-colors ${
-                filterType !== 'all' ? 'border-blue-500/30 bg-blue-500/5' : 'border-[var(--hairline)] hover:opacity-80'
-              }`}
-            >
-              <Filter size={13} /> {filterOptions.find(o => o.value === filterType)?.label || 'Filter'} <ChevronDown size={12} className={`text-[var(--muted)] transition-transform ${filterOpen ? 'rotate-180' : ''}`} />
-            </button>
-            {filterOpen && (
-              <div 
-                className="absolute right-0 top-full mt-1.5 w-44 rounded-xl border border-[var(--hairline)] bg-[var(--surface-card)] backdrop-blur-xl shadow-xl z-50 overflow-hidden"
-              >
+          <div className="w-full md:w-[180px]">
+            <Select value={filterType} onValueChange={setFilterType}>
+              <SelectTrigger className="h-12 md:h-auto md:py-1.5 bg-[var(--surface-elevated)] border-[var(--hairline)] text-xs">
+                <div className="flex items-center gap-1.5">
+                  <Filter size={13} />
+                  <SelectValue placeholder="Filter" />
+                </div>
+              </SelectTrigger>
+              <SelectContent className="bg-[var(--surface-card)] border-[var(--hairline)] text-[var(--on-dark)]">
                 {filterOptions.map(opt => (
-                  <button
-                    key={opt.value}
-                    onClick={() => { setFilterType(opt.value); setFilterOpen(false); }}
-                    className={`w-full text-left px-4 py-2.5 text-xs font-medium transition-colors flex items-center justify-between ${
-                      filterType === opt.value 
-                        ? 'bg-blue-500/10 text-blue-400 font-bold' 
-                        : 'text-[var(--on-dark)] hover:bg-[rgba(var(--primary-rgb),0.04)]'
-                    }`}
-                  >
+                  <SelectItem key={opt.value} value={opt.value} className="text-xs hover:bg-[rgba(var(--primary-rgb),0.04)] focus:bg-blue-500/10 focus:text-blue-400">
                     {opt.label}
-                    {filterType === opt.value && <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>}
-                  </button>
+                  </SelectItem>
                 ))}
-              </div>
-            )}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
@@ -314,25 +302,32 @@ export function History({ fullHistory, loading }) {
         <div className="text-[10px] md:text-[11px] font-medium text-[var(--muted)]">
           Showing {filteredHistory.length > 0 ? startIndex + 1 : 0} to {Math.min(startIndex + itemsPerPage, filteredHistory.length)} of {filteredHistory.length} archives
         </div>
-        <div className="flex items-center gap-1.5 md:gap-2">
-          <button 
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-            className={`w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-lg border text-xs ${currentPage === 1 ? 'border-[var(--hairline)] text-[var(--muted)] cursor-not-allowed' : 'border-[var(--hairline)] text-[var(--on-dark)] hover:opacity-80 transition-colors'}`}
-          >
-            &lt;
-          </button>
-          <div className="flex items-center justify-center min-w-[32px] h-7 md:h-8 rounded-lg border border-blue-500/30 bg-blue-500/10 text-blue-400 font-black text-[10px] md:text-xs px-2">
-            {currentPage} {totalPages > 0 && `/ ${totalPages}`}
-          </div>
-          <button 
-            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-            disabled={currentPage >= totalPages || totalPages === 0}
-            className={`w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-lg border text-xs ${currentPage >= totalPages || totalPages === 0 ? 'border-[var(--hairline)] text-[var(--muted)] cursor-not-allowed' : 'border-[var(--hairline)] text-[var(--on-dark)] hover:opacity-80 transition-colors'}`}
-          >
-            &gt;
-          </button>
-        </div>
+        
+        {totalPages > 0 && (
+          <Pagination className="justify-end w-auto mx-0">
+            <PaginationContent className="gap-1 md:gap-2">
+              <PaginationItem>
+                <PaginationPrevious 
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  className={`h-8 px-3 py-0 flex items-center justify-center rounded-lg border cursor-pointer ${currentPage === 1 ? 'border-[var(--hairline)] text-[var(--muted)] pointer-events-none opacity-50' : 'border-[var(--hairline)] text-[var(--on-dark)] hover:bg-white/5 transition-colors'}`}
+                />
+              </PaginationItem>
+              
+              <PaginationItem>
+                <PaginationLink isActive className="h-8 min-w-[32px] rounded-lg border border-blue-500/30 bg-blue-500/10 text-blue-400 font-black text-xs">
+                  {currentPage}
+                </PaginationLink>
+              </PaginationItem>
+
+              <PaginationItem>
+                <PaginationNext 
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  className={`h-8 px-3 py-0 flex items-center justify-center rounded-lg border cursor-pointer ${currentPage >= totalPages ? 'border-[var(--hairline)] text-[var(--muted)] pointer-events-none opacity-50' : 'border-[var(--hairline)] text-[var(--on-dark)] hover:bg-white/5 transition-colors'}`}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
       </div>
     </div>
   );

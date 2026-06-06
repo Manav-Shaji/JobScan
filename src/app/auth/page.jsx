@@ -16,6 +16,7 @@ import {
     Globe, 
     Smartphone 
 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/navigation";
 
 function AuthContent() {
     const searchParams = useSearchParams();
@@ -193,10 +194,10 @@ function AuthContent() {
 
             {/* Card Wrapper with Animated Rotating Border Glow */}
             <div className="auth-card-wrapper fade-in-section is-visible z-10 mx-4">
-                <div className={`auth-card-inner mode-${mode}`}>
+                <div className="auth-card-inner">
                     
                     {/* Left Branding Panel */}
-                    <div className="branding-panel">
+                    <div className="branding-panel hidden lg:block">
                         <div className="branding-content flex flex-col justify-between h-full">
                             <div>
                                 <div className="flex items-center gap-2 mb-10">
@@ -238,12 +239,20 @@ function AuthContent() {
                         </div>
                     </div>
 
-                    {/* Right sliding Form Panels Container */}
-                    <div className="form-container">
-                        <div className="form-wrapper">
+                    {/* Right Form Panels Container */}
+                    <div className="form-container w-full lg:w-1/2 p-6 md:p-10 flex flex-col justify-center">
+                        <Tabs value={mode} onValueChange={(val) => {
+                            setMode(val);
+                            router.replace(`?mode=${val}`, { scroll: false });
+                        }} className="w-full max-w-[400px] mx-auto">
+                            
+                            <TabsList className="grid w-full grid-cols-2 mb-8 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl p-1 h-auto">
+                                <TabsTrigger value="login" className="py-2.5 rounded-lg text-xs font-bold data-[state=active]:bg-[var(--cta)] data-[state=active]:text-white transition-all">Sign In</TabsTrigger>
+                                <TabsTrigger value="signup" className="py-2.5 rounded-lg text-xs font-bold data-[state=active]:bg-[var(--cta)] data-[state=active]:text-white transition-all">Create Account</TabsTrigger>
+                            </TabsList>
                             
                             {/* LOGIN COLUMN */}
-                            <div className="form-side" key="login-column">
+                            <TabsContent value="login" className="mt-0 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300">
                                 {/* Mobile Logo / Subtitle Header */}
                                 <div className="md:hidden flex flex-col items-center mb-6">
                                     <div className="flex items-center gap-2 mb-1.5">
@@ -363,22 +372,10 @@ function AuthContent() {
                                     </div>
                                 </form>
 
-                                <div className="text-center mt-6 animate-field-6">
-                                    <p className="text-xs text-[var(--muted)] font-medium">
-                                        New to the system?{' '}
-                                        <button
-                                            type="button"
-                                            onClick={() => setMode('signup')}
-                                            className="text-[var(--cta)] hover:text-[var(--cta-hover)] font-semibold underline bg-transparent border-none p-0 cursor-pointer transition-colors"
-                                        >
-                                            Create an account
-                                        </button>
-                                    </p>
-                                </div>
-                            </div>
+                                </TabsContent>
 
                             {/* SIGN UP COLUMN */}
-                            <div className="form-side" key="signup-column">
+                            <TabsContent value="signup" className="mt-0 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300">
                                 {/* Mobile Logo / Subtitle Header */}
                                 <div className="md:hidden flex flex-col items-center mb-6">
                                     <div className="flex items-center gap-2 mb-1.5">
@@ -536,21 +533,8 @@ function AuthContent() {
                                     </div>
                                 </form>
 
-                                <div className="text-center mt-6 animate-field-6">
-                                    <p className="text-xs text-[var(--muted)] font-medium">
-                                        Already registered?{' '}
-                                        <button
-                                            type="button"
-                                            onClick={() => setMode('login')}
-                                            className="text-[var(--cta)] hover:text-[var(--cta-hover)] font-semibold underline bg-transparent border-none p-0 cursor-pointer transition-colors"
-                                        >
-                                            Sign In
-                                        </button>
-                                    </p>
-                                </div>
-                            </div>
-
-                        </div>
+                            </TabsContent>
+                        </Tabs>
                     </div>
 
                 </div>

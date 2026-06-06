@@ -1,59 +1,9 @@
-"use client";
-
-import { useEffect } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
-import { useAuth } from '@/frontend/context/auth-context'
-import { TopNavbar } from '@/frontend/ui/layout/Navbar'
-import { BottomNavigation } from '@/frontend/ui/layout/BottomNavigation'
-import dynamic from 'next/dynamic'
-
-const ChatWidget = dynamic(() => import('@/frontend/ui/layout/ChatWidget').then(mod => mod.ChatWidget), {
-  ssr: false
-})
+import { AppClientWrapper } from '@/frontend/ui/layout/AppClientWrapper'
 
 export default function AppLayout({ children }) {
-  const { user, loading } = useAuth()
-  const router = useRouter()
-  const pathname = usePathname()
-
-  useEffect(() => {
-    // Protect app routes, but allow /app/analyzer for guest trials
-    if (!loading && !user && pathname !== '/app/analyzer') {
-      router.push('/auth')
-    }
-  }, [user, loading, pathname, router])
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center" style={{ height: '100vh', background: 'var(--canvas)' }}>
-        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" role="status">
-          <span className="sr-only">Loading...</span>
-        </div>
-      </div>
-    )
-  }
-
-  // Prevent flicker for unauthorized users
-  if (!user && pathname !== '/app/analyzer') {
-    return null
-  }
-
   return (
-    <>
-      <div className="dashboard-layout" style={{ minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
-        <TopNavbar />
-        <main className="main-content" style={{ flex: 1, minWidth: 0 }}>
-          <div 
-            className="content-area w-full mx-auto px-3 sm:px-4 md:px-8 pt-4 pb-28 md:pt-2 md:pb-8 max-w-[1200px]"
-          >
-            {children}
-          </div>
-        </main>
-        <BottomNavigation />
-        <div className="hidden md:block">
-          <ChatWidget />
-        </div>
-      </div>
-    </>
+    <AppClientWrapper>
+      {children}
+    </AppClientWrapper>
   )
 }

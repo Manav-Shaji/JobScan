@@ -7,6 +7,7 @@ import { useAuth } from '@/frontend/context/auth-context';
 import { ThemeToggle } from '@/frontend/ui/layout/ThemeToggle';
 import { ShieldCheck, LogOut, LogIn, LayoutGrid, History, User, Settings, Menu, X, Download } from 'lucide-react';
 import { usePwa } from '@/frontend/context/pwa-context';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/overlay';
 
 // --- TopNavbar Component ---
 export function TopNavbar() {
@@ -53,7 +54,7 @@ export function TopNavbar() {
     return (
         <>
             <header
-                className="top-navbar px-4 md:px-8 py-2 sticky top-0 z-50 md:z-[1000] h-[70px] flex items-center justify-between"
+                className="top-navbar px-4 md:px-8 py-2 sticky top-0 z-[100] md:z-[1000] h-[70px] flex items-center justify-between"
                 style={isMobile ? {
                     background: 'rgba(2, 6, 23, 0.95)',
                     backdropFilter: 'blur(12px)',
@@ -301,39 +302,19 @@ export function TopNavbar() {
 
             </header>
 
-            {/* --- Mobile Navigation Drawer (Overlay & Panel) --- */}
+            {/* --- Mobile Navigation Drawer (Sheet) --- */}
             {user && (
-                <>
-                    <div 
-                        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] transition-opacity duration-300 md:hidden ${
-                            mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                        }`}
-                        onClick={() => {
-                            setMobileMenuOpen(false);
-                            if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
-                        }}
-                    />
-                    <div
-                        className={`fixed top-0 right-0 bottom-0 w-[85vw] max-w-[320px] h-screen z-[100] bg-[#081124] border-l border-white/10 shadow-2xl md:hidden flex flex-col justify-between p-6 transition-transform duration-300 ease-in-out ${
-                            mobileMenuOpen ? 'translate-x-0 opacity-100 visible pointer-events-auto' : 'translate-x-full opacity-0 invisible pointer-events-none'
-                        }`}
-                    >
-                        {/* Drawer Header */}
-                        <div className="flex flex-col gap-6">
-                            <div className="flex items-center justify-between border-b border-white/5 pb-4">
-                                <span className="font-black text-lg text-white">Menu</span>
-                                <button 
-                                    onClick={() => {
-                                        setMobileMenuOpen(false);
-                                        if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
-                                    }}
-                                    className="p-2 rounded-xl border border-white/10 text-gray-400 hover:text-white bg-slate-900/50 flex items-center justify-center w-9 h-9"
-                                    aria-label="Close menu"
-                                >
-                                    <X size={18} />
-                                </button>
-                            </div>
-
+                <Sheet open={mobileMenuOpen} onOpenChange={(open) => {
+                    setMobileMenuOpen(open);
+                    if (open && typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
+                }}>
+                    <SheetContent side="right" className="w-[85vw] max-w-[320px] bg-[#081124] border-l border-white/10 p-6 pt-[90px] flex flex-col justify-between h-full text-white [&>button]:hidden">
+                        <SheetHeader className="text-left border-b border-white/5 pb-4 mb-4 hidden">
+                            <SheetTitle className="font-black text-lg text-white">Menu</SheetTitle>
+                        </SheetHeader>
+                        
+                        {/* Drawer Content */}
+                        <div className="flex flex-col gap-6 mt-4">
                             {/* Section 1: Compact User Info Card */}
                             <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-900/60 border border-white/5">
                                 <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white text-[11px] font-black shadow-inner flex-shrink-0">
@@ -398,7 +379,7 @@ export function TopNavbar() {
                         </div>
 
                         {/* Section 4: Exit Actions */}
-                        <div className="flex flex-col gap-4 border-t border-white/5 pt-4">
+                        <div className="flex flex-col gap-4 border-t border-white/5 pt-4 mt-auto">
                             <button
                                 onClick={(e) => { 
                                     setMobileMenuOpen(false); 
@@ -410,8 +391,8 @@ export function TopNavbar() {
                                 <LogOut size={14} /> Sign Out
                             </button>
                         </div>
-                    </div>
-                </>
+                    </SheetContent>
+                </Sheet>
             )}
         </>
     );

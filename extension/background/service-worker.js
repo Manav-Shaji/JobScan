@@ -76,3 +76,10 @@ function getLocalStorage(keys) {
     chrome.storage.local.get(keys, resolve);
   });
 }
+
+// Track SPA navigation and notify content scripts
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.url) {
+    chrome.tabs.sendMessage(tabId, { action: 'URL_CHANGED', url: changeInfo.url }).catch(() => {});
+  }
+});

@@ -1,5 +1,7 @@
 import { Search, ShieldAlert, ShieldCheck, Activity, FileText, AlertTriangle, Cpu, Terminal, Shield, User, RefreshCw, History, Settings } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import { Skeleton } from "@/components/ui/layout";
+import { Card, CardContent } from "@/components/ui/layout";
 import Link from 'next/link';
 
 const formatDate = (dateString) => {
@@ -65,27 +67,27 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
       <div className="flex flex-col gap-5">
         {/* Desktop Skeleton */}
         <div className="hidden md:flex flex-col gap-5">
-          <div className="skeleton rounded-3xl h-[70px] w-full" />
+          <Skeleton className="rounded-3xl h-[70px] w-full" />
           <div className="grid grid-cols-4 gap-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="skeleton rounded-2xl h-[106px]" />
+              <Skeleton key={i} className="rounded-2xl h-[106px]" />
             ))}
           </div>
           <div className="grid grid-cols-12 gap-4">
-            <div className="col-span-8 skeleton rounded-2xl h-[320px]" />
-            <div className="col-span-4 skeleton rounded-2xl h-[320px]" />
+            <Skeleton className="col-span-8 rounded-2xl h-[320px]" />
+            <Skeleton className="col-span-4 rounded-2xl h-[320px]" />
           </div>
         </div>
 
         {/* Mobile Skeleton */}
         <div className="md:hidden flex flex-col gap-4">
-          <div className="skeleton rounded-2xl h-[112px] w-full" />
+          <Skeleton className="rounded-2xl h-[112px] w-full" />
           <div className="grid grid-cols-2 gap-3">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="skeleton rounded-2xl h-[96px]" />
+              <Skeleton key={i} className="rounded-2xl h-[96px]" />
             ))}
           </div>
-          <div className="skeleton rounded-2xl h-[230px] w-full" />
+          <Skeleton className="rounded-2xl h-[230px] w-full" />
         </div>
       </div>
     );
@@ -170,7 +172,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
         {/* --- Metrics Grid --- */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {statCards.map((s, i) => (
-            <div key={i} className="glass-card premium-card-edge rounded-2xl p-5 shadow-lg hover-lift transition-all group fade-slide-up-in" style={{ animationDelay: `${i * 0.08}s` }}>
+            <Card key={i} className="glass-card premium-card-edge rounded-2xl p-5 shadow-lg hover-lift transition-all group fade-slide-up-in border-[var(--hairline)]" style={{ animationDelay: `${i * 0.08}s` }}>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-[10px] font-black tracking-widest text-[var(--muted)] uppercase">{s.label}</span>
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${s.bg} ${s.border} ${s.color} group-hover:scale-105 transition-transform`}>
@@ -179,7 +181,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
               </div>
               <div className="text-2xl font-black tracking-tight text-[var(--on-dark)] leading-none">{s.value}</div>
               <div className="text-[10px] text-[var(--muted)] mt-2 font-medium">{s.description}</div>
-            </div>
+            </Card>
           ))}
         </div>
 

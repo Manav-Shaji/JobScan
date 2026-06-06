@@ -32,9 +32,9 @@ export async function analyzeJob(
 
   const scanType = posterBase64 && jobDescription ? 'Combined' : posterBase64 ? 'Poster' : 'Text';
   
-  // Base the hash on both text and poster base64 signature
+  // Base the hash on both text and poster base64 signature with v2 prefix to invalidate older schema versions
   const normalized = normalizeJobText(jobDescription);
-  const hashSource = normalized + (posterBase64 ? posterBase64.substring(0, 100) : '');
+  const hashSource = 'v2:' + normalized + (posterBase64 ? posterBase64.substring(0, 100) : '');
   const hash = crypto.createHash('md5').update(hashSource).digest('hex');
 
   // 1. Check Database cache (within 24 hours validity)

@@ -36,7 +36,7 @@ export const GET_USER_HISTORY = `
   FROM job_scans 
   WHERE user_id = $1 
   ORDER BY created_at DESC 
-  LIMIT 10
+  LIMIT $2 OFFSET $3
 `;
 
 export const UPDATE_RETENTION_DAYS = `

@@ -35,11 +35,12 @@
   "content_scripts": [
     {
       "matches": [
-        "*://*.linkedin.com/*",
-        "*://*.indeed.com/*",
-        "*://*.naukri.com/*",
-        "*://*.foundit.in/*",
-        "*://*.internshala.com/*"
+        "*://*.linkedin.com/jobs/*",
+        "*://*.indeed.com/viewjob*",
+        "*://*.indeed.com/jobs*",
+        "*://*.naukri.com/job-listings*",
+        "*://*.foundit.in/job/*",
+        "*://*.internshala.com/job/*"
       ],
       "js": [
         "utils/page-parser.js",
