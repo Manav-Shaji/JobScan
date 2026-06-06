@@ -1,6 +1,6 @@
-import { Switch } from "@/components/ui/forms";
-import { Skeleton } from "@/components/ui/layout";
-import { Separator } from "@/components/ui/layout";
+import { Switch } from "@/frontend/ui/forms";
+import { Skeleton } from "@/frontend/ui/layout";
+import { Separator } from "@/frontend/ui/layout";
 import { Bell, Shield, Eye, Database, Trash2, Download, Sun, Moon, Laptop, AppWindow, Globe, Smartphone } from 'lucide-react';
 import { useTheme } from "@/frontend/context/theme-context";
 import { useState } from "react";

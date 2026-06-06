@@ -31,10 +31,10 @@ import {
     ImageIcon,
     CheckSquare
 } from 'lucide-react';
-import { Textarea } from "@/components/ui/forms";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/navigation";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/feedback";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/layout";
+import { Textarea } from "@/frontend/ui/forms";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/frontend/ui/navigation";
+import { Alert, AlertDescription, AlertTitle } from "@/frontend/ui/feedback";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/frontend/ui/layout";
 
 export default function Analyzer() {
     const { setCurrentJobContext } = useJob();

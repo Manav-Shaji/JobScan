@@ -1,7 +1,7 @@
-import { Label } from "@/components/ui/forms";
-import { Input } from "@/components/ui/forms";
-import { Skeleton } from "@/components/ui/layout";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/navigation";
+import { Label } from "@/frontend/ui/forms";
+import { Input } from "@/frontend/ui/forms";
+import { Skeleton } from "@/frontend/ui/layout";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/frontend/ui/navigation";
 import { User, Mail, Key, Lock } from 'lucide-react';
 
 export function Profile({ 

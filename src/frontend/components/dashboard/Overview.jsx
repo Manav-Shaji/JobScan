@@ -1,7 +1,7 @@
 import { Search, ShieldAlert, ShieldCheck, Activity, FileText, AlertTriangle, Cpu, Terminal, Shield, User, RefreshCw, History, Settings } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
-import { Skeleton } from "@/components/ui/layout";
-import { Card, CardContent } from "@/components/ui/layout";
+import { Skeleton } from "@/frontend/ui/layout";
+import { Card, CardContent } from "@/frontend/ui/layout";
 import Link from 'next/link';
 
 const formatDate = (dateString) => {

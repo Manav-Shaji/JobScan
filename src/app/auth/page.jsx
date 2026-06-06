@@ -16,7 +16,7 @@ import {
     Globe, 
     Smartphone 
 } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/navigation";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/frontend/ui/navigation";
 
 function AuthContent() {
     const searchParams = useSearchParams();

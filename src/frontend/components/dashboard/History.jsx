@@ -1,7 +1,7 @@
 import { FileText, Search, Filter, ChevronDown, Calendar, AlertTriangle, MoreVertical, Briefcase } from 'lucide-react';
 import React, { useState, useMemo, useEffect } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/forms";
-import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious, PaginationLink } from "@/components/ui/navigation";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/frontend/ui/forms";
+import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious, PaginationLink } from "@/frontend/ui/navigation";
 
 const formatDate = (dateString) => {
   if (!dateString) return { date: 'N/A', time: '' };

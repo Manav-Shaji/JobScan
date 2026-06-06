@@ -7,7 +7,7 @@ import { useAuth } from '@/frontend/context/auth-context';
 import { ThemeToggle } from '@/frontend/ui/layout/ThemeToggle';
 import { ShieldCheck, LogOut, LogIn, LayoutGrid, History, User, Settings, Menu, X, Download } from 'lucide-react';
 import { usePwa } from '@/frontend/context/pwa-context';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/overlay';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/frontend/ui/overlay';
 
 // --- TopNavbar Component ---
 export function TopNavbar() {
