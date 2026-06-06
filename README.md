@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# JobScan
 
-## Getting Started
+JobScan is a modern web application designed to help users identify and avoid job scams. By leveraging the power of the Google Gemini API, JobScan analyzes job postings, emails, and recruiter communications for potential threats and red flags.
 
-First, run the development server:
+## Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Framework:** [Next.js](https://nextjs.org) (App Router)
+- **Database:** PostgreSQL (with raw SQL queries via `pg`)
+- **Authentication:** [NextAuth.js v5](https://authjs.dev/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components:** [Radix UI](https://www.radix-ui.com/) + Lucide Icons
+- **AI Integration:** Google Gemini API (`@google/generative-ai`)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Prerequisites
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Before running the application locally, ensure you have the following installed:
+- Node.js (v18 or higher recommended)
+- PostgreSQL (running locally or accessible via your network)
+- A valid Google Gemini API Key
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Setup & Installation
 
-## Learn More
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **Configure Environment Variables:**
+   Create a `.env.local` file in the root directory based on the following template:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```env
+   # Application Port
+   PORT=3000
+   NODE_ENV=development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   # PostgreSQL Configuration
+   DB_USER=devuser
+   DB_HOST=localhost
+   DB_NAME=jobscan
+   DB_PASSWORD=devpass
+   DB_PORT=5435
 
-## Deploy on Vercel
+   # NextAuth Setup
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=your_generated_secret
+   AUTH_SECRET=your_generated_secret
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   # Google Gemini API
+   GEMINI_API_KEY=your_gemini_api_key
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. **Initialize the Database:**
+   Ensure your PostgreSQL server is running and the database specified in `DB_NAME` exists. The application runs its database migrations and schema checks automatically during startup.
+
+4. **Run the Development Server:**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
+
+## Project Structure
+
+- `src/app/` - Next.js App Router pages and layouts.
+- `src/backend/` - Server-side logic, API handlers, authentication, database migrations, and AI logic.
+- `src/frontend/` - React components, layouts, hooks, and UI assets.
+- `src/database/` - Database schemas and initial SQL files.
+- `src/scripts/` - Custom utility scripts (e.g., static icon generation).
+- `extension/` - Files related to the JobScan browser extension.
+
+## Deployment
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new). Make sure to configure your production environment variables (including your remote database connection details and Gemini API key) in the Vercel dashboard.
