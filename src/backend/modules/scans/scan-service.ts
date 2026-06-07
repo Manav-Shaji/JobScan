@@ -5,7 +5,6 @@ import { findCachedScan, insertScanResult } from './scan-repository';
 import { ApiError } from '@/backend/api/errors';
 import { MemoryCache } from '@/backend/cache';
 import { logger } from '@/backend/logging/logger';
-import { runDatabaseMigrations } from '@/backend/db/db-migrations';
 
 const SCAN_COOLDOWN_MS = 10 * 1000;
 
@@ -28,14 +27,13 @@ export async function analyzeJob(
   posterMimeType?: string, 
   posterUrl?: string | null
 ) {
-  await runDatabaseMigrations();
 
   const scanType = posterBase64 && jobDescription ? 'Combined' : posterBase64 ? 'Poster' : 'Text';
   
   // Base the hash on both text and poster base64 signature with v2 prefix to invalidate older schema versions
   const normalized = normalizeJobText(jobDescription);
   const hashSource = 'v2:' + normalized + (posterBase64 ? posterBase64.substring(0, 100) : '');
-  const hash = crypto.createHash('md5').update(hashSource).digest('hex');
+  const hash = crypto.createHash('sha256').update(hashSource).digest('hex');
 
   // 1. Check Database cache (within 24 hours validity)
   const cached = await findCachedScan(hash);

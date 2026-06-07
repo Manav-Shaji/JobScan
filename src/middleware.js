@@ -1,12 +1,8 @@
+import { auth } from '@/backend/auth/index';
 import { NextResponse } from 'next/server';
 
-export default function middleware(req) {
-    const sessionToken = req.cookies.get('authjs.session-token')?.value || 
-                         req.cookies.get('__Secure-authjs.session-token')?.value ||
-                         req.cookies.get('next-auth.session-token')?.value ||
-                         req.cookies.get('__Secure-next-auth.session-token')?.value;
-    
-    const isLoggedIn = !!sessionToken;
+export default auth((req) => {
+    const isLoggedIn = !!req.auth;
     const isAuthPage = req.nextUrl.pathname.startsWith('/auth');
     const isAppPage = req.nextUrl.pathname.startsWith('/app');
 
@@ -28,7 +24,7 @@ export default function middleware(req) {
     }
 
     return null;
-}
+});
 
 export const config = {
     matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],

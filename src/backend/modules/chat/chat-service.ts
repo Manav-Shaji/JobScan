@@ -5,20 +5,17 @@ import {
   saveChatMessage,
 } from './chat-repository';
 import { logger } from '@/backend/logging/logger';
-import { runDatabaseMigrations } from '@/backend/db/db-migrations';
 
 /**
  * Service orchestrating chatbot messaging. Connects message history,
  * context, and user input to Gemini AI, saves exchanges to postgres, and logs activities.
  */
 export async function getChatHistory(userId: string) {
-  await runDatabaseMigrations();
   logger.logApp('Fetching chat messages history for user', { userId });
   return fetchHistory(userId);
 }
 
 export async function processChatMessage(userId: string, message: string, context: any) {
-  await runDatabaseMigrations();
   try {
     logger.logApp('Processing chatbot incoming message request...', { userId });
     

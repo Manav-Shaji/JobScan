@@ -3,14 +3,12 @@ import { pool } from '@/backend/db/db';
 import bcrypt from 'bcryptjs';
 import { CHECK_USER_EXISTS, INSERT_USER } from './user-queries';
 import { logger } from '@/backend/logging/logger';
-import { runDatabaseMigrations } from '@/backend/db/db-migrations';
 
 /**
  * Service handling user account registration in JobScan. Enforces transactional DB operations,
  * registers records in `users` table, and logs events locally.
  */
 export async function registerUser({ email, password, name }: any) {
-  await runDatabaseMigrations();
   const cleanEmail = email.toLowerCase().trim();
   const client = await pool.connect();
   try {

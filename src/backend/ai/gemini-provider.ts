@@ -3,6 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { z } from 'zod';
 import { logger } from '@/backend/logging/logger';
 import { jobScanSystemInstruction } from './prompts';
+import { MemoryCache } from '@/backend/cache';
 
 const PRIMARY_MODEL = 'gemini-3.1-flash-lite'; // or 'gemini-2.5-flash' for vision? wait, both support vision.
 const FALLBACK_MODEL = 'gemini-2.5-flash';
@@ -13,12 +14,7 @@ let genAI: GoogleGenerativeAI | null = null;
 const API_KEY = process.env.GEMINI_API_KEY;
 if (API_KEY) genAI = new GoogleGenerativeAI(API_KEY);
 
-interface CacheEntry {
-  value: any;
-  expiresAt: number;
-}
-
-const analysisCache = new Map<string, CacheEntry>();
+const analysisCache = new MemoryCache<any>(CACHE_TTL_MS);
 
 const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
   let timeoutId: NodeJS.Timeout;
@@ -29,17 +25,11 @@ const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
 };
 
 function getCachedAnalysis(key: string) {
-  const entry = analysisCache.get(key);
-  if (!entry) return null;
-  if (Date.now() > entry.expiresAt) {
-    analysisCache.delete(key);
-    return null;
-  }
-  return entry.value;
+  return analysisCache.get(key);
 }
 
 function setCachedAnalysis(key: string, value: any) {
-  analysisCache.set(key, { value, expiresAt: Date.now() + CACHE_TTL_MS });
+  analysisCache.set(key, value);
 }
 
 function extractErrorMessage(error: unknown) {
