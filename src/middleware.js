@@ -1,5 +1,11 @@
-import { auth } from '@/backend/auth/index';
+import NextAuth from 'next-auth';
+import { authConfig } from '@/backend/auth/config';
 import { NextResponse } from 'next/server';
+
+const { auth } = NextAuth({
+    ...authConfig,
+    secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+});
 
 export default auth((req) => {
     const isLoggedIn = !!req.auth;

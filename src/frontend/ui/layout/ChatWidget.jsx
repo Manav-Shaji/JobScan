@@ -112,9 +112,7 @@ export function ChatWidget() {
               </div>
             </div>
           </div>
-          <button className="relative z-10 text-slate-400 hover:text-white transition-colors bg-slate-800/50 p-2 rounded-lg" onClick={() => setIsOpen(false)}>
-            <X size={18} />
-          </button>
+
         </div>
 
         <div className="flex-1 overflow-y-auto p-5 scrollbar-thin scrollbar-thumb-slate-700">

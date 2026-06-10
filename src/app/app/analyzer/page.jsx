@@ -29,11 +29,12 @@ import {
     UploadCloud,
     X,
     ImageIcon,
-    CheckSquare
+    CheckSquare,
+    FileSearch
 } from 'lucide-react';
 import { Textarea } from "@/frontend/ui/forms";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/frontend/ui/navigation";
-import { Alert, AlertDescription, AlertTitle } from "@/frontend/ui/feedback";
+import { Alert, AlertDescription, AlertTitle } from "@/frontend/ui/feedback/Alert";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/frontend/ui/layout";
 
 export default function Analyzer() {

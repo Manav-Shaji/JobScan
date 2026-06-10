@@ -22,14 +22,8 @@ export async function processChatMessage(userId: string, message: string, contex
     // Fetch user's previous chat history
     const rawHistory = await fetchHistory(userId);
     
-    // Map db format to what Gemini expectations require: [{role: 'user'|'model', parts: [{text: content}]}]
-    const history = rawHistory.map(msg => ({
-      role: msg.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: msg.content }]
-    }));
-
     logger.logApp('Generating AI chatbot conversation response...');
-    const resp = await geminiService.generateChatResponse(history, message, context);
+    const resp = await geminiService.generateChatResponse(rawHistory, message, context);
 
     // Save user's message
     await saveChatMessage(userId, 'user', message);
