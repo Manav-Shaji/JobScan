@@ -12,8 +12,8 @@ export const AuthProvider = ({ children }) => {
     user: session?.user || null,
     session,
     loading: status === 'loading',
-    login: async (email, password) => {
-      const result = await signIn('credentials', { email, password, redirect: false });
+    login: async (email, password, rememberMe = false) => {
+      const result = await signIn('credentials', { email, password, rememberMe, redirect: false });
       if (!result?.error) {
         if (typeof navigator !== 'undefined' && navigator.vibrate) {
           navigator.vibrate(20);

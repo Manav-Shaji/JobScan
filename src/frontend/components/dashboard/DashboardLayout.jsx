@@ -1,4 +1,4 @@
-import { Tabs } from "@/frontend/ui/navigation/Tabs";
+import { Tabs } from "@/frontend/ui/navigation";
 
 export function DashboardLayout({ children, activeTab, setActiveTab }) {
   return (

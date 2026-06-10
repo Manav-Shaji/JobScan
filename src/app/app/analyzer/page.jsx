@@ -44,6 +44,7 @@ export default function Analyzer() {
     const [posterFile, setPosterFile] = useState(null);
     const [posterPreview, setPosterPreview] = useState(null);
     const [isDragging, setIsDragging] = useState(false);
+    const [activeTab, setActiveTab] = useState('text');
     
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
@@ -193,7 +194,10 @@ export default function Analyzer() {
     };
 
     const handleAnalyze = useCallback(async () => {
-        if (!jobText.trim() && !posterFile) {
+        const textToAnalyze = activeTab === 'text' ? jobText : '';
+        const fileToAnalyze = activeTab === 'image' ? posterFile : null;
+
+        if (!textToAnalyze.trim() && !fileToAnalyze) {
             setInputError(true);
             setTimeout(() => setInputError(false), 1000);
             return;
@@ -209,7 +213,7 @@ export default function Analyzer() {
 
         try {
             const [payload] = await Promise.all([
-                api.analyze(jobText, posterFile),
+                api.analyze(textToAnalyze, fileToAnalyze),
                 runStagedLoading()
             ]);
 
@@ -240,7 +244,7 @@ export default function Analyzer() {
                 patternName: data.patternName,
                 patternConfidence: data.patternConfidence,
                 posterCredibilityScore: data.posterCredibilityScore,
-                scanType: data.scanType || (posterFile && jobText ? 'Combined' : posterFile ? 'Poster' : 'Text'),
+                scanType: data.scanType || (fileToAnalyze && textToAnalyze ? 'Combined' : fileToAnalyze ? 'Poster' : 'Text'),
                 fallbackUsed: data.fallbackUsed || false,
             });
             setShowBottomSheet(true);
@@ -265,7 +269,7 @@ export default function Analyzer() {
         } finally {
             setLoading(false);
         }
-    }, [jobText, posterFile, checkCanScan, incrementScan, setCurrentJobContext, toast]);
+    }, [activeTab, jobText, posterFile, checkCanScan, incrementScan, setCurrentJobContext, toast]);
 
     const handleReport = useCallback(async () => {
         if (!result) return;
@@ -293,9 +297,8 @@ export default function Analyzer() {
 
     const getAnalyzeButtonText = () => {
         if (loading) return "ANALYZING...";
-        if (jobText.trim() && posterFile) return "ANALYZE BOTH";
-        if (posterFile) return "ANALYZE POSTER ONLY";
-        return "ANALYZE TEXT ONLY";
+        if (activeTab === 'image') return "ANALYZE POSTER";
+        return "ANALYZE TEXT";
     };
 
     return (
@@ -351,7 +354,7 @@ export default function Analyzer() {
 
             {/* --- Main Workspace (Input Area) --- */}
             <div className="mb-6">
-                <Tabs defaultValue="text" className="w-full">
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                     <TabsList className="grid w-full grid-cols-2 mb-4 bg-[var(--surface-elevated)] border border-[var(--hairline)] rounded-xl p-1 h-auto">
                         <TabsTrigger value="text" className="py-2.5 rounded-lg text-xs font-bold data-[state=active]:bg-blue-500 data-[state=active]:text-white transition-all flex items-center gap-2"><FileText size={14}/> Text Analysis</TabsTrigger>
                         <TabsTrigger value="image" className="py-2.5 rounded-lg text-xs font-bold data-[state=active]:bg-purple-500 data-[state=active]:text-white transition-all flex items-center gap-2"><ImageIcon size={14}/> Poster Upload</TabsTrigger>

@@ -5,7 +5,7 @@ import { logger } from '@/backend/logging/logger';
 
 export const credentialsProvider = CredentialsProvider({
     name: 'Credentials',
-    credentials: { email: { label: 'Email', type: 'email' }, password: { label: 'Password', type: 'password' } },
+    credentials: { email: { label: 'Email', type: 'email' }, password: { label: 'Password', type: 'password' }, rememberMe: { label: 'Remember Me', type: 'text' } },
     async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
             logger.logSecurity('Failed login attempt due to missing credentials');
@@ -25,7 +25,8 @@ export const credentialsProvider = CredentialsProvider({
             
             if (isValid) {
                 logger.logApp('Successful login', { userId: user.id, email: user.email });
-                return { id: user.id, email: user.email, name: user.name };
+                const rememberMe = credentials.rememberMe === 'true' || credentials.rememberMe === true;
+                return { id: user.id, email: user.email, name: user.name, rememberMe };
             } else {
                 logger.logSecurity('Failed login attempt: Incorrect password', { email: cleanEmail });
                 return null;

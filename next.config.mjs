@@ -17,6 +17,7 @@ const nextConfig = {
         ];
     },
     experimental: {
+        allowedDevOrigins: ['chalice-helium-rift.ngrok-free.dev'],
         optimizePackageImports: [
             'lucide-react',
             '@radix-ui/react-dialog',

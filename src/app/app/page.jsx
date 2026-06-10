@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/frontend/context/auth-context';
 import api from '@/frontend/utils/api-client';
-import { TabsContent } from "@/frontend/ui/navigation/Tabs";
+import { TabsContent } from "@/frontend/ui/navigation";
 import { useToast } from "@/frontend/hooks/use-toast";
 import { Toaster } from "@/frontend/ui/toasts";
 import { DashboardLayout } from '@/frontend/components/dashboard/DashboardLayout';

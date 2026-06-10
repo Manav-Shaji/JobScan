@@ -28,6 +28,7 @@ function AuthContent() {
         name: '',
         email: '',
         password: '',
+        rememberMe: false,
     });
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
@@ -71,7 +72,8 @@ function AuthContent() {
     }
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+        setFormData({ ...formData, [e.target.name]: value });
         if (error) setError('');
     };
 
@@ -81,7 +83,7 @@ function AuthContent() {
         setError('');
 
         if (mode === 'login') {
-            const result = await login(formData.email, formData.password);
+            const result = await login(formData.email, formData.password, formData.rememberMe);
             if (result.success) {
                 router.push(callbackUrl);
                 router.refresh();
@@ -332,7 +334,10 @@ function AuthContent() {
                                         <label className="flex items-center gap-2 cursor-pointer group">
                                             <input
                                                 type="checkbox"
+                                                name="rememberMe"
                                                 id="remember-me"
+                                                checked={formData.rememberMe}
+                                                onChange={handleChange}
                                                 className="w-4 h-4 rounded border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-[var(--cta)] focus:ring-offset-0 focus:ring-[var(--cta)]"
                                             />
                                             <span className="text-xs text-[var(--muted)] group-hover:text-[var(--on-dark)] transition-colors">

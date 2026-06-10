@@ -7,6 +7,10 @@ export const authConfig = {
         async jwt({ token, user }: any) {
             if (user) {
                 token.id = user.id;
+                // If user didn't check rememberMe, expire their session in 24 hours instead of 30 days
+                if (user.rememberMe === false) {
+                    token.exp = Math.floor(Date.now() / 1000) + (24 * 60 * 60);
+                }
             }
             return token;
         },
