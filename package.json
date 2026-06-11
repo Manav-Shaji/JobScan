@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "node extension/build-icons.mjs",
     "dev": "next dev",
-    "prebuild": "node extension/build-icons.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "ext:dev": "wxt src/extension",
+    "ext:build": "wxt build src/extension"
   },
   "dependencies": {
     "@serwist/next": "^9.0.2",
@@ -48,6 +48,8 @@
     "eslint-config-next": "^15.3.1",
     "postcss": "^8.5.14",
     "tailwindcss": "^3.4.19",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "wxt": "^0.18.0",
+    "@types/chrome": "^0.0.268"
   }
 }
