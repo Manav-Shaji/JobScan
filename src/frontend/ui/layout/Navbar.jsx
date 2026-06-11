@@ -123,7 +123,7 @@ export function TopNavbar() {
                                             : { color: 'var(--muted)' }
                                     }
                                 >
-                                    <ShieldCheck size={13} className="nav-icon" /> Trust Analyzer
+                                    <ShieldCheck size={13} className="nav-icon" /> Analyzer
                                     {(pathname === '/app/analyzer' || (pathname === '/app' && tabParam === 'analyzer')) && (
                                         <span className="active-dot"></span>
                                     )}
@@ -146,7 +146,7 @@ export function TopNavbar() {
                                             : { color: 'var(--muted)' }
                                     }
                                 >
-                                    <LayoutGrid size={13} className="nav-icon" /> Trust Overview
+                                    <LayoutGrid size={13} className="nav-icon" /> Overview
                                     {pathname === '/app' && tabParam === 'overview' && (
                                         <span className="active-dot"></span>
                                     )}
@@ -169,7 +169,7 @@ export function TopNavbar() {
                                             : { color: 'var(--muted)' }
                                     }
                                 >
-                                    <History size={13} className="nav-icon" /> Scan History
+                                    <History size={13} className="nav-icon" /> History
                                     {pathname === '/app' && tabParam === 'history' && (
                                         <span className="active-dot"></span>
                                     )}
@@ -192,7 +192,7 @@ export function TopNavbar() {
                                             : { color: 'var(--muted)' }
                                     }
                                 >
-                                    <User size={13} className="nav-icon" /> User Profile
+                                    <User size={13} className="nav-icon" /> Profile
                                     {pathname === '/app' && tabParam === 'profile' && (
                                         <span className="active-dot"></span>
                                     )}
@@ -215,7 +215,7 @@ export function TopNavbar() {
                                             : { color: 'var(--muted)' }
                                     }
                                 >
-                                    <Settings size={13} className="nav-icon" /> Settings Console
+                                    <Settings size={13} className="nav-icon" /> Settings
                                     {pathname === '/app' && tabParam === 'settings' && (
                                         <span className="active-dot"></span>
                                     )}
@@ -359,7 +359,7 @@ export function TopNavbar() {
                                             : 'border-transparent text-[var(--muted)] hover:bg-black/5 dark:hover:bg-white/5 hover:text-[var(--on-dark)]'
                                     }`}
                                 >
-                                    <Settings size={14} /> Settings Console
+                                    <Settings size={14} /> Settings
                                 </Link>
                                 <button
                                     onClick={() => {
