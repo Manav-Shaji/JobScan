@@ -43,6 +43,7 @@ yarn-error.log*
 next-env.d.ts
 
 # local logs
-/logs/
+logs/*
+!logs/.gitkeep
 
 .antigravity/

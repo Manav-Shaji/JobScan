@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic'
 const ChatWidget = dynamic(() => import('@/frontend/ui/layout/ChatWidget').then(mod => mod.ChatWidget), {
   ssr: false
 })
+import { PwaUpdater } from '@/frontend/ui/components/PwaUpdater'
 
 export function AppClientWrapper({ children }) {
   const { user, loading } = useAuth()
@@ -25,7 +26,7 @@ export function AppClientWrapper({ children }) {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center" style={{ height: '100vh', background: 'var(--canvas)' }}>
+      <div className="flex justify-center items-center" style={{ height: '100dvh', background: 'var(--canvas)' }}>
         <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" role="status">
           <span className="sr-only">Loading...</span>
         </div>
@@ -40,7 +41,14 @@ export function AppClientWrapper({ children }) {
 
   return (
     <>
-      <div className="dashboard-layout" style={{ minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
+      <div className="dashboard-layout" style={{ 
+        minHeight: '100dvh', 
+        width: '100%', 
+        display: 'flex', 
+        flexDirection: 'column',
+        paddingTop: 'env(safe-area-inset-top)',
+        paddingBottom: 'env(safe-area-inset-bottom)'
+      }}>
         <TopNavbar />
         <main className="main-content" style={{ flex: 1, minWidth: 0 }}>
           <div 
@@ -53,6 +61,7 @@ export function AppClientWrapper({ children }) {
         <div className="hidden md:block">
           <ChatWidget />
         </div>
+        <PwaUpdater />
       </div>
     </>
   )

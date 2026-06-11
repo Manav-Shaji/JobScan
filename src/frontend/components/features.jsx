@@ -8,7 +8,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/frontend/ui/dialog";
+} from "@/frontend/ui/overlay/dialog";
 import { Shield, Infinity, History, TrendingUp, MessageSquare, Rocket } from 'lucide-react';
 
 // --- TrustScore Component ---

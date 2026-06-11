@@ -61,7 +61,10 @@ export const AuthProvider = ({ children }) => {
         window.localStorage.removeItem('nextauth.message');
       }
 
-      await signOut({ redirect: true, callbackUrl: '/auth' });
+      await signOut({ redirect: false });
+      if (typeof window !== 'undefined') {
+        window.location.href = '/auth';
+      }
     },
     updateProfile: async (data) => {
       try {

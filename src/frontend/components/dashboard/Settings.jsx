@@ -6,7 +6,7 @@ import { useTheme } from "@/frontend/context/theme-context";
 import { useState } from "react";
 import { useToast } from "@/frontend/hooks/use-toast";
 import { usePwa } from "@/frontend/context/pwa-context";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/frontend/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/frontend/ui/overlay/dialog";
 
 export function Settings({ formData, setFormData, loading }) {
   if (loading) {

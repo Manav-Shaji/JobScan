@@ -6,7 +6,7 @@ import { useAuth } from '@/frontend/context/auth-context';
 import api from '@/frontend/utils/api-client';
 import { TabsContent } from "@/frontend/ui/navigation";
 import { useToast } from "@/frontend/hooks/use-toast";
-import { Toaster } from "@/frontend/ui/toasts";
+import { Toaster } from "@/frontend/ui/feedback/toasts";
 import { DashboardLayout } from '@/frontend/components/dashboard/DashboardLayout';
 import dynamic from 'next/dynamic';
 
@@ -73,7 +73,7 @@ export default function SuperDashboard() {
 
     if (authLoading || !user) {
         return (
-            <div className="flex justify-center items-center" style={{ height: '100vh', background: 'var(--canvas)' }}>
+            <div className="flex justify-center items-center" style={{ height: '100dvh', background: 'var(--canvas)' }}>
                 <div className="spinner-border text-primary" role="status">
                     <span className="sr-only">Loading...</span>
                 </div>

@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { TrustScore } from '@/frontend/ui/features';
-import { SignupWall } from '@/frontend/ui/features';
+import { TrustScore } from '@/frontend/components/features';
+import { SignupWall } from '@/frontend/components/features';
 import api from '@/frontend/utils/api-client';
 import { useScanLimit } from '@/frontend/hooks/use-scan-limit';
 import { useJob } from '@/frontend/context/job-context';
 import { useToast } from "@/frontend/hooks/use-toast";
-import { Toaster } from "@/frontend/ui/toasts";
+import { Toaster } from "@/frontend/ui/feedback/toasts";
 import {
     ShieldCheck,
     Cpu,

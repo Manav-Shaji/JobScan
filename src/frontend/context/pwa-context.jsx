@@ -31,8 +31,8 @@ export function PwaProvider({ children }) {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
-          .then((reg) => console.log('[PWA] Service Worker registered successfully:', reg.scope))
-          .catch((err) => console.error('[PWA] Service Worker registration failed:', err));
+          .then((reg) => { if (process.env.NODE_ENV === 'development') console.log('[PWA] Service Worker registered successfully:', reg.scope); })
+          .catch((err) => { if (process.env.NODE_ENV === 'development') console.error('[PWA] Service Worker registration failed:', err); });
       });
     }
 
@@ -41,7 +41,7 @@ export function PwaProvider({ children }) {
       e.preventDefault();
       setDeferredPrompt(e);
       setIsInstallable(true);
-      console.log('[PWA] Installation prompt captured');
+      if (process.env.NODE_ENV === 'development') console.log('[PWA] Installation prompt captured');
     };
     window.addEventListener('beforeinstallprompt', handleInstallPrompt);
 
@@ -85,7 +85,7 @@ export function PwaProvider({ children }) {
 
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    console.log(`[PWA] Install prompt result: ${outcome}`);
+    if (process.env.NODE_ENV === 'development') console.log(`[PWA] Install prompt result: ${outcome}`);
 
     if (outcome === 'accepted') {
       setIsInstallable(false);
@@ -113,13 +113,13 @@ export function PwaProvider({ children }) {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
         // Mock push subscription registration details
-        console.log('[PWA] Notification permission granted. Setting up push handlers.');
+        if (process.env.NODE_ENV === 'development') console.log('[PWA] Notification permission granted. Setting up push handlers.');
         
         // Retrieve push subscription (Architecture registration details only)
         if ('serviceWorker' in navigator) {
           const reg = await navigator.serviceWorker.ready;
           const sub = await reg.pushManager.getSubscription();
-          console.log('[PWA Push Token Endpoint Details]:', sub ? sub.endpoint : 'No active registration token found');
+          if (process.env.NODE_ENV === 'development') console.log('[PWA Push Token Endpoint Details]:', sub ? sub.endpoint : 'No active registration token found');
         }
 
         toast({
@@ -137,7 +137,7 @@ export function PwaProvider({ children }) {
         return false;
       }
     } catch (error) {
-      console.error('[PWA] Error requesting permission:', error);
+      if (process.env.NODE_ENV === 'development') console.error('[PWA] Error requesting permission:', error);
       return false;
     }
   };

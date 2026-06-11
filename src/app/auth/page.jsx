@@ -554,7 +554,7 @@ export default function CombinedAuthPage() {
             fallback={
                 <div
                     className="auth-page-container flex justify-center items-center"
-                    style={{ height: '100vh', background: 'var(--canvas)' }}
+                    style={{ height: '100dvh', background: 'var(--canvas)' }}
                 >
                     <div className="w-8 h-8 border-4 border-[#F2613F] border-t-transparent rounded-full animate-spin" role="status">
                         <span className="sr-only">Loading...</span>

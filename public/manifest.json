@@ -34,20 +34,27 @@
       "purpose": "maskable"
     }
   ],
-  "screenshots": [
+  "shortcuts": [
     {
-      "src": "/simple_analysis.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "JobScan Dashboard Console"
+      "name": "Analyzer",
+      "short_name": "Analyzer",
+      "description": "Analyze a new job posting",
+      "url": "/app?tab=analyzer",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "src": "/profile1.png",
-      "sizes": "750x1334",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "JobScan Mobile Profile Settings"
+      "name": "History",
+      "short_name": "History",
+      "description": "View past analyses",
+      "url": "/app?tab=history",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Profile",
+      "short_name": "Profile",
+      "description": "Account and settings",
+      "url": "/app?tab=profile",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

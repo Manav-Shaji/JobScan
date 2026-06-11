@@ -1,10 +1,14 @@
-import withPWAInit from "@ducanh2912/next-pwa";
+import withSerwistInit from "@serwist/next";
 
-const withPWA = withPWAInit({
-  dest: "public",
+const withSerwist = withSerwistInit({
+  swSrc: "src/app/sw.ts",
+  swDest: "public/sw.js",
   disable: process.env.NODE_ENV === "development",
-  register: true,
-  skipWaiting: true,
+  exclude: [
+    /^\/api\/auth\/.*$/i,
+    /^\/auth/i,
+    /^\/app/i,
+  ],
 });
 
 /** @type {import('next').NextConfig} */
@@ -17,7 +21,6 @@ const nextConfig = {
         ];
     },
     experimental: {
-        allowedDevOrigins: ['chalice-helium-rift.ngrok-free.dev'],
         optimizePackageImports: [
             'lucide-react',
             '@radix-ui/react-dialog',
@@ -36,4 +39,4 @@ const nextConfig = {
     },
 };
 
-export default withPWA(nextConfig);
+export default withSerwist(nextConfig);
