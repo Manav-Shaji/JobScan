@@ -10,14 +10,15 @@ export default defineContentScript({
   main() {
     console.log('JobScan Content Script Loaded');
 
-    let buttonInjected = false;
-
     const injectButton = () => {
-      if (buttonInjected) return;
+      if (!document.body) return; // Wait until body exists
+      if (document.getElementById('jobscan-analyze-btn')) return; // Check DOM instead of boolean
+      
       const extractor = getExtractor(window.location.href);
       if (!extractor) return;
 
       const btn = document.createElement('button');
+      btn.id = 'jobscan-analyze-btn'; // Explicit ID to check for existence
       btn.textContent = 'Analyze with JobScan';
       btn.style.position = 'fixed';
       btn.style.bottom = '24px';
@@ -36,14 +37,15 @@ export default defineContentScript({
         btn.textContent = 'Extracting...';
         btn.style.opacity = '0.8';
         
+        // IMPORTANT: Open sidepanel IMMEDIATELY to preserve the user gesture token!
+        // If we wait for extract() to finish, Chrome will block the sidepanel from opening.
+        chrome.runtime.sendMessage({ action: 'OPEN_SIDEPANEL' });
+        
         try {
           const data = await extractor.extract();
           if (data) {
             // Save to storage
             await chrome.storage.local.set({ latestJobExtraction: data });
-            
-            // Notify background to open sidepanel
-            chrome.runtime.sendMessage({ action: 'OPEN_SIDEPANEL' });
             
             btn.textContent = 'Job Extracted!';
             btn.style.backgroundColor = '#16a34a';
@@ -65,7 +67,6 @@ export default defineContentScript({
       };
 
       document.body.appendChild(btn);
-      buttonInjected = true;
     };
 
     // Use MutationObserver to wait for DOM stability on Single Page Apps
@@ -78,7 +79,8 @@ export default defineContentScript({
       }, 500);
     });
     
-    observer.observe(document.body, { childList: true, subtree: true });
+    // Observe the entire document in case body hasn't loaded yet
+    observer.observe(document.documentElement, { childList: true, subtree: true });
     
     // Also try immediately
     setTimeout(injectButton, 2000);

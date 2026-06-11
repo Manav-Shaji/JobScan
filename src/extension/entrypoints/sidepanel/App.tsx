@@ -21,6 +21,7 @@ export default function App() {
     const handleNewJob = async (data: any) => {
       setJobData(data);
       setError(null);
+      setAnalysisResult(null); // Clear previous analysis result to avoid showing stale data!
       
       // STALE-WHILE-REVALIDATE PATTERN
       const cached = await getCachedAnalysis(data.url);
@@ -204,8 +205,8 @@ export default function App() {
               {loading && <div className="text-xs text-center text-blue-400 animate-pulse">Refreshing analysis in background...</div>}
               <Card className="overflow-hidden border-2 border-[var(--hairline)]">
                 <div className="bg-gradient-to-r from-[var(--surface-card)] to-transparent p-6 flex flex-col items-center justify-center border-b border-[var(--hairline)]">
-                  <div className="relative flex items-center justify-center w-24 h-24 mb-4">
-                    <svg className="absolute w-full h-full transform -rotate-90">
+                  <div className="relative flex items-center justify-center w-24 h-24 mb-4 shrink-0">
+                    <svg viewBox="0 0 96 96" className="absolute w-full h-full transform -rotate-90">
                       <circle cx="48" cy="48" r="44" stroke="currentColor" strokeWidth="8" fill="none" className="text-slate-800" />
                       <circle 
                         cx="48" cy="48" r="44" 
@@ -384,14 +385,14 @@ export default function App() {
   );
 
   return (
-    <div className="flex flex-col w-full h-screen">
-      <div className="flex-1 overflow-y-auto p-4 pb-20">
+    <div className="flex flex-col w-full h-screen overflow-hidden bg-background">
+      <div className="flex-1 overflow-y-auto p-4 pb-6">
         {activeTab === 'dashboard' && renderDashboard()}
         {activeTab === 'history' && renderHistory()}
         {activeTab === 'settings' && renderSettings()}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 border-t bg-[var(--surface-card)] backdrop-blur-xl z-50">
+      <div className="border-t bg-[var(--surface-card)] z-50 shrink-0">
         <div className="flex justify-around items-center h-14">
           <button 
             onClick={() => setActiveTab('dashboard')} 

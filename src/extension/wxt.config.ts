@@ -12,7 +12,8 @@ export default defineConfig({
     host_permissions: [
       '*://*.linkedin.com/*',
       '*://*.indeed.com/*',
-      '*://*.naukri.com/*'
+      '*://*.naukri.com/*',
+      'http://localhost:3000/*'
     ],
     action: {
       default_title: 'Open JobScan'
@@ -26,6 +27,19 @@ export default defineConfig({
         '@/shared': path.resolve(__dirname, '../shared'),
         '@/lib': path.resolve(__dirname, '../lib'),
         '@/backend': path.resolve(__dirname, '../backend')
+      }
+    },
+    build: {
+      rollupOptions: {
+        onwarn(warning, warn) {
+          if (warning.code === 'MODULE_LEVEL_DIRECTIVE' && warning.message.includes('use client')) {
+            return;
+          }
+          if (warning.message.includes('sourcemap') || warning.message.includes("Can't resolve original location of error")) {
+            return;
+          }
+          warn(warning);
+        }
       }
     }
   })
