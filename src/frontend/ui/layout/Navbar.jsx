@@ -304,7 +304,7 @@ export function TopNavbar() {
                     setMobileMenuOpen(open);
                     if (open && typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
                 }}>
-                    <SheetContent side="right" className="w-[85vw] max-w-[320px] bg-[var(--surface-card)] border-l border-[var(--hairline)] p-6 pt-[90px] flex flex-col justify-between h-full text-[var(--on-dark)] [&>button]:hidden">
+                    <SheetContent side="right" className="w-[85vw] max-w-[320px] bg-[var(--canvas)] border-l border-[var(--hairline)] p-6 pt-[90px] flex flex-col justify-between h-full text-[var(--on-dark)] [&>button]:hidden">
                         <SheetHeader className="text-left border-b border-[var(--hairline)] pb-4 mb-4 hidden">
                             <SheetTitle className="font-black text-lg text-[var(--on-dark)]">Menu</SheetTitle>
                         </SheetHeader>

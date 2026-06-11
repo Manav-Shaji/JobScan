@@ -305,7 +305,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
         )}
 
         {/* Compact Premium Mobile Trust Hero */}
-        <div className="glass-card rounded-2xl p-4 border border-white/5 bg-gradient-to-br from-slate-900 to-[#081124] shadow-xl relative overflow-hidden flex items-center justify-between gap-3 max-h-[180px]">
+        <div className="glass-card rounded-2xl p-4 border border-[var(--hairline)] shadow-xl relative overflow-hidden flex items-center justify-between gap-3 max-h-[180px]">
           <div className="flex flex-col gap-1 relative z-10 flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
               <span className="relative flex h-2 w-2">
@@ -314,7 +314,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
               </span>
               <span className="text-[9px] font-black uppercase tracking-wider text-emerald-400">AI Verification: ACTIVE</span>
             </div>
-            <h2 className="text-base font-black text-white leading-tight mt-1.5">Trust Score: {statsData.avgTrustScore || 0}/100</h2>
+            <h2 className="text-base font-black text-[var(--on-dark)] leading-tight mt-1.5">Trust Score: {statsData.avgTrustScore || 0}/100</h2>
             <div className="flex items-center gap-1.5 mt-1">
               <span className="text-[10px] font-bold text-gray-400">Risk Level:</span>
               <span className={`text-[9px] font-black tracking-widest uppercase px-2 py-0.5 rounded border ${
@@ -336,7 +336,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
                 cx="40"
                 cy="40"
                 r="34"
-                stroke="rgba(255,255,255,0.05)"
+                stroke="var(--hairline-strong)"
                 strokeWidth="6"
                 fill="transparent"
               />
@@ -357,7 +357,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
               />
             </svg>
             <div className="absolute text-center flex flex-col justify-center items-center">
-              <span className="text-[15px] font-black text-white leading-none">{statsData.avgTrustScore || 0}%</span>
+              <span className="text-[15px] font-black text-[var(--on-dark)] leading-none">{statsData.avgTrustScore || 0}%</span>
               <span className="text-[8px] font-bold text-gray-400 mt-0.5 leading-none">score</span>
             </div>
           </div>
@@ -371,7 +371,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
             onClick={() => { if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20); }}
             className="block text-decoration-none active:scale-[0.96] active:opacity-90 transition-all duration-150"
           >
-            <div className="glass-card rounded-2xl p-3.5 flex flex-col justify-between min-h-[110px] max-h-[140px] border border-white/5 bg-slate-900/40 hover:border-blue-500/20 active:bg-blue-500/5 h-full">
+            <div className="glass-card rounded-2xl p-3.5 flex flex-col justify-between min-h-[110px] max-h-[140px] border border-[var(--hairline)] hover:border-blue-500/20 active:bg-blue-500/5 h-full">
               <div className="flex justify-between items-start w-full">
                 <span className="text-[10px] font-black tracking-wider text-gray-400 uppercase">Trust Analyzer</span>
                 <ShieldCheck size={16} className="text-blue-400" />
@@ -386,7 +386,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
             onClick={() => { if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20); }}
             className="block text-decoration-none active:scale-[0.96] active:opacity-90 transition-all duration-150"
           >
-            <div className="glass-card rounded-2xl p-3.5 flex flex-col justify-between min-h-[110px] max-h-[140px] border border-white/5 bg-slate-900/40 hover:border-emerald-500/20 active:bg-emerald-500/5 h-full">
+            <div className="glass-card rounded-2xl p-3.5 flex flex-col justify-between min-h-[110px] max-h-[140px] border border-[var(--hairline)] hover:border-emerald-500/20 active:bg-emerald-500/5 h-full">
               <div className="flex justify-between items-start w-full">
                 <span className="text-[10px] font-black tracking-wider text-gray-400 uppercase">Scan History</span>
                 <History size={16} className="text-emerald-400" />
@@ -401,7 +401,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
             onClick={() => { if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20); }}
             className="block text-decoration-none active:scale-[0.96] active:opacity-90 transition-all duration-150"
           >
-            <div className="glass-card rounded-2xl p-3.5 flex flex-col justify-between min-h-[110px] max-h-[140px] border border-white/5 bg-slate-900/40 hover:border-purple-500/20 active:bg-purple-500/5 h-full">
+            <div className="glass-card rounded-2xl p-3.5 flex flex-col justify-between min-h-[110px] max-h-[140px] border border-[var(--hairline)] hover:border-purple-500/20 active:bg-purple-500/5 h-full">
               <div className="flex justify-between items-start w-full">
                 <span className="text-[10px] font-black tracking-wider text-gray-400 uppercase">User Profile</span>
                 <User size={16} className="text-purple-400" />
@@ -416,7 +416,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
             onClick={() => { if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20); }}
             className="block text-decoration-none active:scale-[0.96] active:opacity-90 transition-all duration-150"
           >
-            <div className="glass-card rounded-2xl p-3.5 flex flex-col justify-between min-h-[110px] max-h-[140px] border border-white/5 bg-slate-900/40 hover:border-amber-500/20 active:bg-amber-500/5 h-full">
+            <div className="glass-card rounded-2xl p-3.5 flex flex-col justify-between min-h-[110px] max-h-[140px] border border-[var(--hairline)] hover:border-amber-500/20 active:bg-amber-500/5 h-full">
               <div className="flex justify-between items-start w-full">
                 <span className="text-[10px] font-black tracking-wider text-gray-400 uppercase">Settings</span>
                 <Settings size={16} className="text-amber-400" />

@@ -308,20 +308,22 @@ export function History({ fullHistory, loading }) {
             <PaginationContent className="gap-1 md:gap-2">
               <PaginationItem>
                 <PaginationPrevious 
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  href="#"
+                  onClick={(e) => { e.preventDefault(); setCurrentPage(p => Math.max(1, p - 1)); }}
                   className={`h-8 px-3 py-0 flex items-center justify-center rounded-lg border cursor-pointer ${currentPage === 1 ? 'border-[var(--hairline)] text-[var(--muted)] pointer-events-none opacity-50' : 'border-[var(--hairline)] text-[var(--on-dark)] hover:bg-white/5 transition-colors'}`}
                 />
               </PaginationItem>
               
               <PaginationItem>
-                <PaginationLink isActive className="h-8 min-w-[32px] rounded-lg border border-blue-500/30 bg-blue-500/10 text-blue-400 font-black text-xs">
+                <PaginationLink href="#" onClick={(e) => e.preventDefault()} isActive className="h-8 min-w-[32px] rounded-lg border border-blue-500/30 bg-blue-500/10 text-blue-400 font-black text-xs">
                   {currentPage}
                 </PaginationLink>
               </PaginationItem>
 
               <PaginationItem>
                 <PaginationNext 
-                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  href="#"
+                  onClick={(e) => { e.preventDefault(); setCurrentPage(p => Math.min(totalPages, p + 1)); }}
                   className={`h-8 px-3 py-0 flex items-center justify-center rounded-lg border cursor-pointer ${currentPage >= totalPages ? 'border-[var(--hairline)] text-[var(--muted)] pointer-events-none opacity-50' : 'border-[var(--hairline)] text-[var(--on-dark)] hover:bg-white/5 transition-colors'}`}
                 />
               </PaginationItem>
