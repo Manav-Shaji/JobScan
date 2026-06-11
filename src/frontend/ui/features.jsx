@@ -67,9 +67,9 @@ export const TrustScore = memo(function TrustScore({ score = 0, visible = false 
     const strokeDashoffset = circumference - (displayScore / 100) * circumference;
 
     return (
-        <div className="flex flex-col items-center justify-center w-full">
+        <div className="flex flex-col items-center justify-center w-full" aria-label={`Trust Score ${displayScore} percent`} role="img">
             <div className="relative flex items-center justify-center w-40 h-40 mb-4">
-                <svg className="w-full h-full transform -rotate-90 drop-shadow-2xl" viewBox="0 0 200 200">
+                <svg className="w-full h-full transform -rotate-90 drop-shadow-2xl relative z-0" viewBox="0 0 200 200">
                     <defs>
                         <linearGradient id="safeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" stopColor="#10b981" />
@@ -103,12 +103,14 @@ export const TrustScore = memo(function TrustScore({ score = 0, visible = false 
                         }}
                     />
                 </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="font-black tracking-tighter transition-all leading-none" style={{ 
+                <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+                    <span className="font-black tracking-tighter transition-all leading-none text-5xl lg:text-6xl flex items-baseline" style={{ 
                         color,
-                        fontSize: '4rem',
                         textShadow: `0 0 15px ${color}60, 0 0 35px ${color}30`
-                    }}>{displayScore}</span>
+                    }}>
+                        {displayScore}
+                        <span className="text-xl lg:text-2xl ml-0.5">%</span>
+                    </span>
                     <span className="text-[9px] text-[var(--muted)] font-black tracking-[0.15em] mt-1.5 uppercase">Trust Score</span>
                 </div>
             </div>

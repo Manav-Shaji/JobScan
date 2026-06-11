@@ -55,11 +55,7 @@ export function TopNavbar() {
         <>
             <header
                 className="top-navbar px-4 md:px-8 py-2 sticky top-0 z-[100] md:z-[1000] h-[70px] flex items-center justify-between"
-                style={isMobile ? {
-                    background: 'rgba(2, 6, 23, 0.95)',
-                    backdropFilter: 'blur(12px)',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                } : {
+                style={{
                     background: 'var(--surface-card)',
                     backdropFilter: 'blur(16px)',
                     borderBottom: '1px solid var(--hairline-strong)',
@@ -308,30 +304,30 @@ export function TopNavbar() {
                     setMobileMenuOpen(open);
                     if (open && typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
                 }}>
-                    <SheetContent side="right" className="w-[85vw] max-w-[320px] bg-[#081124] border-l border-white/10 p-6 pt-[90px] flex flex-col justify-between h-full text-white [&>button]:hidden">
-                        <SheetHeader className="text-left border-b border-white/5 pb-4 mb-4 hidden">
-                            <SheetTitle className="font-black text-lg text-white">Menu</SheetTitle>
+                    <SheetContent side="right" className="w-[85vw] max-w-[320px] bg-[var(--surface-card)] border-l border-[var(--hairline)] p-6 pt-[90px] flex flex-col justify-between h-full text-[var(--on-dark)] [&>button]:hidden">
+                        <SheetHeader className="text-left border-b border-[var(--hairline)] pb-4 mb-4 hidden">
+                            <SheetTitle className="font-black text-lg text-[var(--on-dark)]">Menu</SheetTitle>
                         </SheetHeader>
                         
                         {/* Drawer Content */}
                         <div className="flex flex-col gap-6 mt-4">
                             {/* Section 1: Compact User Info Card */}
-                            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-900/60 border border-white/5">
+                            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-[var(--hairline)]">
                                 <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white text-[11px] font-black shadow-inner flex-shrink-0">
                                     {user.name
                                         ? user.name.split(' ').map((n) => n[0]).join('').toUpperCase().substring(0, 2)
                                         : user.email ? user.email.substring(0, 2).toUpperCase() : 'U'}
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                    <div className="text-[11px] font-black text-white truncate leading-tight">{user.name || 'User'}</div>
-                                    <div className="text-[9px] text-gray-400 truncate mt-0.5 leading-none">{user.email}</div>
+                                    <div className="text-[11px] font-black text-[var(--on-dark)] truncate leading-tight">{user.name || 'User'}</div>
+                                    <div className="text-[9px] text-[var(--muted)] truncate mt-0.5 leading-none">{user.email}</div>
                                 </div>
                             </div>
 
                             {/* Section 2: Appearance & PWA Install */}
-                            <div className="flex flex-col gap-2 bg-slate-900/40 p-2.5 rounded-xl border border-white/5">
+                            <div className="flex flex-col gap-2 bg-black/5 dark:bg-white/5 p-2.5 rounded-xl border border-[var(--hairline)]">
                                 <div className="flex items-center justify-between px-1">
-                                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider">Theme Mode</span>
+                                    <span className="text-[10px] font-black text-[var(--muted)] uppercase tracking-wider">Theme Mode</span>
                                     <ThemeToggle />
                                 </div>
                                 {isInstallable && (
@@ -350,7 +346,7 @@ export function TopNavbar() {
 
                             {/* Section 3: Settings & System Console Links */}
                             <nav className="flex flex-col gap-1">
-                                <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest px-1.5 mb-1.5 block">Console Controls</span>
+                                <span className="text-[9px] font-black text-[var(--muted)] uppercase tracking-widest px-1.5 mb-1.5 block">Console Controls</span>
                                 <Link
                                     href="/app?tab=settings"
                                     onClick={() => {
@@ -359,8 +355,8 @@ export function TopNavbar() {
                                     }}
                                     className={`px-3 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2.5 border ${
                                         pathname === '/app' && tabParam === 'settings'
-                                            ? 'bg-blue-500/10 text-blue-400 border-blue-500/20 shadow-sm'
-                                            : 'border-transparent text-gray-400 hover:bg-white/5 hover:text-white'
+                                            ? 'bg-blue-500/10 text-[var(--cta)] border-[var(--cta)]/20 shadow-sm'
+                                            : 'border-transparent text-[var(--muted)] hover:bg-black/5 dark:hover:bg-white/5 hover:text-[var(--on-dark)]'
                                     }`}
                                 >
                                     <Settings size={14} /> Settings Console
@@ -371,7 +367,7 @@ export function TopNavbar() {
                                         if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
                                         alert("JobScan - AI Scam Detector v1.0.0. Designed for MCA Final-Year Project Demonstration.");
                                     }}
-                                    className="px-3 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2.5 border border-transparent text-gray-400 hover:bg-white/5 hover:text-white text-left w-full bg-transparent"
+                                    className="px-3 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2.5 border border-transparent text-[var(--muted)] hover:bg-black/5 dark:hover:bg-white/5 hover:text-[var(--on-dark)] text-left w-full bg-transparent"
                                 >
                                     <ShieldCheck size={14} /> About JobScan
                                 </button>
@@ -379,7 +375,7 @@ export function TopNavbar() {
                         </div>
 
                         {/* Section 4: Exit Actions */}
-                        <div className="flex flex-col gap-4 border-t border-white/5 pt-4 mt-auto">
+                        <div className="flex flex-col gap-4 border-t border-[var(--hairline)] pt-4 mt-auto">
                             <button
                                 onClick={(e) => { 
                                     setMobileMenuOpen(false); 

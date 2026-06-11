@@ -56,7 +56,12 @@ export const AuthProvider = ({ children }) => {
       if (typeof navigator !== 'undefined' && navigator.vibrate) {
         navigator.vibrate(20);
       }
-      await signOut({ redirect: true, callbackUrl: '/' });
+      
+      if (typeof window !== 'undefined') {
+        window.localStorage.removeItem('nextauth.message');
+      }
+
+      await signOut({ redirect: true, callbackUrl: '/auth' });
     },
     updateProfile: async (data) => {
       try {
