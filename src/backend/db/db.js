@@ -1,6 +1,4 @@
 import { Pool } from 'pg';
-import fs from 'fs';
-import path from 'path';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const isNextBuild = process.env.NEXT_PHASE === 'phase-production-build';
@@ -18,19 +16,8 @@ if (isProduction && !isNextBuild) {
       message: `Missing database environment variables: ${missing.join(', ')}`
     };
 
-    try {
-      const logsDir = path.resolve('logs');
-      if (!fs.existsSync(logsDir)) {
-        fs.mkdirSync(logsDir, { recursive: true });
-      }
-      fs.appendFileSync(
-        path.join(logsDir, 'error.log'),
-        JSON.stringify(errorEntry) + '\n',
-        'utf-8'
-      );
-    } catch (e) {
-      console.error('[Database Setup] Failed to write error log file:', e);
-    }
+    // Log to console only — Vercel's file system is read-only
+    console.error(JSON.stringify(errorEntry));
 
     throw new Error(`FATAL: Missing required PostgreSQL environment variables in production: ${missing.join(', ')}`);
   }
@@ -44,6 +31,8 @@ if (!global.pgPool) {
     database: process.env.DB_NAME || 'jobscan',
     password: process.env.DB_PASSWORD || 'devpass',
     port: parseInt(process.env.DB_PORT || '5432'),
+    // SSL required in production (Vercel serverless environment)
+    ssl: isProduction ? { rejectUnauthorized: false } : false,
   });
 }
 pool = global.pgPool;

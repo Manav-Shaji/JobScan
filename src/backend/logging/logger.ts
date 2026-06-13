@@ -7,6 +7,10 @@ export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 const LOGS_DIR = path.join(process.cwd(), 'logs');
 
 function appendLog(filename: string, level: string, message: string, meta?: any) {
+  // Vercel's serverless file system is read-only — skip file writes in production.
+  // All logs are captured by Vercel from console output instead.
+  if (process.env.NODE_ENV === 'production') return;
+
   try {
     if (!fs.existsSync(LOGS_DIR)) {
       fs.mkdirSync(LOGS_DIR, { recursive: true });
@@ -39,14 +43,14 @@ class StructuredLogger {
     const levels: LogLevel[] = ['debug', 'info', 'warn', 'error'];
     const currentIdx = levels.indexOf(consoleLogLevel as LogLevel);
     const targetIdx = levels.indexOf(level);
-    
+
     const effectiveCurrentIdx = currentIdx !== -1 ? currentIdx : levels.indexOf('info');
     return targetIdx >= effectiveCurrentIdx;
   }
 
   private format(level: LogLevel, message: string, meta?: any): string {
     const timestamp = new Date().toISOString();
-    
+
     // In production, emit clean JSON logs
     if (this.isProduction) {
       const logObject = {
@@ -69,7 +73,7 @@ class StructuredLogger {
 
     const levelStr = `${colors[level]}${level.toUpperCase()}${colors.reset}`;
     const metaStr = meta ? ` \x1b[90m${JSON.stringify(meta, null, 2)}\x1b[0m` : '';
-    
+
     return `[${timestamp}] ${levelStr}: ${message}${metaStr}`;
   }
 
@@ -104,7 +108,7 @@ class StructuredLogger {
 
   error(message: string, error?: any, meta?: any) {
     let errorDetails = meta || {};
-    
+
     if (error instanceof Error) {
       errorDetails = {
         ...errorDetails,
@@ -124,7 +128,7 @@ class StructuredLogger {
     if (this.shouldLogToConsole('error')) {
       console.error(this.format('error', message, errorDetails));
     }
-    
+
     // Automatically write all errors to error.log
     appendLog('error.log', 'error', message, errorDetails);
   }
