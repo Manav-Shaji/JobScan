@@ -13,7 +13,8 @@ export default defineConfig({
       '*://*.linkedin.com/*',
       '*://*.indeed.com/*',
       '*://*.naukri.com/*',
-      'http://localhost:3000/*'
+      'http://localhost:3000/*',
+      'https://job-scan-black.vercel.app/*',
     ],
     action: {
       default_title: 'Open JobScan'
