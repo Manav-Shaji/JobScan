@@ -1,6 +1,9 @@
 // API Adapter for Chrome Extension
 
-const API_BASE = 'https://job-scan-black.vercel.app/api';
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL
+    ? `${process.env.NEXT_PUBLIC_API_URL}/api`
+    : 'http://localhost:3000/api';
 
 export async function analyzeJob(
   jobData: any,
