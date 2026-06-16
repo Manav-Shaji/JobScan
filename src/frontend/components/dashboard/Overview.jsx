@@ -367,7 +367,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
         <div className="grid grid-cols-2 gap-3">
           {/* Action 1: Trust Analyzer */}
           <Link 
-            href="/app?tab=analyzer" 
+            href="/dashboard?tab=analyzer" 
             onClick={() => { if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20); }}
             className="block text-decoration-none active:scale-[0.96] active:opacity-90 transition-all duration-150"
           >
@@ -382,7 +382,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
 
           {/* Action 2: Scan History */}
           <Link 
-            href="/app?tab=history" 
+            href="/dashboard?tab=history" 
             onClick={() => { if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20); }}
             className="block text-decoration-none active:scale-[0.96] active:opacity-90 transition-all duration-150"
           >
@@ -397,7 +397,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
 
           {/* Action 3: User Profile */}
           <Link 
-            href="/app?tab=profile" 
+            href="/dashboard?tab=profile" 
             onClick={() => { if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20); }}
             className="block text-decoration-none active:scale-[0.96] active:opacity-90 transition-all duration-150"
           >
@@ -412,7 +412,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
 
           {/* Action 4: Settings */}
           <Link 
-            href="/app?tab=settings" 
+            href="/dashboard?tab=settings" 
             onClick={() => { if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20); }}
             className="block text-decoration-none active:scale-[0.96] active:opacity-90 transition-all duration-150"
           >

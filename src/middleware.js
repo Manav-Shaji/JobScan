@@ -10,16 +10,16 @@ const { auth } = NextAuth({
 export default auth((req) => {
     const isLoggedIn = !!req.auth;
     const isAuthPage = req.nextUrl.pathname.startsWith('/auth');
-    const isAppPage = req.nextUrl.pathname.startsWith('/app');
+    const isAppPage = req.nextUrl.pathname.startsWith('/dashboard');
 
     if (isAuthPage) {
         if (isLoggedIn) {
-            return NextResponse.redirect(new URL('/app', req.url));
+            return NextResponse.redirect(new URL('/dashboard', req.url));
         }
         return null;
     }
 
-    if (isAppPage && !isLoggedIn && req.nextUrl.pathname !== '/app/analyzer') {
+    if (isAppPage && !isLoggedIn && req.nextUrl.pathname !== '/dashboard/analyzer') {
         let from = req.nextUrl.pathname;
         if (req.nextUrl.search) {
             from += req.nextUrl.search;

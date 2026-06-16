@@ -14,33 +14,33 @@ export function BottomNavigation() {
             label: 'Home',
             icon: LayoutGrid,
             tab: 'overview',
-            href: '/app?tab=overview',
+            href: '/dashboard?tab=overview',
         },
         {
             label: 'Analyzer',
             icon: ShieldCheck,
             tab: 'analyzer',
-            href: '/app?tab=analyzer',
+            href: '/dashboard?tab=analyzer',
         },
         {
             label: 'History',
             icon: History,
             tab: 'history',
-            href: '/app?tab=history',
+            href: '/dashboard?tab=history',
         },
         {
             label: 'Profile',
             icon: User,
             tab: 'profile',
-            href: '/app?tab=profile',
+            href: '/dashboard?tab=profile',
         },
     ];
 
     const isActive = (item) => {
         if (item.tab === 'analyzer') {
-            return pathname === '/app/analyzer' || (pathname === '/app' && tabParam === 'analyzer');
+            return pathname === '/dashboard/analyzer' || (pathname === '/dashboard' && tabParam === 'analyzer');
         }
-        return pathname === '/app' && tabParam === item.tab;
+        return pathname === '/dashboard' && tabParam === item.tab;
     };
 
     return (

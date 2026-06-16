@@ -16,7 +16,7 @@ export function Navbar() {
         
         <div className="nav-actions flex items-center">
           <ThemeToggle />
-          <Link href="/app/analyzer" className="btn-glow ml-3" style={{ padding: '8px 20px' }}>
+          <Link href="/dashboard/analyzer" className="btn-glow ml-3" style={{ padding: '8px 20px' }}>
             Get Started
           </Link>
         </div>
@@ -134,7 +134,7 @@ export function HeroSection() {
                     Instantly verify job postings, recruiters, and companies using our advanced AI-driven threat detection system. Get comprehensive trust scores in seconds.
                 </p>
                 <div className="flex gap-3 justify-center mb-5">
-                    <Link href="/app/analyzer" className="button-primary flex items-center">
+                    <Link href="/dashboard/analyzer" className="button-primary flex items-center">
                         <ShieldCheck size={20} className="mr-2" /> Start Scanning Free
                     </Link>
                     <a href="#how-it-works" className="btn-premium-secondary flex items-center">

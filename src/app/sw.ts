@@ -24,7 +24,7 @@ const serwist = new Serwist({
           path.startsWith('/api/analyze') ||
           path.startsWith('/api/chat') ||
           path.startsWith('/auth') ||
-          path.startsWith('/app')
+          path.startsWith('/dashboard')
         );
       },
       handler: new NetworkOnly(),

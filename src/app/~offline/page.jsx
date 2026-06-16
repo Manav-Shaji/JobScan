@@ -23,7 +23,7 @@ export default function OfflinePage() {
       </button>
 
       <Link 
-        href="/app?tab=analyzer" 
+        href="/dashboard?tab=analyzer" 
         className="btn-premium-secondary w-full max-w-[280px] gap-2"
       >
         <ShieldAlert size={16} />

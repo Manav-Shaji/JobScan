@@ -106,14 +106,14 @@ export function TopNavbar() {
                         }}
                     >
                                 <Link
-                                    href="/app?tab=analyzer"
+                                    href="/dashboard?tab=analyzer"
                                     className={`nav-capsule-link px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 relative ${
-                                        pathname === '/app/analyzer' || (pathname === '/app' && tabParam === 'analyzer')
+                                        pathname === '/dashboard/analyzer' || (pathname === '/dashboard' && tabParam === 'analyzer')
                                             ? 'shadow-sm border'
                                             : 'border border-transparent'
                                     }`}
                                     style={
-                                        pathname === '/app/analyzer' || (pathname === '/app' && tabParam === 'analyzer')
+                                        pathname === '/dashboard/analyzer' || (pathname === '/dashboard' && tabParam === 'analyzer')
                                             ? {
                                                   background: 'var(--surface-card)',
                                                   color: 'var(--cta)',
@@ -124,19 +124,19 @@ export function TopNavbar() {
                                     }
                                 >
                                     <ShieldCheck size={13} className="nav-icon" /> Analyzer
-                                    {(pathname === '/app/analyzer' || (pathname === '/app' && tabParam === 'analyzer')) && (
+                                    {(pathname === '/dashboard/analyzer' || (pathname === '/dashboard' && tabParam === 'analyzer')) && (
                                         <span className="active-dot"></span>
                                     )}
                                 </Link>
                                 <Link
-                                    href="/app?tab=overview"
+                                    href="/dashboard?tab=overview"
                                     className={`nav-capsule-link px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 relative ${
-                                        pathname === '/app' && tabParam === 'overview'
+                                        pathname === '/dashboard' && tabParam === 'overview'
                                             ? 'shadow-sm border'
                                             : 'border border-transparent'
                                     }`}
                                     style={
-                                        pathname === '/app' && tabParam === 'overview'
+                                        pathname === '/dashboard' && tabParam === 'overview'
                                             ? {
                                                   background: 'var(--surface-card)',
                                                   color: 'var(--cta)',
@@ -147,19 +147,19 @@ export function TopNavbar() {
                                     }
                                 >
                                     <LayoutGrid size={13} className="nav-icon" /> Overview
-                                    {pathname === '/app' && tabParam === 'overview' && (
+                                    {pathname === '/dashboard' && tabParam === 'overview' && (
                                         <span className="active-dot"></span>
                                     )}
                                 </Link>
                                 <Link
-                                    href="/app?tab=history"
+                                    href="/dashboard?tab=history"
                                     className={`nav-capsule-link px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 relative ${
-                                        pathname === '/app' && tabParam === 'history'
+                                        pathname === '/dashboard' && tabParam === 'history'
                                             ? 'shadow-sm border'
                                             : 'border border-transparent'
                                     }`}
                                     style={
-                                        pathname === '/app' && tabParam === 'history'
+                                        pathname === '/dashboard' && tabParam === 'history'
                                             ? {
                                                   background: 'var(--surface-card)',
                                                   color: 'var(--cta)',
@@ -170,19 +170,19 @@ export function TopNavbar() {
                                     }
                                 >
                                     <History size={13} className="nav-icon" /> History
-                                    {pathname === '/app' && tabParam === 'history' && (
+                                    {pathname === '/dashboard' && tabParam === 'history' && (
                                         <span className="active-dot"></span>
                                     )}
                                 </Link>
                                 <Link
-                                    href="/app?tab=profile"
+                                    href="/dashboard?tab=profile"
                                     className={`nav-capsule-link px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 relative ${
-                                        pathname === '/app' && tabParam === 'profile'
+                                        pathname === '/dashboard' && tabParam === 'profile'
                                             ? 'shadow-sm border'
                                             : 'border border-transparent'
                                     }`}
                                     style={
-                                        pathname === '/app' && tabParam === 'profile'
+                                        pathname === '/dashboard' && tabParam === 'profile'
                                             ? {
                                                   background: 'var(--surface-card)',
                                                   color: 'var(--cta)',
@@ -193,19 +193,19 @@ export function TopNavbar() {
                                     }
                                 >
                                     <User size={13} className="nav-icon" /> Profile
-                                    {pathname === '/app' && tabParam === 'profile' && (
+                                    {pathname === '/dashboard' && tabParam === 'profile' && (
                                         <span className="active-dot"></span>
                                     )}
                                 </Link>
                                 <Link
-                                    href="/app?tab=settings"
+                                    href="/dashboard?tab=settings"
                                     className={`nav-capsule-link px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 relative ${
-                                        pathname === '/app' && tabParam === 'settings'
+                                        pathname === '/dashboard' && tabParam === 'settings'
                                             ? 'shadow-sm border'
                                             : 'border border-transparent'
                                     }`}
                                     style={
-                                        pathname === '/app' && tabParam === 'settings'
+                                        pathname === '/dashboard' && tabParam === 'settings'
                                             ? {
                                                   background: 'var(--surface-card)',
                                                   color: 'var(--cta)',
@@ -216,7 +216,7 @@ export function TopNavbar() {
                                     }
                                 >
                                     <Settings size={13} className="nav-icon" /> Settings
-                                    {pathname === '/app' && tabParam === 'settings' && (
+                                    {pathname === '/dashboard' && tabParam === 'settings' && (
                                         <span className="active-dot"></span>
                                     )}
                                 </Link>
@@ -348,13 +348,13 @@ export function TopNavbar() {
                             <nav className="flex flex-col gap-1">
                                 <span className="text-[9px] font-black text-[var(--muted)] uppercase tracking-widest px-1.5 mb-1.5 block">Console Controls</span>
                                 <Link
-                                    href="/app?tab=settings"
+                                    href="/dashboard?tab=settings"
                                     onClick={() => {
                                         setMobileMenuOpen(false);
                                         if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
                                     }}
                                     className={`px-3 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2.5 border ${
-                                        pathname === '/app' && tabParam === 'settings'
+                                        pathname === '/dashboard' && tabParam === 'settings'
                                             ? 'bg-blue-500/10 text-[var(--cta)] border-[var(--cta)]/20 shadow-sm'
                                             : 'border-transparent text-[var(--muted)] hover:bg-black/5 dark:hover:bg-white/5 hover:text-[var(--on-dark)]'
                                     }`}

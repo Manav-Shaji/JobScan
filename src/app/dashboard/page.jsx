@@ -40,7 +40,7 @@ export default function SuperDashboard() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!authLoading && !user) router.replace('/app/analyzer');
+        if (!authLoading && !user) router.replace('/dashboard/analyzer');
     }, [user, authLoading, router]);
 
     useEffect(() => {

@@ -37,7 +37,7 @@ function AuthContent() {
 
     const { login, register, user, loading: authLoading } = useAuth();
     const router = useRouter();
-    const callbackUrl = searchParams.get('callbackUrl') || '/app';
+    const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
 
     // Redirect if already logged in
     useEffect(() => {
@@ -103,7 +103,7 @@ function AuthContent() {
                 formData.password,
             );
             if (result.success) {
-                router.push('/app');
+                router.push('/dashboard');
                 router.refresh();
             } else {
                 let userFriendlyError = result.message || 'Failed to create account';

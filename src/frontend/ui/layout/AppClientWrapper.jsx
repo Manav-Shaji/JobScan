@@ -18,8 +18,8 @@ export function AppClientWrapper({ children }) {
   const pathname = usePathname()
 
   useEffect(() => {
-    // Protect app routes, but allow /app/analyzer for guest trials
-    if (!loading && !user && pathname !== '/app/analyzer') {
+    // Protect app routes, but allow /dashboard/analyzer for guest trials
+    if (!loading && !user && pathname !== '/dashboard/analyzer') {
       router.push('/auth')
     }
   }, [user, loading, pathname, router])
@@ -35,7 +35,7 @@ export function AppClientWrapper({ children }) {
   }
 
   // Prevent flicker for unauthorized users
-  if (!user && pathname !== '/app/analyzer') {
+  if (!user && pathname !== '/dashboard/analyzer') {
     return null
   }
 
