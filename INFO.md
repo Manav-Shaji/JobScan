@@ -102,9 +102,89 @@ Target users include active job seekers, recent graduates, remote workers, and a
 ### PWA
 *   **Serwist (`@serwist/next`):** A modern fork of Workbox, used to easily integrate Service Workers and caching strategies into Next.js.
 
+## Architecture Decisions
+
+*   **Next.js App Router:** Chosen for server-side rendering (SSR), optimized SEO, built-in API routes, and seamless React integration. It simplifies full-stack development by co-locating backend logic and frontend UI.
+*   **PostgreSQL:** Selected for its robust relational data model, ensuring data integrity for user accounts, scan histories, and reports. It supports complex querying needed for the dashboard.
+*   **Raw SQL instead of ORM:** Chosen for explicit control over database queries, maximum performance, and to avoid ORM overhead or "magic" behavior. It enforces a deep understanding of the database schema.
+*   **Google Gemini AI:** Selected for its multimodal capabilities (processing both text and images) and high speed. It provides the advanced natural language understanding required to detect subtle scam patterns.
+*   **NextAuth v5:** Provides a secure, standardized, and easily configurable authentication system out-of-the-box for Next.js, handling sessions securely without manual cookie management.
+*   **Serwist:** Chosen over older PWA plugins because of its modern architecture and active maintenance, seamlessly integrating Service Workers into the Next.js App Router build process.
+*   **WXT:** Selected as a next-generation framework for building browser extensions. It simplifies Manifest V3 compliance, provides HMR during development, and streamlines the build process for multiple browsers.
+*   **Tailwind CSS:** Chosen for rapid, utility-first styling, enabling responsive and consistent design without context-switching between CSS files and React components.
+*   **Radix UI:** Selected to provide accessible, unstyled UI primitives. It handles complex accessibility (WAI-ARIA) requirements for interactive components like dialogs and dropdowns while allowing custom styling via Tailwind.
+
 ## High-Level Architecture
 
 The architecture follows a modular, monolithic approach utilizing Next.js as the core orchestrator.
+
+### Job Analysis Flow
+
+```text
+User
+↓
+Analyzer UI
+↓
+API Route
+↓
+Validation
+↓
+Scan Service
+↓
+Gemini Provider
+↓
+Database
+↓
+Response
+```
+
+### Chat Assistant Flow
+
+```text
+User
+↓
+Chat UI
+↓
+API Route
+↓
+Gemini Chat
+↓
+Database
+↓
+Response
+```
+
+### Browser Extension Flow
+
+```text
+LinkedIn / Indeed
+↓
+Content Script
+↓
+Extension UI
+↓
+JobScan API
+↓
+Gemini Analysis
+↓
+Result
+```
+
+### Authentication Flow
+
+```text
+Login Page
+↓
+NextAuth
+↓
+Credentials Validation
+↓
+Database
+↓
+Session Creation
+↓
+Dashboard
+```
 
 ```text
 User / Browser Extension
@@ -126,6 +206,17 @@ PostgreSQL      Gemini AI
 3.  **Business Logic Layer:** Modules (`src/backend/modules/*`) handle data orchestration, validation, and enforce business rules (e.g., verifying user ownership before returning scan history).
 4.  **AI Engine:** The `gemini-provider.ts` handles communication with Google's APIs, including prompt construction, parsing, and local fallback logic.
 5.  **Database Layer:** Raw SQL queries execute against the PostgreSQL database to persist scans, users, and reports.
+
+## Folder Responsibilities
+
+| Folder | Responsibility |
+| :--- | :--- |
+| `src/app` | Routing |
+| `src/backend` | Business Logic |
+| `src/frontend` | UI Layer |
+| `src/database` | Database Layer |
+| `extension` | Browser Extension |
+| `scripts` | Utility Scripts |
 
 ## Folder Structure
 
@@ -172,14 +263,16 @@ The frontend uses Next.js App Router (`src/app`) for page routing and `src/front
 
 ### API Layer
 
-*   `/api/analyze`: **POST** - Receives job text or image, validates user, calls `geminiService`, saves to DB, returns trust score and analysis.
-*   `/api/chat`: **POST** - Receives chat messages and context, calls Gemini chat API, logs messages to DB, returns AI response.
-*   `/api/history`: **GET** - Retrieves paginated job scan history for the authenticated user.
-*   `/api/profile`: **POST** - Updates the authenticated user's profile information.
-*   `/api/reports`: **POST** - Submits a scam report linking a `scan_id` to the reporting user.
-*   `/api/stats`: **GET** - Retrieves dashboard statistics (total scans, average trust score, total reports) for the user.
-*   `/api/auth/register`: **POST** - Handles new user creation, password hashing, and DB insertion.
-*   `/api/password`: **POST** - Handles user password updates.
+| Endpoint | Method | Auth Required | Purpose |
+| :--- | :--- | :--- | :--- |
+| `/api/analyze` | POST | Yes | Analyze job posting |
+| `/api/chat` | POST | Yes | AI chat assistant |
+| `/api/history` | GET | Yes | Retrieve scan history |
+| `/api/profile` | POST | Yes | Update profile info |
+| `/api/reports` | POST | Yes | Submit a scam report |
+| `/api/stats` | GET | Yes | Retrieve user stats |
+| `/api/auth/register` | POST | No | Register a user |
+| `/api/password` | POST | Yes | Update user password |
 
 ### Business Modules
 
@@ -203,6 +296,20 @@ Defined in `src/database/schema.sql`.
 *   **`chat_messages`**: Stores conversation history.
     *   `id` (UUID), `user_id` (FK), `role`, `content`.
 
+```text
+users
+│
+├── job_scans
+│      │
+│      └── scam_reports
+│
+└── chat_messages
+```
+
+*   **Relationships:** A user can have many job scans, scam reports, and chat messages. A job scan can have many scam reports.
+*   **Foreign keys:** `user_id` in `job_scans` and `chat_messages`. `scan_id` and `reported_by` in `scam_reports`.
+*   **Cascade behavior:** All foreign keys use `ON DELETE CASCADE`, meaning if a user is deleted, all their associated data is securely wiped.
+
 **Data Flow:** When a user scans a job, a record is created in `job_scans`. If they report it, a linked record is created in `scam_reports`. All user data is tied to the `users` table via `user_id` foreign keys with `ON DELETE CASCADE`.
 
 ## Authentication & Security
@@ -212,6 +319,16 @@ Defined in `src/database/schema.sql`.
 *   **Password Hashing:** Handled securely by `bcryptjs` with a salt round of 12 (`src/backend/modules/auth/auth-service.ts`).
 *   **Authorization:** API routes use NextAuth's `auth()` helper to verify the user is logged in before allowing access to sensitive endpoints (e.g., history, analyze).
 *   **Security Logging:** Custom logger (`src/backend/logging/logger.ts`) tracks security events (e.g., failed logins, duplicate registration attempts).
+
+## Security Considerations
+
+*   **Password hashing:** Passwords are never stored in plain text. They are hashed using `bcryptjs` with a secure salt round of 12 before being stored in the database.
+*   **Session security:** NextAuth manages secure, HTTP-only, encrypted JWT sessions, protecting against XSS attacks stealing session tokens.
+*   **API protection:** All sensitive API routes use the `auth()` helper to strictly enforce authentication checks before processing requests or accessing the database.
+*   **Input validation:** `Zod` schemas are used to strictly validate and sanitize the structure of AI responses and API inputs to prevent malformed data from causing issues.
+*   **SQL injection protection:** The `pg` library is used with parameterized queries (e.g., `WHERE email = $1`), effectively neutralizing SQL injection vulnerabilities.
+*   **Authentication checks:** Business modules verify that requested data (like scan history) belongs to the authenticated `user_id`, preventing lateral data access (IDOR).
+*   **Sensitive environment variables:** Secrets like `NEXTAUTH_SECRET` and `GEMINI_API_KEY` are isolated in `.env.local` and are never exposed to the client-side bundle.
 
 ## AI Analysis Engine
 
@@ -235,23 +352,79 @@ Located entirely within `src/backend/ai/gemini-provider.ts`.
     *   `npm run ext:dev`: Runs the extension in development mode with HMR.
     *   `npm run ext:build`: Compiles the extension to the `dist-ext/` directory for deployment.
 
+## Browser Extension Development
+
+*   **Extension architecture:** Built using a Background Script (for service worker tasks) and Content Scripts (injected into job boards to extract DOM text and render the overlay).
+*   **Manifest V3:** The extension strictly adheres to Manifest V3 guidelines, ensuring modern security, privacy, and performance standards.
+*   **WXT usage:** WXT is used as the build framework, abstracting away complex manifest management and providing a Vite-powered development experience.
+
+### Development Commands
+```bash
+npm run ext:dev
+npm run ext:build
+```
+
+### How to load unpacked extension
+1. Open Chrome and navigate to `chrome://extensions`.
+2. Enable "Developer mode" in the top right.
+3. Click "Load unpacked" and select the generated `dist-ext/` folder.
+
+### Supported websites
+*   LinkedIn
+*   Indeed
+*   Naukri
+*   Foundit
+*   Internshala
+
+### Extension communication flow
+1. Content script detects a job posting on a supported site.
+2. User triggers analysis via the extension UI.
+3. Content script extracts the text and sends an HTTP POST request to the JobScan API.
+4. The Next.js API processes the request via Gemini and returns the JSON result.
+5. Content script renders the result directly on the job board page.
+
 ## Progressive Web App
 
 *   **Offline Support:** Utilizes a Service Worker (`src/app/sw.ts`) configured by Serwist. It caches static assets and provides a custom offline page (`/~offline/page.jsx`) when no network is available.
 *   **Manifest:** Next.js generates the PWA manifest dynamically or via static configuration to define app icons, colors, and display modes.
 *   **Installation:** Managed by `src/frontend/context/pwa-context.jsx`, which intercepts the `beforeinstallprompt` event to show a custom installation button to the user.
 
+## Progressive Web App (PWA)
+
+*   **Serwist integration:** Uses `@serwist/next` to auto-generate the Service Worker during the build process.
+*   **Service Worker behavior:** The SW intercepts network requests. API routes are configured as `NetworkOnly`, while static assets use caching.
+*   **Offline fallback:** If the network is unavailable, the SW serves a custom offline page (`/~offline`).
+*   **Install prompt:** A custom context intercepts the browser's `beforeinstallprompt` event to show an install button.
+*   **Update flow:** The Service Worker takes effect immediately upon reload.
+
+### PWA lifecycle
+1. Registration
+2. Installation
+3. Activation
+
+### Caching strategy
+*   API Routes: `NetworkOnly`
+*   Static Assets: Cached via Serwist defaults
+
+### Offline behavior
+Graceful degradation. The user can view the offline page, and native installation continues to function.
+
 ## Configuration
 
-Environment variables defined in `.env.local`:
-
-*   `PORT`: Port for the Next.js server (e.g., `3000`).
-*   `DB_USER`, `DB_HOST`, `DB_NAME`, `DB_PASSWORD`, `DB_PORT`: PostgreSQL connection parameters.
-*   `NEXTAUTH_URL`: The canonical URL of the site (e.g., `http://localhost:3000`).
-*   `NEXTAUTH_SECRET`: A secure random string used to encrypt session tokens (Required).
-*   `AUTH_SECRET`: Fallback or alias for `NEXTAUTH_SECRET` (Required).
-*   `GEMINI_API_KEY`: API key for Google Generative AI (Required).
-*   `CONSOLE_LOG_LEVEL`: Controls logging verbosity (e.g., `warn`, `info`).
+| Variable | Required | Description |
+| :--- | :--- | :--- |
+| `GEMINI_API_KEY` | Yes | Google Gemini API Key |
+| `NEXTAUTH_SECRET` | Yes | Session encryption secret |
+| `DB_HOST` | Yes | PostgreSQL host |
+| `DB_USER` | Yes | PostgreSQL connection user |
+| `DB_NAME` | Yes | PostgreSQL database name |
+| `DB_PASSWORD` | Yes | PostgreSQL connection password |
+| `DB_PORT` | Yes | PostgreSQL connection port |
+| `NEXTAUTH_URL` | Yes | Canonical URL of the site |
+| `AUTH_SECRET` | Yes | Fallback session encryption secret |
+| `PORT` | No | Port for the Next.js server (e.g., 3000) |
+| `NODE_ENV` | No | Environment mode (e.g., development) |
+| `CONSOLE_LOG_LEVEL`| No | Controls logging verbosity |
 
 ## Installation Guide
 
@@ -294,6 +467,41 @@ npm start
 npm run ext:build
 ```
 Load the generated `dist-ext/` folder as an unpacked extension in Chrome.
+
+## Deployment Guide
+
+### Recommended Deployment Stack
+
+*   **Frontend:** Vercel
+*   **Database:** PostgreSQL (Neon / Supabase / Railway)
+*   **AI:** Gemini API
+*   **Authentication:** NextAuth
+
+### Environment Variables
+Production variables required:
+*   `DB_USER`, `DB_HOST`, `DB_NAME`, `DB_PASSWORD`, `DB_PORT`
+*   `NEXTAUTH_URL`
+*   `NEXTAUTH_SECRET` / `AUTH_SECRET`
+*   `GEMINI_API_KEY`
+*   `NODE_ENV=production`
+
+### Build Commands
+```bash
+npm run build
+```
+
+### Start Commands
+```bash
+npm start
+```
+
+### Post Deployment Verification
+Checklist:
+*   [ ] Login works
+*   [ ] Gemini analysis works
+*   [ ] Database connection works
+*   [ ] PWA installs
+*   [ ] Extension API works
 
 ## Development Workflow
 
@@ -346,8 +554,30 @@ Load the generated `dist-ext/` folder as an unpacked extension in Chrome.
 *   **Important architecture decisions:** Using raw SQL instead of an ORM for explicit control. Implementing a multimodal AI provider to handle both text and images seamlessly.
 *   **Common mistakes:** Modifying database tables without updating the corresponding `SELECT`/`INSERT` queries in `src/backend/modules/`. Forgetting to add `"use client"` directives to interactive React components.
 
-## AI Assistant Context
+## AI Assistant Development Rules
 
+Before modifying:
+*   Authentication
+*   Database Schema
+*   Gemini Provider
+*   Service Worker
+*   Browser Extension
+
+review dependencies carefully.
+
+Do NOT:
+*   Change API contracts
+*   Change Trust Score structure
+*   Change Risk Level values
+*   Modify database schema without migrations
+
+Preserve:
+*   JSON response formats
+*   Authentication flow
+*   Extension communication protocol
+*   PWA routing
+
+**Project-Specific Constraints:**
 *   **Coding conventions:** Use standard Next.js conventions. Server components by default, `"use client"` where interactivity is needed. Use Tailwind for all styling.
 *   **Folder responsibilities:** Never place business logic directly in `src/app/api/` routes; always extract to `src/backend/modules/`. Keep AI specific logic isolated in `src/backend/ai/`.
 *   **Architectural rules:** Database operations must use parameterized queries (`$1, $2`) to prevent SQL injection.
