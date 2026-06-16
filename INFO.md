@@ -1,3 +1,5 @@
+<div align="justify">
+
 # JobScan
 
 ## Executive Summary
@@ -352,3 +354,5 @@ Load the generated `dist-ext/` folder as an unpacked extension in Chrome.
 *   **Important dependencies:** `@google/generative-ai`, `next-auth`, `pg`, `serwist`, `wxt`, `radix-ui`.
 *   **Careful modifications:** Editing `gemini-provider.ts` or `prompts.ts` can drastically alter the accuracy of the platform. Always test changes against both obvious scams and legitimate job postings.
 *   **Typical patterns:** Utilizing Radix UI primitives wrapped in Tailwind classes for accessible, consistent frontend components. Using NextAuth `auth()` for protecting server-side routes and API endpoints.
+
+</div>

@@ -1,3 +1,5 @@
+<div align="justify">
+
 # JobScan - AI-Powered Job Scam Detection Platform
 
 JobScan is an intelligent job verification platform that helps users identify fraudulent job opportunities using AI-powered analysis, OCR scanning, trust scoring, and scam pattern detection.
@@ -64,6 +66,7 @@ Built as an MCA final-year project, JobScan combines modern web technologies, ar
 - PostgreSQL
 - Raw SQL Queries
 - NextAuth v5
+- Zod Validation
 
 ### AI & Analysis
 - Google Gemini API
@@ -71,8 +74,8 @@ Built as an MCA final-year project, JobScan combines modern web technologies, ar
 - Scam Pattern Detection Engine
 
 ### Additional Platforms
-- Progressive Web App (PWA)
-- Chrome Extension (Manifest V3)
+- Progressive Web App (PWA) via Serwist
+- Chrome Extension (Manifest V3) via WXT
 
 ---
 
@@ -136,8 +139,12 @@ DB_PORT=5435
 
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=your_secret
+AUTH_SECRET=your_secret
 
 GEMINI_API_KEY=your_api_key
+
+NODE_ENV=development
+CONSOLE_LOG_LEVEL=warn
 ```
 
 ---
@@ -156,10 +163,18 @@ The application automatically initializes the schema during startup.
 
 ## Development
 
-Start the development server:
+> **Note**: For deep technical onboarding, architecture details, and developer guidelines, please refer to [INFO.md](./INFO.md).
+
+Start the Next.js development server:
 
 ```bash
 npm run dev
+```
+
+Start the Browser Extension development server (HMR):
+
+```bash
+npm run ext:dev
 ```
 
 Open:
@@ -248,3 +263,5 @@ MCA Final Year Project
 ## License
 
 This project is intended for academic and educational purposes.
+
+</div>
