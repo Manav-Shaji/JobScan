@@ -1,7 +1,6 @@
 // API Adapter for Chrome Extension
 
-const API_BASE = import.meta.env.VITE_API_URL 
-  || (import.meta.env.MODE === 'development' ? ['http://localhost:3000/api'].join('') : 'https://job-scan-black.vercel.app/api');
+import { getApiBaseUrl } from './environment';
 
 export async function analyzeJob(
   jobData: any,
@@ -21,6 +20,7 @@ ${jobData.description || ''}
 `
       : '';
 
+    const API_BASE = await getApiBaseUrl();
     const res = await fetch(`${API_BASE}/analyze`, {
       method: 'POST',
       headers: {
