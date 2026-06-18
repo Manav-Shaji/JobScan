@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const scanSchema = z.object({
-  jobDescription: z.string().optional(),
+  jobDescription: z.string().max(10000, "Job description exceeds maximum length of 10,000 characters").optional(),
   posterBase64: z.string().optional(),
   posterMimeType: z.string().optional(),
 }).refine(data => {

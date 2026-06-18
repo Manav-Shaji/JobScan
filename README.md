@@ -47,8 +47,9 @@ Built as an MCA final-year project, JobScan combines modern web technologies, ar
 ### Security Features
 - Secure authentication with NextAuth
 - Password hashing with bcryptjs
-- Rate-limited sensitive endpoints
+- Rate-limited sensitive endpoints (In-memory cache; Redis recommended for multi-instance scaling)
 - Structured security logging
+- Data layer isolation (Repositories vs Services)
 
 ---
 
@@ -230,13 +231,18 @@ Android:
 
 ```text
 src/
-├── app/
+├── app/               # App Router & API Endpoints
 ├── backend/
+│   ├── ai/            # Gemini integration
+│   ├── repositories/  # Database access & SQL execution
+│   └── services/      # Core business logic
 ├── frontend/
+│   └── components/    # Reusable React components
+├── database/          # Schemas & migrations
+└── shared/            # Types & utilities
 
-extension/
-public/
-database/
+extension/             # Chrome Extension (WXT)
+public/                # Static assets
 ```
 
 ---

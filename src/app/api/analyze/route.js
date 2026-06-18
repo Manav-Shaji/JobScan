@@ -1,6 +1,7 @@
 import { createRouteHandler } from '@/backend/api/route-utils';
 import { scanSchema } from '@/shared/validators/scan';
 import { analyzeJob } from '@/backend/services/scan-service';
+import { UPLOAD_LIMITS } from '@/shared/constants/index';
 
 export const POST = createRouteHandler({
   auth: 'optional',
@@ -12,9 +13,9 @@ export const POST = createRouteHandler({
     let posterBase64 = undefined;
     let posterMimeType = undefined;
 
-    const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
-    const MAX_BASE64_LENGTH = 7000000; // ~5MB of binary data
+    const ALLOWED_MIME_TYPES = UPLOAD_LIMITS.ALLOWED_MIME_TYPES;
+    const MAX_FILE_SIZE = UPLOAD_LIMITS.MAX_FILE_SIZE_BYTES; // 5MB limit
+    const MAX_BASE64_LENGTH = UPLOAD_LIMITS.MAX_BASE64_LENGTH; // ~5MB of binary data
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await req.formData();

@@ -3,30 +3,20 @@ import { cache } from 'react';
 import { query } from '@/database/connection/db';
 import { logger } from '@/backend/logging/logger';
 import {
-  UPDATE_USER_NAME_EMAIL,
-  UPDATE_USER_NAME,
-  UPDATE_USER_PASSWORD,
-  GET_USER_STATS,
-  GET_USER_HISTORY,
-  UPDATE_RETENTION_DAYS,
-  DELETE_USER,
-} from '../repositories/user-queries';
+  updateUserNameAndEmail,
+  updateUserPassword,
+  fetchUserStats,
+  fetchUserHistory,
+  updateUserRetentionDays,
+  deleteUserAccount,
+} from '../repositories/user-repository';
 
-function deriveVerdict(score: number, riskLevel: string) {
-  const cleanRisk = (riskLevel || '').toUpperCase();
-  if (cleanRisk === 'CRITICAL' || score < 45) return 'scam';
-  if (score < 75) return 'caution';
-  return 'safe';
-}
+import { deriveVerdict } from '@/shared/utils/verdict';
 
 export async function updateProfile(userId: string, name: string, email?: string) {
   try {
     logger.logApp('Updating user profile', { userId, name, email });
-    if (email) {
-      await query(UPDATE_USER_NAME_EMAIL, [name, email, userId]);
-    } else {
-      await query(UPDATE_USER_NAME, [name, userId]);
-    }
+    await updateUserNameAndEmail(userId, name, email);
 
     return { success: true };
   } catch (error) {
@@ -38,7 +28,7 @@ export async function updateProfile(userId: string, name: string, email?: string
 export async function updatePassword(userId: string, passwordHash: string) {
   try {
     logger.logApp('Updating user password', { userId });
-    await query(UPDATE_USER_PASSWORD, [passwordHash, userId]);
+    await updateUserPassword(userId, passwordHash);
 
     return { success: true };
   } catch (error) {
@@ -49,13 +39,12 @@ export async function updatePassword(userId: string, passwordHash: string) {
 
 export const getUserStats = cache(async function(userId: string) {
   try {
-    const res = await query(GET_USER_STATS, [userId]);
-    const s = res.rows[0];
+    const s = await fetchUserStats(userId);
     
     return {
       totalScans: parseInt(s.total_scans, 10) || 0,
       scamsDetected: parseInt(s.scams_detected, 10) || 0,
-      avgTrustScore: Math.round(parseFloat(s.avg_trust_score)) || 76,
+      avgTrustScore: s.avg_trust_score ? Math.round(parseFloat(s.avg_trust_score)) : null,
     };
   } catch (error) {
     logger.error('Database error fetching user stats', error, { userId });
@@ -65,9 +54,9 @@ export const getUserStats = cache(async function(userId: string) {
 
 export const getUserHistory = cache(async function(userId: string, limit: number = 10, offset: number = 0) {
   try {
-    const res = await query(GET_USER_HISTORY, [userId, limit, offset]);
+    const rows = await fetchUserHistory(userId, limit, offset);
     
-    return res.rows.map(i => ({
+    return rows.map((i: any) => ({
       id: i.id,
       content: i.content,
       score: i.trust_score,
@@ -83,7 +72,7 @@ export const getUserHistory = cache(async function(userId: string, limit: number
 export async function updateRetentionDays(userId: string, days: number) {
   try {
     logger.logApp('Updating user retention days setting', { userId, days });
-    await query(UPDATE_RETENTION_DAYS, [days, userId]);
+    await updateUserRetentionDays(userId, days);
     
     return { success: true };
   } catch (error) {
@@ -97,7 +86,7 @@ export async function deleteAccount(userId: string) {
     logger.logApp('Executing complete user account deletion flow', { userId });
     
     // ON DELETE CASCADE automatically cleans up scans, reports, and chat messages
-    await query(DELETE_USER, [userId]);
+    await deleteUserAccount(userId);
 
     return { success: true };
   } catch (error) {

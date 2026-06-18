@@ -2,14 +2,26 @@ import 'server-only';
 import crypto from 'crypto';
 import { query } from '@/database/connection/db';
 import { logger } from '@/backend/logging/logger';
-import { FIND_CACHED_SCAN, INSERT_SCAN_RESULT } from './scan-queries';
+export const FIND_CACHED_SCAN = `
+  SELECT s.*, 
+         COALESCE(COUNT(r.id), 0) AS community_reports
+  FROM job_scans s
+  LEFT JOIN scam_reports r ON r.scan_id = s.id
+  WHERE s.content_hash = $1 AND s.user_id = $2 AND s.created_at > NOW() - INTERVAL '24 hours'
+  GROUP BY s.id
+  LIMIT 1
+`;
 
-function deriveVerdict(score: number, riskLevel: string) {
-  const cleanRisk = (riskLevel || '').toUpperCase();
-  if (cleanRisk === 'CRITICAL' || score < 45) return 'scam';
-  if (score < 75) return 'caution';
-  return 'safe';
-}
+export const INSERT_SCAN_RESULT = `
+  INSERT INTO job_scans (
+    id, user_id, content, content_hash, scan_type, trust_score, risk_level,
+    pattern_name, pattern_confidence, poster_url, poster_text, red_flags, positive_signals, analysis
+  )
+  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+  RETURNING *
+`;
+
+import { deriveVerdict } from '@/shared/utils/verdict';
 
 function mapRowToScan(row: any) {
   if (!row) return null;
@@ -50,9 +62,9 @@ function mapRowToScan(row: any) {
   };
 }
 
-export async function findCachedScan(hash: string) {
+export async function findCachedScan(hash: string, userId: string) {
   try {
-    const cached = await query(FIND_CACHED_SCAN, [hash]);
+    const cached = await query(FIND_CACHED_SCAN, [hash, userId]);
 
     if (cached.rows.length === 0) return null;
     const row = cached.rows[0];
@@ -85,6 +97,10 @@ export async function insertScanResult(
     scanType?: string;
   }
 ) {
+  if (jobDescription && jobDescription.length > 10000) {
+    throw new Error('Repository Guard: Job description exceeds maximum length of 10,000 characters');
+  }
+
   try {
     const id = crypto.randomUUID();
     const positiveSignals = multimodalData?.posterAnalysis?.positiveSignals || [];

@@ -1,7 +1,7 @@
 import 'server-only';
 import { pool } from '@/database/connection/db';
 import bcrypt from 'bcryptjs';
-import { CHECK_USER_EXISTS, INSERT_USER } from '../repositories/user-queries';
+import { findUserByEmail, createUser } from '../repositories/user-repository';
 import { logger } from '@/backend/logging/logger';
 
 /**
@@ -16,8 +16,8 @@ export async function registerUser({ email, password, name }: any) {
     const passwordHash = await bcrypt.hash(password, salt);
     await client.query('BEGIN');
     
-    const existing = await client.query(CHECK_USER_EXISTS, [cleanEmail]);
-    if (existing.rows.length > 0) {
+    const existing = await findUserByEmail(cleanEmail, client);
+    if (existing.length > 0) {
       await client.query('ROLLBACK');
       logger.logSecurity('User registration attempted with existing email address', { email: cleanEmail });
       return { error: 'User already exists', status: 409 };
@@ -26,8 +26,7 @@ export async function registerUser({ email, password, name }: any) {
     // Ensure name is non-empty since it is NOT NULL in the users table
     const cleanName = (name && name.trim()) || cleanEmail.split('@')[0];
     
-    const userResult = await client.query(INSERT_USER, [cleanEmail, cleanName, passwordHash]);
-    const newUser = userResult.rows[0];
+    const newUser = await createUser(cleanEmail, cleanName, passwordHash, client);
     
     await client.query('COMMIT');
     

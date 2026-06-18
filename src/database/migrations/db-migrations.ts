@@ -2,11 +2,7 @@ import 'server-only';
 import { query } from '@/database/connection/db';
 import { logger } from '@/backend/logging/logger';
 
-let dbInitialized = false;
-
 export async function runDatabaseMigrations() {
-  if (dbInitialized) return;
-  
   try {
     // Enable UUID extension
     await query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`);
@@ -64,16 +60,19 @@ export async function runDatabaseMigrations() {
       CREATE TABLE IF NOT EXISTS chat_messages (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         user_id UUID NOT NULL,
+        scan_id UUID,
         role VARCHAR(20) NOT NULL,
         content TEXT NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW(),
-        CONSTRAINT fk_chat_messages_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+        CONSTRAINT fk_chat_messages_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+        CONSTRAINT fk_chat_messages_scan FOREIGN KEY(scan_id) REFERENCES job_scans(id) ON DELETE CASCADE
       );
     `);
 
     // Create indexes
     await query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON users(email);`);
-    await query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_job_scans_content_hash ON job_scans(content_hash);`);
+    await query(`DROP INDEX IF EXISTS idx_job_scans_content_hash;`);
+    await query(`CREATE INDEX IF NOT EXISTS idx_job_scans_user_content_hash ON job_scans(user_id, content_hash);`);
     await query(`CREATE INDEX IF NOT EXISTS idx_job_scans_user_id ON job_scans(user_id);`);
     await query(`CREATE INDEX IF NOT EXISTS idx_job_scans_created_at_desc ON job_scans(created_at DESC);`);
     await query(`CREATE INDEX IF NOT EXISTS idx_job_scans_user_created_at ON job_scans(user_id, created_at DESC);`);
@@ -82,8 +81,8 @@ export async function runDatabaseMigrations() {
     await query(`CREATE INDEX IF NOT EXISTS idx_scam_reports_scan_id ON scam_reports(scan_id);`);
     await query(`CREATE INDEX IF NOT EXISTS idx_scam_reports_reported_by ON scam_reports(reported_by);`);
     await query(`CREATE INDEX IF NOT EXISTS idx_chat_messages_user_created_at ON chat_messages(user_id, created_at DESC);`);
+    await query(`CREATE INDEX IF NOT EXISTS idx_chat_messages_scan_id ON chat_messages(scan_id);`);
 
-    dbInitialized = true;
     logger.info('Database initialized and verified successfully.');
   } catch (error) {
     logger.error('Failed to initialize database tables and constraints', error);

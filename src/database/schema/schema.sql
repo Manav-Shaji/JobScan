@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS job_scans (
 );
 
 -- Indexes for job_scans
-CREATE UNIQUE INDEX IF NOT EXISTS idx_job_scans_content_hash ON job_scans(content_hash);
+CREATE INDEX IF NOT EXISTS idx_job_scans_user_content_hash ON job_scans(user_id, content_hash);
 CREATE INDEX IF NOT EXISTS idx_job_scans_user_id ON job_scans(user_id);
 CREATE INDEX IF NOT EXISTS idx_job_scans_created_at_desc ON job_scans(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_job_scans_user_created_at ON job_scans(user_id, created_at DESC);
@@ -63,11 +63,14 @@ CREATE INDEX IF NOT EXISTS idx_scam_reports_reported_by ON scam_reports(reported
 CREATE TABLE IF NOT EXISTS chat_messages (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL,
+    scan_id UUID,
     role VARCHAR(20) NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    CONSTRAINT fk_chat_messages_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    CONSTRAINT fk_chat_messages_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_chat_messages_scan FOREIGN KEY(scan_id) REFERENCES job_scans(id) ON DELETE CASCADE
 );
 
 -- Indexes for chat_messages
 CREATE INDEX IF NOT EXISTS idx_chat_messages_user_created_at ON chat_messages(user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_chat_messages_scan_id ON chat_messages(scan_id);

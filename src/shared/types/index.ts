@@ -22,7 +22,7 @@ export interface ScanResult {
   content: string;
   contentHash: string;
   trustScore: number;
-  verdict: 'safe' | 'warning' | 'scam';
+  verdict: 'safe' | 'caution' | 'scam';
   riskLevel: 'low' | 'medium' | 'high';
   redFlags: string[];
   breakdown: any;
@@ -47,7 +47,7 @@ export interface ScamReport {
     company: string;
     description: string;
     trustScore: number;
-    aiVerdict: 'safe' | 'warning' | 'scam';
+    aiVerdict: 'safe' | 'caution' | 'scam';
     riskLevel: 'low' | 'medium' | 'high';
   };
 }

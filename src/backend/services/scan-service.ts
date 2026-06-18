@@ -42,7 +42,11 @@ export async function analyzeJob(
   const hash = crypto.createHash('sha256').update(hashSource).digest('hex');
 
   // 1. Check Database cache (within 24 hours validity)
-  const cached = await findCachedScan(hash);
+  let cached = null;
+  if (userId) {
+    cached = await findCachedScan(hash, userId);
+  }
+  
   if (cached) {
     logger.logApp('Returning cached scan result from database', { hash });
     return cached;

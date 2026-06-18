@@ -231,11 +231,14 @@ src/
 ├── backend/           # Core Backend Architecture
 │   ├── ai/            # Gemini AI integration and prompts
 │   ├── auth/          # NextAuth configuration
+│   ├── api/           # API handlers and middlewares
 │   ├── cache/         # In-memory caching utilities
-│   ├── db/            # PostgreSQL connection pool
 │   ├── logging/       # Custom application loggers
-│   └── modules/       # Business logic (scans, reports, users)
+│   ├── repositories/  # Data access layer (Raw SQL queries)
+│   └── services/      # Business logic and orchestration
 ├── database/          # Database definitions
+│   ├── migrations/    # Database migrations
+│   ├── connection/    # PostgreSQL connection pool
 │   └── schema.sql     # PostgreSQL table definitions
 ├── extension/         # Browser Extension source code
 │   ├── content/       # Content scripts injected into web pages
@@ -245,7 +248,7 @@ src/
 │   ├── components/    # Reusable React components (UI, layout)
 │   ├── context/       # React Context providers (Auth, Job, PWA)
 │   └── hooks/         # Custom React hooks
-└── lib/               # Shared utilities
+└── shared/            # Shared types, constants, and utilities
 ```
 
 ## Frontend Architecture
@@ -274,14 +277,15 @@ The frontend uses Next.js App Router (`src/app`) for page routing and `src/front
 | `/api/auth/register` | POST | No | Register a user |
 | `/api/password` | POST | Yes | Update user password |
 
-### Business Modules
+### Business Services & Repositories
 
-Located in `src/backend/modules/`. This isolates database operations from HTTP routing.
+Located in `src/backend/services/` and `src/backend/repositories/`. This strictly separates database operations from business logic.
 
-*   **Auth Module:** Manages user creation (`user-service.ts`) and database queries (`user-queries.ts`).
-*   **Scans Module:** Handles storing and retrieving scan results (`job_scans` table).
-*   **Reports Module:** Manages the submission of user scam reports (`scam_reports` table).
-*   **Chat Module:** Manages the storage of user-AI conversations (`chat_messages` table).
+*   **User Layer:** Manages user creation and updates (`user-service.ts`) using SQL defined in `user-repository.ts`.
+*   **Scan Layer:** Handles orchestration of AI scanning (`scan-service.ts`) and storing results (`scan-repository.ts`).
+*   **Report Layer:** Manages the submission of user scam reports (`report-service.ts` and `report-repository.ts`).
+*   **Chat Layer:** Manages the storage of user-AI conversations (`chat-service.ts` and `chat-repository.ts`).
+*   **Cleanup Layer:** Handles dormant secure cleanup operations for expired scans (`cleanup-service.ts`).
 
 ## Database Design
 
@@ -521,7 +525,7 @@ Checklist:
 2.  **API Route:** Request hits `src/app/api/analyze/route.js`.
 3.  **Validation:** NextAuth `auth()` ensures the user is logged in. Input is checked for length/validity.
 4.  **Service / AI:** `geminiService.analyzeJobMultimodal` is invoked. It checks the cache. If missed, it sends the prompt to the Gemini API.
-5.  **Database:** The resulting trust score and parsed JSON are passed to `scanService.createScan` (in `src/backend/modules/scans/scan-service.js`), which executes an `INSERT` statement into the PostgreSQL `job_scans` table.
+5.  **Database:** The resulting trust score and parsed JSON are passed to `insertScanResult` (in `src/backend/repositories/scan-repository.ts`), which executes an `INSERT` statement into the PostgreSQL `job_scans` table.
 6.  **Response:** The API returns a 200 status with the structured JSON analysis, which the frontend renders.
 
 ## Important Files
@@ -538,6 +542,7 @@ Checklist:
 *   **AI Hallucinations:** While structured, Gemini may occasionally misinterpret nuance in job descriptions.
 *   **Quota Limits:** High traffic could exhaust the Gemini API free tier, though mitigated by the caching and fallback mechanisms.
 *   **Extension Breakages:** Changes to the DOM structure of LinkedIn or Indeed could break the extension's content extraction scripts.
+*   **Rate Limiting Limitations:** The current rate limiter uses an in-memory cache (`MemoryCache`). In a horizontally scaled multi-instance environment (e.g., behind a load balancer), this leads to state isolation and volatile storage resets on deployment. Future scaling requires migrating to Upstash/Redis.
 *   **Technical Debt:** Raw SQL queries without an ORM (like Prisma or Drizzle) require careful maintenance and migrations.
 
 ## Troubleshooting
