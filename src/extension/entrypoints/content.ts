@@ -1,4 +1,3 @@
-import { defineContentScript } from 'wxt/sandbox';
 import { getExtractor } from '../content/extractors/registry';
 
 export default defineContentScript({

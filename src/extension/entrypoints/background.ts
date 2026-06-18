@@ -1,4 +1,3 @@
-import { defineBackground } from 'wxt/sandbox';
 
 export default defineBackground(() => {
   console.log('JobScan Background Service Worker initialized.');
