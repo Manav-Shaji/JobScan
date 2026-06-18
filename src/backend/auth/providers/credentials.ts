@@ -1,6 +1,6 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
-import { query } from '@/backend/db/db';
+import { query } from '@/database/connection/db';
 import { logger } from '@/backend/logging/logger';
 
 export const credentialsProvider = CredentialsProvider({

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '@/frontend/context/theme-context';
+import { useTheme } from '@/frontend/providers/theme-provider';
 import { Sun, Moon } from 'lucide-react';
 
 export function ThemeToggle({ className = '' }: { className?: string }) {

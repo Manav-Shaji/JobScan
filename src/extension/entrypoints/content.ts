@@ -69,20 +69,38 @@ export default defineContentScript({
       document.body.appendChild(btn);
     };
 
-    // Use a lightweight periodic check for SPA navigation instead of an expensive full-DOM MutationObserver
     let lastUrl = window.location.href;
+    let observer: MutationObserver | null = null;
+    let throttleTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const setupScopedObserver = () => {
+      if (observer) observer.disconnect();
+      
+      // Route-aware execution
+      const isJobPage = window.location.href.includes('/jobs/') || window.location.href.includes('/job/');
+      if (!isJobPage) return;
+
+      observer = new MutationObserver(() => {
+        if (throttleTimer) return;
+        throttleTimer = setTimeout(() => {
+          injectButton();
+          throttleTimer = null;
+        }, 500); // Throttling
+      });
+
+      const targetNode = document.body; // Ideally scoped to job panel, but fallback to body with throttle
+      observer.observe(targetNode, { childList: true, subtree: true });
+    };
+
     setInterval(() => {
-      // If URL changed (SPA navigation), inject the button
       if (window.location.href !== lastUrl) {
         lastUrl = window.location.href;
+        setupScopedObserver();
         setTimeout(injectButton, 500);
-        setTimeout(injectButton, 1500);
-        setTimeout(injectButton, 3000); // Retry for slower DOM updates
-      } else {
-        // Also ensure button stays injected if page dynamically replaces the DOM without URL change
-        injectButton();
       }
-    }, 1000);
+    }, 1500);
+    
+    setupScopedObserver();
     
     // Also try immediately
     setTimeout(injectButton, 2000);

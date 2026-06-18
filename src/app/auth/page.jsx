@@ -3,7 +3,7 @@
 import { useState, Suspense, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useAuth } from '@/frontend/context/auth-context';
+import { useAuth } from '@/frontend/providers/auth-provider';
 import { ThemeToggle } from '@/frontend/ui/layout/ThemeToggle';
 import { 
     ShieldCheck, 

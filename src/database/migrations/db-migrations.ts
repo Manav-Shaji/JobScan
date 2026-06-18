@@ -1,5 +1,5 @@
 import 'server-only';
-import { query } from '@/backend/db/db';
+import { query } from '@/database/connection/db';
 import { logger } from '@/backend/logging/logger';
 
 let dbInitialized = false;

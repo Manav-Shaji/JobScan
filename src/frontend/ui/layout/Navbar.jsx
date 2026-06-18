@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useAuth } from '@/frontend/context/auth-context';
+import { useAuth } from '@/frontend/providers/auth-provider';
 import { ThemeToggle } from '@/frontend/ui/layout/ThemeToggle';
 import { ShieldCheck, LogOut, LogIn, LayoutGrid, History, User, Settings, Menu, X, Download } from 'lucide-react';
-import { usePwa } from '@/frontend/context/pwa-context';
+import { usePwa } from '@/frontend/providers/pwa-provider';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/frontend/ui/overlay/Sheet';
 
 // --- TopNavbar Component ---

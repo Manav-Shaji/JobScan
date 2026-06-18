@@ -39,8 +39,6 @@ function safeJsonPayload(raw: string) {
   const cleaned = raw
     .replace(/```(?:json)?/gi, '')
     .replace(/\r/g, '')
-    .replace(/[‘’]/g, "'")
-    .replace(/[“”]/g, '"')
     .trim();
 
   const firstBrace = cleaned.indexOf('{');

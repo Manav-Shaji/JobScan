@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import { useAuth } from '@/frontend/context/auth-context'
+import { useAuth } from '@/frontend/providers/auth-provider'
 import { TopNavbar } from '@/frontend/ui/layout/Navbar'
 import { BottomNavigation } from '@/frontend/ui/layout/BottomNavigation'
 import dynamic from 'next/dynamic'

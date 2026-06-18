@@ -1,6 +1,6 @@
 import 'server-only';
 import crypto from 'crypto';
-import { query } from '@/backend/db/db';
+import { query } from '@/database/connection/db';
 import { logger } from '@/backend/logging/logger';
 import { GET_CHAT_HISTORY, INSERT_CHAT_MESSAGE } from './chat-queries';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useAuth } from '@/frontend/context/auth-context';
+import { useAuth } from '@/frontend/providers/auth-provider';
 const FREE_SCAN_LIMIT = 3;
 const STORAGE_KEY = 'jobscan_free_scans';
 

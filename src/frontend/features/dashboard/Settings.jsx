@@ -2,10 +2,10 @@ import { Switch } from "@/frontend/ui/forms";
 import { Skeleton } from "@/frontend/ui/layout";
 import { Separator } from "@/frontend/ui/layout";
 import { Bell, Shield, Eye, Database, Trash2, Download, Sun, Moon, Laptop, AppWindow, Globe, Smartphone } from 'lucide-react';
-import { useTheme } from "@/frontend/context/theme-context";
+import { useTheme } from "@/frontend/providers/theme-provider";
 import { useState } from "react";
 import { useToast } from "@/frontend/hooks/use-toast";
-import { usePwa } from "@/frontend/context/pwa-context";
+import { usePwa } from "@/frontend/providers/pwa-provider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/frontend/ui/overlay/dialog";
 
 export function Settings({ formData, setFormData, loading }) {

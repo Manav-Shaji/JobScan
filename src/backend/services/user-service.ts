@@ -1,6 +1,6 @@
 import 'server-only';
 import { cache } from 'react';
-import { query } from '@/backend/db/db';
+import { query } from '@/database/connection/db';
 import { logger } from '@/backend/logging/logger';
 import {
   UPDATE_USER_NAME_EMAIL,

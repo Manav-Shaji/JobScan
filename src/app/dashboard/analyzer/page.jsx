@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { TrustScore } from '@/frontend/features/landing/features';
-import { SignupWall } from '@/frontend/features/landing/features';
+import dynamic from 'next/dynamic';
+const TrustScore = dynamic(() => import('@/frontend/features/landing/features').then(mod => mod.TrustScore));
+const SignupWall = dynamic(() => import('@/frontend/features/landing/features').then(mod => mod.SignupWall));
 import api from '@/frontend/utils/api-client';
 import { useScanLimit } from '@/frontend/hooks/use-scan-limit';
-import { useJob } from '@/frontend/context/job-context';
+import { useJob } from '@/frontend/providers/job-provider';
 import { useToast } from "@/frontend/hooks/use-toast";
 import { Toaster } from "@/frontend/ui/feedback/toasts";
 import {

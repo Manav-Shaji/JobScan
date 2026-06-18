@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { useAuth } from '@/frontend/context/auth-context';
-import { useJob } from '@/frontend/context/job-context';
+import { useAuth } from '@/frontend/providers/auth-provider';
+import { useJob } from '@/frontend/providers/job-provider';
 import api from '@/frontend/utils/api-client';
 import { Bot, Send, X, Sparkles, MessageSquare, Loader2 } from 'lucide-react';
 

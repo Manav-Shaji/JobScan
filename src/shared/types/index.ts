@@ -6,25 +6,17 @@ export interface StandardApiResponse<T = any> {
   errors?: any[];
 }
 
-export interface User {
+export interface UserProfile {
   id: string;
   email: string;
   name: string | null;
   role: 'user' | 'admin';
-  createdAt: string;
+  createdAt?: string;
   avatarUrl?: string | null;
   totalScans?: number;
 }
 
-export interface Profile {
-  id: string;
-  name: string | null;
-  role: 'user' | 'admin';
-  email: string;
-  avatarUrl?: string | null;
-}
-
-export interface JobScan {
+export interface ScanResult {
   id: string;
   userId: string | null;
   content: string;

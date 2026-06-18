@@ -1,6 +1,6 @@
 import 'server-only';
 import crypto from 'crypto';
-import { query } from '@/backend/db/db';
+import { query } from '@/database/connection/db';
 import { logger } from '@/backend/logging/logger';
 import { FIND_CACHED_SCAN, INSERT_SCAN_RESULT } from './scan-queries';
 
