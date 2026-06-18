@@ -23,7 +23,10 @@ async function detectEnvironment(): Promise<string> {
 
     clearTimeout(timeoutId);
 
-    if (response.ok) {
+    // If we get ANY response back (even 401 Unauthorized, 404, or 500), 
+    // it means the localhost server is physically running and responding.
+    // Fetch only throws if the connection is completely refused/timed out.
+    if (response) {
       return LOCAL_API;
     }
   } catch (error) {
@@ -50,6 +53,7 @@ export async function getApiBaseUrl(): Promise<string> {
   cachedUrl = url;
   cacheExpiry = now + CACHE_DURATION_MS;
 
+  console.log(`[JobScan Env] Active API Base: ${url} (Cached for 60s)`);
   return url;
 }
 
