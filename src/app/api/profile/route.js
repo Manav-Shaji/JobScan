@@ -1,6 +1,6 @@
 import { createRouteHandler } from '@/backend/api/route-utils';
-import { updateProfileSchema } from '@/backend/modules/auth/auth-schema';
-import { updateProfile, deleteAccount, updateRetentionDays } from '@/backend/modules/auth/user-service';
+import { updateProfileSchema } from '@/shared/validators/auth';
+import { updateProfile, deleteAccount, updateRetentionDays } from '@/backend/services/user-service';
 
 export const POST = createRouteHandler({
   auth: 'user',

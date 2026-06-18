@@ -69,18 +69,20 @@ export default defineContentScript({
       document.body.appendChild(btn);
     };
 
-    // Use MutationObserver to wait for DOM stability on Single Page Apps
-    // Debounced to prevent excessive CPU usage during rapid DOM mutations
-    let debounceTimer: ReturnType<typeof setTimeout>;
-    const observer = new MutationObserver(() => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
+    // Use a lightweight periodic check for SPA navigation instead of an expensive full-DOM MutationObserver
+    let lastUrl = window.location.href;
+    setInterval(() => {
+      // If URL changed (SPA navigation), inject the button
+      if (window.location.href !== lastUrl) {
+        lastUrl = window.location.href;
+        setTimeout(injectButton, 500);
+        setTimeout(injectButton, 1500);
+        setTimeout(injectButton, 3000); // Retry for slower DOM updates
+      } else {
+        // Also ensure button stays injected if page dynamically replaces the DOM without URL change
         injectButton();
-      }, 500);
-    });
-    
-    // Observe the entire document in case body hasn't loaded yet
-    observer.observe(document.documentElement, { childList: true, subtree: true });
+      }
+    }, 1000);
     
     // Also try immediately
     setTimeout(injectButton, 2000);

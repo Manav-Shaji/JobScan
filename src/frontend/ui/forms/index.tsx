@@ -7,7 +7,7 @@ import * as SwitchPrimitives from "@radix-ui/react-switch"
 import { Check, ChevronDown } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@/shared/helpers/utils"
+import { cn } from "@/shared/utils"
 
 // --- Input ---
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(

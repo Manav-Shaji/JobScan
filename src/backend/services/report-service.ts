@@ -1,5 +1,5 @@
 import 'server-only';
-import { insertReport } from './report-repository';
+import { insertReport } from '../repositories/report-repository';
 import { logger } from '@/backend/logging/logger';
 
 /**

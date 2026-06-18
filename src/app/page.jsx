@@ -7,7 +7,7 @@ import {
     TestimonialsSection, 
     ContactSection, 
     FooterSection 
-} from '@/frontend/components/landing';
+} from '@/frontend/features/landing';
 
 export default function Landing() {
     return (

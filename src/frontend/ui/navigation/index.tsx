@@ -5,7 +5,7 @@ import * as TabsPrimitive from "@radix-ui/react-tabs"
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 import Link from "next/link"
 
-import { cn } from "@/shared/helpers/utils"
+import { cn } from "@/shared/utils"
 
 // --- Pagination ---
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (

@@ -1,7 +1,7 @@
 import 'server-only';
 import { pool } from '@/backend/db/db';
 import bcrypt from 'bcryptjs';
-import { CHECK_USER_EXISTS, INSERT_USER } from './user-queries';
+import { CHECK_USER_EXISTS, INSERT_USER } from '../repositories/user-queries';
 import { logger } from '@/backend/logging/logger';
 
 /**

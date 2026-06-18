@@ -7,13 +7,13 @@ import api from '@/frontend/utils/api-client';
 import { TabsContent } from "@/frontend/ui/navigation";
 import { useToast } from "@/frontend/hooks/use-toast";
 import { Toaster } from "@/frontend/ui/feedback/toasts";
-import { DashboardLayout } from '@/frontend/components/dashboard/DashboardLayout';
+import { DashboardLayout } from '@/frontend/features/dashboard/DashboardLayout';
 import dynamic from 'next/dynamic';
 
-const Overview = dynamic(() => import('@/frontend/components/dashboard/Overview').then(mod => mod.Overview), { ssr: false });
-const History = dynamic(() => import('@/frontend/components/dashboard/History').then(mod => mod.History), { ssr: false });
-const Profile = dynamic(() => import('@/frontend/components/dashboard/Profile').then(mod => mod.Profile), { ssr: false });
-const Settings = dynamic(() => import('@/frontend/components/dashboard/Settings').then(mod => mod.Settings), { ssr: false });
+const Overview = dynamic(() => import('@/frontend/features/dashboard/Overview').then(mod => mod.Overview), { ssr: false });
+const History = dynamic(() => import('@/frontend/features/dashboard/History').then(mod => mod.History), { ssr: false });
+const Profile = dynamic(() => import('@/frontend/features/dashboard/Profile').then(mod => mod.Profile), { ssr: false });
+const Settings = dynamic(() => import('@/frontend/features/dashboard/Settings').then(mod => mod.Settings), { ssr: false });
 const Analyzer = dynamic(() => import('./analyzer/page'), { ssr: false });
 
 export default function SuperDashboard() {

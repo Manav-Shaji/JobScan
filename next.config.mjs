@@ -26,12 +26,9 @@ const nextConfig = {
             '@radix-ui/react-dialog',
             '@radix-ui/react-label',
             '@radix-ui/react-radio-group',
-            '@radix-ui/react-slot',
             '@radix-ui/react-switch',
             '@radix-ui/react-tabs',
-            '@radix-ui/react-toast',
-            'date-fns',
-            'recharts'
+            '@radix-ui/react-toast'
         ],
     },
     images: {

@@ -3,7 +3,7 @@ import { geminiService } from '@/backend/ai/gemini-provider';
 import {
   getChatHistory as fetchHistory,
   saveChatMessage,
-} from './chat-repository';
+} from '../repositories/chat-repository';
 import { logger } from '@/backend/logging/logger';
 
 /**

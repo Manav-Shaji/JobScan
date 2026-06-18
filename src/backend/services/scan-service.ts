@@ -1,7 +1,7 @@
 import 'server-only';
 import crypto from 'crypto';
 import { geminiService } from '@/backend/ai/gemini-provider';
-import { findCachedScan, insertScanResult } from './scan-repository';
+import { findCachedScan, insertScanResult } from '../repositories/scan-repository';
 import { ApiError } from '@/backend/api/errors';
 import { MemoryCache } from '@/backend/cache';
 import { logger } from '@/backend/logging/logger';
@@ -32,7 +32,13 @@ export async function analyzeJob(
   
   // Base the hash on both text and poster base64 signature with v2 prefix to invalidate older schema versions
   const normalized = normalizeJobText(jobDescription);
-  const hashSource = 'v2:' + normalized + (posterBase64 ? posterBase64.substring(0, 100) : '');
+  let hashSource = 'v2:' + normalized;
+  
+  if (posterBase64) {
+    const imageHash = crypto.createHash('sha256').update(posterBase64).digest('hex');
+    hashSource += ':' + imageHash;
+  }
+  
   const hash = crypto.createHash('sha256').update(hashSource).digest('hex');
 
   // 1. Check Database cache (within 24 hours validity)

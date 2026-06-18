@@ -3,18 +3,14 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { z } from 'zod';
 import { logger } from '@/backend/logging/logger';
 import { jobScanSystemInstruction } from './prompts';
-import { MemoryCache } from '@/backend/cache';
 
 const PRIMARY_MODEL = 'gemini-3.1-flash-lite'; // or 'gemini-2.5-flash' for vision? wait, both support vision.
 const FALLBACK_MODEL = 'gemini-2.5-flash';
-const CACHE_TTL_MS = 1000 * 60 * 60 * 6; // 6 hours
 const MAX_AI_TIMEOUT_MS = 15000; // Increased for image processing
 
 let genAI: GoogleGenerativeAI | null = null;
 const API_KEY = process.env.GEMINI_API_KEY;
 if (API_KEY) genAI = new GoogleGenerativeAI(API_KEY);
-
-const analysisCache = new MemoryCache<any>(CACHE_TTL_MS);
 
 const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
   let timeoutId: NodeJS.Timeout;
@@ -24,13 +20,7 @@ const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
   return Promise.race([promise, timeoutPromise]).finally(() => clearTimeout(timeoutId));
 };
 
-function getCachedAnalysis(key: string) {
-  return analysisCache.get(key);
-}
 
-function setCachedAnalysis(key: string, value: any) {
-  analysisCache.set(key, value);
-}
 
 function extractErrorMessage(error: unknown) {
   if (typeof error === 'string') return error;
@@ -228,12 +218,7 @@ async function attemptModel(parts: any[], modelName: string) {
 
 export const geminiService = {
   async analyzeJobMultimodal(jobText: string, posterBase64?: string, posterMimeType?: string) {
-    const cacheKeyParts = ['v2', jobText.trim().replace(/\s+/g, ' ').toLowerCase()];
-    if (posterBase64) cacheKeyParts.push(posterBase64.substring(0, 150)); // Cache based on a prefix of the image
-    const cacheKey = cacheKeyParts.join('|');
-
-    const cached = getCachedAnalysis(cacheKey);
-    if (cached) return cached;
+    // Database cache covers duplicate scans, memory cache removed.
 
     const parts: any[] = [];
     const scanType = posterBase64 && jobText ? 'combined' : posterBase64 ? 'image' : 'text';
@@ -253,38 +238,28 @@ export const geminiService = {
     }
 
     if (!genAI) {
-      const fallback = normalizeAnalysis(localFallbackAnalysis(jobText, 'no API key'));
-      setCachedAnalysis(cacheKey, fallback);
-      return fallback;
+      return normalizeAnalysis(localFallbackAnalysis(jobText, 'no API key'));
     }
 
     const primary = await attemptModel(parts, PRIMARY_MODEL);
     if (primary.analysis) {
-      setCachedAnalysis(cacheKey, primary.analysis);
       return primary.analysis;
     }
 
     if (primary.quotaError) {
-      const fallback = normalizeAnalysis(localFallbackAnalysis(jobText, 'quota error'));
-      setCachedAnalysis(cacheKey, fallback);
-      return fallback;
+      return normalizeAnalysis(localFallbackAnalysis(jobText, 'quota error'));
     }
 
     const secondary = await attemptModel(parts, FALLBACK_MODEL);
     if (secondary.analysis) {
-      setCachedAnalysis(cacheKey, secondary.analysis);
       return secondary.analysis;
     }
 
     if (secondary.quotaError) {
-      const fallback = normalizeAnalysis(localFallbackAnalysis(jobText, 'quota error'));
-      setCachedAnalysis(cacheKey, fallback);
-      return fallback;
+      return normalizeAnalysis(localFallbackAnalysis(jobText, 'quota error'));
     }
 
-    const fallback = normalizeAnalysis(localFallbackAnalysis(jobText, primary.message || 'AI failure'));
-    setCachedAnalysis(cacheKey, fallback);
-    return fallback;
+    return normalizeAnalysis(localFallbackAnalysis(jobText, primary.message || 'AI failure'));
   },
 
   async generateChatResponse(history: any[], message: string, jobContext: any = null) {

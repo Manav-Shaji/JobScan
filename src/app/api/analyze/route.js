@@ -1,6 +1,6 @@
 import { createRouteHandler } from '@/backend/api/route-utils';
-import { scanSchema } from '@/backend/modules/scans/scan-schema';
-import { analyzeJob } from '@/backend/modules/scans/scan-service';
+import { scanSchema } from '@/shared/validators/scan';
+import { analyzeJob } from '@/backend/services/scan-service';
 
 export const POST = createRouteHandler({
   auth: 'optional',
@@ -18,6 +18,13 @@ export const POST = createRouteHandler({
       const file = formData.get('poster');
 
       if (file && typeof file !== 'string') {
+        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
+        if (file.size > MAX_FILE_SIZE) {
+          return new Response(JSON.stringify({ error: 'File size exceeds 5MB limit' }), {
+            status: 413,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
         const buffer = Buffer.from(await file.arrayBuffer());
         posterMimeType = file.type;
         posterBase64 = buffer.toString('base64');

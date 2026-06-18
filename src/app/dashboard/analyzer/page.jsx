@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { TrustScore } from '@/frontend/components/features';
-import { SignupWall } from '@/frontend/components/features';
+import { TrustScore } from '@/frontend/features/landing/features';
+import { SignupWall } from '@/frontend/features/landing/features';
 import api from '@/frontend/utils/api-client';
 import { useScanLimit } from '@/frontend/hooks/use-scan-limit';
 import { useJob } from '@/frontend/context/job-context';

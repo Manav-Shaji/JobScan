@@ -5,7 +5,7 @@ import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import * as SeparatorPrimitive from "@radix-ui/react-separator"
 import { ChevronDown } from "lucide-react"
 
-import { cn } from "@/shared/helpers/utils"
+import { cn } from "@/shared/utils"
 
 // --- Accordion ---
 const Accordion = AccordionPrimitive.Root

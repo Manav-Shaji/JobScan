@@ -10,7 +10,7 @@ import {
   GET_USER_HISTORY,
   UPDATE_RETENTION_DAYS,
   DELETE_USER,
-} from './user-queries';
+} from '../repositories/user-queries';
 
 function deriveVerdict(score: number, riskLevel: string) {
   const cleanRisk = (riskLevel || '').toUpperCase();

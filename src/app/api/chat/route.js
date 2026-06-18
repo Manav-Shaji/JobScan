@@ -1,6 +1,6 @@
 import { createRouteHandler } from '@/backend/api/route-utils';
-import { chatSchema } from '@/backend/modules/chat/chat-schema';
-import { getChatHistory, processChatMessage } from '@/backend/modules/chat/chat-service';
+import { chatSchema } from '@/shared/validators/chat';
+import { getChatHistory, processChatMessage } from '@/backend/services/chat-service';
 
 export const GET = createRouteHandler({
   auth: 'user',

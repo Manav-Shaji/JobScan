@@ -1,6 +1,6 @@
 import { createRouteHandler } from '@/backend/api/route-utils';
-import { registerSchema } from '@/backend/modules/auth/auth-schema';
-import { registerUser } from '@/backend/modules/auth/auth-service';
+import { registerSchema } from '@/shared/validators/auth';
+import { registerUser } from '@/backend/services/auth-service';
 import { ApiError } from '@/backend/api/errors';
 
 export const POST = createRouteHandler({
