@@ -5,7 +5,7 @@
   "description": "Intelligent analysis for job security. Detect employment fraud instantly.",
   "theme_color": "#020617",
   "background_color": "#020617",
-  "start_url": "/app?tab=analyzer",
+  "start_url": "/dashboard?tab=analyzer",
   "display": "standalone",
   "orientation": "portrait",
   "icons": [
@@ -39,21 +39,21 @@
       "name": "Analyzer",
       "short_name": "Analyzer",
       "description": "Analyze a new job posting",
-      "url": "/app?tab=analyzer",
+      "url": "/dashboard?tab=analyzer",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "History",
       "short_name": "History",
       "description": "View past analyses",
-      "url": "/app?tab=history",
+      "url": "/dashboard?tab=history",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Profile",
       "short_name": "Profile",
       "description": "Account and settings",
-      "url": "/app?tab=profile",
+      "url": "/dashboard?tab=profile",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]
