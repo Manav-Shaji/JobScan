@@ -227,8 +227,7 @@ export function TopNavbar() {
             <div className="flex items-center gap-4">
                 {/* Mobile Hamburger button - only visible on mobile when logged in */}
                 {user && (
-                    <button
-                        onClick={() => {
+                    <button type="button" onClick={() => {
                             setMobileMenuOpen(!mobileMenuOpen);
                             if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
                         }}
@@ -248,8 +247,7 @@ export function TopNavbar() {
                 {/* Desktop-only action items */}
                 <div className="hidden md:flex items-center gap-4">
                     {isInstallable && (
-                        <button
-                            onClick={installApp}
+                        <button type="button" onClick={installApp}
                             className="btn-premium-secondary flex items-center gap-1.5 text-xs font-black uppercase tracking-wider"
                             style={{ padding: '8px 14px', borderRadius: '10px' }}
                             title="Install JobScan Application"
@@ -272,8 +270,7 @@ export function TopNavbar() {
                                       ? user.email.substring(0, 2).toUpperCase()
                                       : 'U'}
                             </div>
-                            <button
-                                onClick={handleLogout}
+                            <button type="button" onClick={handleLogout}
                                 className="text-[var(--muted)] hover:text-red-500 transition-colors bg-[var(--surface-elevated)] border border-[var(--hairline)] hover:border-red-500/30 p-2 rounded-lg"
                                 title="Logout"
                                 aria-label="Logout"
@@ -331,8 +328,7 @@ export function TopNavbar() {
                                     <ThemeToggle />
                                 </div>
                                 {isInstallable && (
-                                    <button
-                                        onClick={() => { 
+                                    <button type="button" onClick={() => { 
                                             setMobileMenuOpen(false); 
                                             installApp(); 
                                             if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
@@ -361,8 +357,7 @@ export function TopNavbar() {
                                 >
                                     <Settings size={14} /> Settings
                                 </Link>
-                                <button
-                                    onClick={() => {
+                                <button type="button" onClick={() => {
                                         setMobileMenuOpen(false);
                                         if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
                                         alert("JobScan - AI Scam Detector v1.0.0. Designed for MCA Final-Year Project Demonstration.");
@@ -376,8 +371,7 @@ export function TopNavbar() {
 
                         {/* Section 4: Exit Actions */}
                         <div className="flex flex-col gap-4 border-t border-[var(--hairline)] pt-4 mt-auto">
-                            <button
-                                onClick={(e) => { 
+                            <button type="button" onClick={(e) => { 
                                     setMobileMenuOpen(false); 
                                     handleLogout(e); 
                                     if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20);

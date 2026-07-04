@@ -105,4 +105,4 @@ export class MemoryCache<T = any> {
 }
 
 // Export default global cache instances for scanning and generic use
-export const globalCache = new MemoryCache();
+const globalCache = new MemoryCache();

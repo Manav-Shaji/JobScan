@@ -14,7 +14,7 @@ export function unauthorized(message = 'Not authorized') {
   return new ApiError(message, 401);
 }
 
-export function forbidden(message = 'Forbidden') {
+function forbidden(message = 'Forbidden') {
   return new ApiError(message, 403);
 }
 

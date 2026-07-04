@@ -3,7 +3,7 @@
 import React, { createContext, useContext } from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 
-export const AuthContext = createContext({});
+const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
   const { data: session, status } = useSession();

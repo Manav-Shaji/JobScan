@@ -172,7 +172,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
         {/* --- Metrics Grid --- */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {statCards.map((s, i) => (
-            <Card key={i} className="glass-card premium-card-edge rounded-2xl p-5 shadow-lg hover-lift transition-all group fade-slide-up-in border-[var(--hairline)]" style={{ animationDelay: `${i * 0.08}s` }}>
+            <Card key={s.label || i} className="glass-card premium-card-edge rounded-2xl p-5 shadow-lg hover-lift transition-all group fade-slide-up-in border-[var(--hairline)]" style={{ animationDelay: `${i * 0.08}s` }}>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-[10px] font-black tracking-widest text-[var(--muted)] uppercase">{s.label}</span>
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${s.bg} ${s.border} ${s.color} group-hover:scale-105 transition-transform`}>
@@ -202,7 +202,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
                   const isScam = a.type === 'scam';
 
                   return (
-                    <div key={i} className="flex items-center justify-between py-2.5 px-5 hover:bg-[rgba(var(--primary-rgb),0.04)] transition-colors group">
+                    <div key={a.id || `recent-${i}`} className="flex items-center justify-between py-2.5 px-5 hover:bg-[rgba(var(--primary-rgb),0.04)] transition-colors group">
                       <div className="flex items-center gap-3.5 flex-1 min-w-0">
                         <div className="w-8 h-8 rounded-lg flex items-center justify-center text-blue-400 flex-shrink-0 group-hover:scale-105 transition-transform border border-[var(--hairline)] bg-[var(--surface-elevated)]">
                           <FileText size={14} />
@@ -438,7 +438,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
               const isScam = a.type === 'scam';
 
               return (
-                <div key={i} className="flex items-center justify-between py-3 px-3.5 hover:bg-[rgba(var(--primary-rgb),0.02)] transition-colors">
+                <div key={a.id || `recent-mobile-${i}`} className="flex items-center justify-between py-3 px-3.5 hover:bg-[rgba(var(--primary-rgb),0.02)] transition-colors">
                   <div className="min-w-0 pr-3 flex-1">
                     <div className="text-[10px] font-black truncate text-[var(--on-dark)]">
                       {a.content ? a.content.substring(0, 32) + '...' : 'Untitled Scan'}

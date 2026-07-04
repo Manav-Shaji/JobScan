@@ -7,6 +7,9 @@
       "@/*": [
         "./src/*"
       ],
+      "@/extension/*": [
+        "./extension/*"
+      ],
       "@/frontend/*": [
         "./src/frontend/*"
       ],

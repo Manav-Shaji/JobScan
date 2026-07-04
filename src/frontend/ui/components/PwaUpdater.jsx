@@ -8,10 +8,12 @@ export function PwaUpdater() {
 
   useEffect(() => {
     if (typeof window !== "undefined" && "serviceWorker" in navigator && window.serwist !== undefined) {
+      const handleUpdate = () => setShowReload(true);
       // Register serwist to listen to updates
-      window.serwist.addEventListener("sw_update_found", () => {
-        setShowReload(true);
-      });
+      window.serwist.addEventListener("sw_update_found", handleUpdate);
+      return () => {
+        window.serwist.removeEventListener("sw_update_found", handleUpdate);
+      };
     }
   }, []);
 
@@ -25,6 +27,7 @@ export function PwaUpdater() {
           <span className="text-xs text-slate-400">A new version of JobScan is ready.</span>
         </div>
         <button
+          type="button"
           onClick={() => {
             if (window.serwist) {
               window.serwist.messageSW({ type: "SKIP_WAITING" });

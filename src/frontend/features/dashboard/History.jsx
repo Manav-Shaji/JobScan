@@ -54,7 +54,40 @@ const ScoreCircle = React.memo(({ score }) => {
 
 ScoreCircle.displayName = 'ScoreCircle';
 
+const filterOptions = [
+  { value: 'all', label: 'All Scans' },
+  { value: 'scam', label: 'Scam Threats' },
+  { value: 'safe', label: 'Secure' },
+  { value: 'caution', label: 'Caution' },
+];
+
 export function History({ fullHistory, loading }) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  
+  const filteredHistory = useMemo(() => {
+    return fullHistory?.filter(h => {
+      const term = searchTerm.toLowerCase();
+      const matchesSearch = (
+        (h.content?.toLowerCase().includes(term)) ||
+        (h.title?.toLowerCase().includes(term)) ||
+        (h.type?.toLowerCase().includes(term))
+      );
+      if (!matchesSearch) return false;
+      if (filterType === 'all') return true;
+      if (filterType === 'scam') return h.type === 'scam' || (h.score ?? 100) < 50;
+      if (filterType === 'safe') return h.type === 'safe' || (h.score ?? 0) >= 70;
+      if (filterType === 'caution') return h.type === 'caution' || ((h.score ?? 0) >= 50 && (h.score ?? 0) < 70);
+      return true;
+    }) || [];
+  }, [fullHistory, searchTerm, filterType]);
+
+  const totalPages = Math.ceil(filteredHistory.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedHistory = filteredHistory.slice(startIndex, startIndex + itemsPerPage);
+
   if (loading) {
     return (
       <div className="glass-card rounded-2xl overflow-hidden shadow-xl mb-8 p-6 border border-[var(--hairline)]">
@@ -83,44 +116,6 @@ export function History({ fullHistory, loading }) {
     );
   }
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState('all');
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const totalItems = fullHistory?.length || 0;
-
-  const filterOptions = [
-    { value: 'all', label: 'All Scans' },
-    { value: 'scam', label: 'Scam Threats' },
-    { value: 'safe', label: 'Secure' },
-    { value: 'caution', label: 'Caution' },
-  ];
-  
-  const filteredHistory = useMemo(() => {
-    return fullHistory?.filter(h => {
-      const term = searchTerm.toLowerCase();
-      const matchesSearch = (
-        (h.content?.toLowerCase().includes(term)) ||
-        (h.title?.toLowerCase().includes(term)) ||
-        (h.type?.toLowerCase().includes(term))
-      );
-      if (!matchesSearch) return false;
-      if (filterType === 'all') return true;
-      if (filterType === 'scam') return h.type === 'scam' || (h.score ?? 100) < 50;
-      if (filterType === 'safe') return h.type === 'safe' || (h.score ?? 0) >= 70;
-      if (filterType === 'caution') return h.type === 'caution' || ((h.score ?? 0) >= 50 && (h.score ?? 0) < 70);
-      return true;
-    }) || [];
-  }, [fullHistory, searchTerm, filterType]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, filterType]);
-
-  const totalPages = Math.ceil(filteredHistory.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedHistory = filteredHistory.slice(startIndex, startIndex + itemsPerPage);
-
   return (
     <div className="glass-card holo-card-edge rounded-2xl overflow-hidden shadow-xl mb-8 p-0 fade-slide-up-in" style={{ padding: 0 }}>
       
@@ -140,14 +135,15 @@ export function History({ fullHistory, loading }) {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={14} />
             <input 
               type="text" 
+              aria-label="Search archives"
               placeholder="Search content or title..." 
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
               className="w-full bg-[var(--surface-elevated)] border border-[var(--hairline)] rounded-xl pl-9 pr-4 h-12 md:h-auto md:py-1.5 text-xs text-[var(--on-dark)] placeholder-[var(--muted)] focus:outline-none focus:border-blue-500/60 transition-colors"
             />
           </div>
           <div className="w-full md:w-[180px]">
-            <Select value={filterType} onValueChange={setFilterType}>
+            <Select value={filterType} onValueChange={(val) => { setFilterType(val); setCurrentPage(1); }}>
               <SelectTrigger className="h-12 md:h-auto md:py-1.5 bg-[var(--surface-elevated)] border-[var(--hairline)] text-xs">
                 <div className="flex items-center gap-1.5">
                   <Filter size={13} />
@@ -183,7 +179,7 @@ export function History({ fullHistory, loading }) {
           const isCaution = !isScam && (h.type === 'caution' || (score >= 50 && score < 70));
           
           return (
-            <div key={i} className="group">
+            <div key={h.id || `${h.createdAt}-${i}`} className="group">
               {/* Desktop View */}
               <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4.5 items-center hover:bg-[rgba(var(--primary-rgb),0.04)] transition-colors">
                 <div className="col-span-3 flex items-center gap-3.5">
@@ -231,7 +227,7 @@ export function History({ fullHistory, loading }) {
                     {isScam ? <AlertTriangle size={12} className="text-red-500" /> : null}
                     {isScam ? 'SCAM THREAT' : isCaution ? 'CAUTION' : 'SECURE'}
                   </div>
-                  <button className="text-[var(--muted)] hover:text-[var(--on-dark)] p-1 rounded transition-colors">
+                  <button type="button" aria-label="More options" className="text-[var(--muted)] hover:text-[var(--on-dark)] p-1 rounded transition-colors">
                     <MoreVertical size={16} />
                   </button>
                 </div>

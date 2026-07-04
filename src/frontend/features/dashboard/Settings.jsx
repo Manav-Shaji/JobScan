@@ -9,6 +9,12 @@ import { usePwa } from "@/frontend/providers/pwa-provider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/frontend/ui/overlay/dialog";
 
 export function Settings({ formData, setFormData, loading }) {
+  const { theme, toggleTheme } = useTheme();
+  const [compactMode, setCompactMode] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const { toast } = useToast();
+  const { isInstallable, isInstalled, isExtensionInstalled, installApp, requestNotificationPermission } = usePwa();
+
   if (loading) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-6 flex flex-col gap-8">
@@ -28,12 +34,6 @@ export function Settings({ formData, setFormData, loading }) {
       </div>
     );
   }
-
-  const { theme, toggleTheme } = useTheme();
-  const [compactMode, setCompactMode] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const { toast } = useToast();
-  const { isInstallable, isInstalled, isExtensionInstalled, installApp, requestNotificationPermission } = usePwa();
 
   const handleRetentionChange = async (e) => {
     const value = e.target.value;
@@ -189,8 +189,7 @@ export function Settings({ formData, setFormData, loading }) {
               <div className="font-semibold text-[var(--on-dark)] text-sm">Export Your Data</div>
               <div className="text-[var(--muted)] text-xs mt-0.5">Download all your scan history as a JSON file</div>
             </div>
-            <button 
-              onClick={handleExportData}
+            <button type="button" onClick={handleExportData}
               className="flex items-center gap-2 bg-[var(--surface-card)] border border-[var(--hairline)] hover:bg-[var(--hairline)] text-[var(--on-dark)] px-4 py-2 rounded-lg text-sm font-medium transition-colors"
             >
               <Download size={14} /> Export
@@ -203,8 +202,7 @@ export function Settings({ formData, setFormData, loading }) {
               <div className="font-semibold text-red-500 text-sm">Delete Account</div>
               <div className="text-[var(--muted)] text-xs mt-0.5">Permanently erase your account and all stored data</div>
             </div>
-            <button 
-              onClick={() => setShowDeleteConfirm(true)}
+            <button type="button" onClick={() => setShowDeleteConfirm(true)}
               className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
             >
               <Trash2 size={14} /> Delete
@@ -233,22 +231,19 @@ export function Settings({ formData, setFormData, loading }) {
               <div className="text-[var(--muted)] text-xs mt-0.5">Choose your preferred visual mode</div>
             </div>
             <div className="flex bg-[var(--surface-card)] border border-[var(--hairline)] rounded-lg p-1 gap-1">
-              <button 
-                onClick={() => theme === 'dark' && toggleTheme()}
+              <button type="button" onClick={() => theme === 'dark' && toggleTheme()}
                 className={`p-1.5 rounded-md ${theme === 'light' ? 'bg-[var(--surface-elevated)] text-[var(--on-dark)] shadow-sm' : 'text-[var(--muted)] hover:text-[var(--on-dark)]'}`} 
                 title="Light Mode"
               >
                 <Sun size={16} />
               </button>
-              <button 
-                onClick={() => theme === 'light' && toggleTheme()}
+              <button type="button" onClick={() => theme === 'light' && toggleTheme()}
                 className={`p-1.5 rounded-md ${theme === 'dark' ? 'bg-[var(--surface-elevated)] text-[var(--on-dark)] shadow-sm' : 'text-[var(--muted)] hover:text-[var(--on-dark)]'}`} 
                 title="Dark Mode"
               >
                 <Moon size={16} />
               </button>
-              <button 
-                className="p-1.5 rounded-md text-[var(--muted)] cursor-not-allowed opacity-50" 
+              <button type="button" className="p-1.5 rounded-md text-[var(--muted)] cursor-not-allowed opacity-50" 
                 title="System Default (Coming Soon)"
                 disabled
               >
@@ -302,8 +297,7 @@ export function Settings({ formData, setFormData, loading }) {
 
             {!isInstalled && isInstallable && (
               <div className="flex justify-end mt-2">
-                <button
-                  onClick={installApp}
+                <button type="button" onClick={installApp}
                   className="button-primary flex items-center gap-2 text-xs font-semibold"
                   style={{ padding: '8px 16px', borderRadius: '10px' }}
                 >
@@ -356,8 +350,7 @@ export function Settings({ formData, setFormData, loading }) {
                 <div className="text-[var(--muted)] text-xs mt-0.5">Receive immediate system push warnings of detected scams.</div>
               </div>
             </div>
-            <button
-              onClick={requestNotificationPermission}
+            <button type="button" onClick={requestNotificationPermission}
               className="btn-premium-secondary text-xs"
               style={{ padding: '8px 16px', borderRadius: '10px' }}
             >
@@ -379,14 +372,12 @@ export function Settings({ formData, setFormData, loading }) {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-8 flex flex-row gap-3 justify-center w-full">
-            <button 
-              onClick={() => setShowDeleteConfirm(false)}
+            <button type="button" onClick={() => setShowDeleteConfirm(false)}
               className="flex-1 px-4 py-2.5 bg-[var(--surface-elevated)] border border-[var(--hairline)] text-[var(--on-dark)] rounded-xl text-sm font-semibold hover:bg-[rgba(var(--primary-rgb),0.05)] transition-colors"
             >
               Cancel
             </button>
-            <button 
-              onClick={handleDeleteAccount}
+            <button type="button" onClick={handleDeleteAccount}
               className="flex-1 px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-lg shadow-red-500/20"
             >
               Delete

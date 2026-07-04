@@ -8,4 +8,5 @@ const nextAuth = NextAuth({
     providers: [credentialsProvider],
 });
 
-export const { handlers, auth, signIn, signOut } = nextAuth;
+export const { handlers, auth } = nextAuth;
+const { signIn, signOut } = nextAuth;

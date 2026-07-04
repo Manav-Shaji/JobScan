@@ -2,7 +2,7 @@ import 'server-only';
 import crypto from 'crypto';
 import { query } from '@/database/connection/db';
 import { logger } from '@/backend/logging/logger';
-export const FIND_CACHED_SCAN = `
+const FIND_CACHED_SCAN = `
   SELECT s.*, 
          COALESCE(COUNT(r.id), 0) AS community_reports
   FROM job_scans s
@@ -12,7 +12,7 @@ export const FIND_CACHED_SCAN = `
   LIMIT 1
 `;
 
-export const INSERT_SCAN_RESULT = `
+const INSERT_SCAN_RESULT = `
   INSERT INTO job_scans (
     id, user_id, content, content_hash, scan_type, trust_score, risk_level,
     pattern_name, pattern_confidence, poster_url, poster_text, red_flags, positive_signals, analysis

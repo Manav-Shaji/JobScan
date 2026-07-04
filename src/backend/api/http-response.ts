@@ -44,10 +44,10 @@ export function errorResponse(message: string, status = 500, errors?: any[]) {
 }
 
 // Keep original APIs for full backwards compatibility
-export function successJson(payload: any, status = 200) {
+function successJson(payload: any, status = 200) {
   return NextResponse.json(payload, { status });
 }
 
-export function errorJson(payload: any, status = 500) {
+function errorJson(payload: any, status = 500) {
   return NextResponse.json(payload, { status });
 }

@@ -7,18 +7,18 @@ import { successResponse } from './http-response';
 import { rateLimit } from './rate-limit';
 import { logger } from '@/backend/logging/logger';
 
-export async function requireUserSession() {
+async function requireUserSession() {
   const session = await auth();
   const user = session?.user;
   if (!user?.id) throw unauthorized();
   return user;
 }
 
-export async function parseJsonBody(req: Request) {
+async function parseJsonBody(req: Request) {
   return req.json().catch(() => ({}));
 }
 
-export function parsePagination(req: Request) {
+function parsePagination(req: Request) {
   const searchParams = new URL(req.url).searchParams;
   return {
     limit: searchParams.get('limit'),
@@ -28,7 +28,7 @@ export function parsePagination(req: Request) {
   };
 }
 
-export function parseSearchQuery(req: Request) {
+function parseSearchQuery(req: Request) {
   const searchParams = new URL(req.url).searchParams;
   return {
     limit: searchParams.get('limit'),
@@ -37,7 +37,7 @@ export function parseSearchQuery(req: Request) {
   };
 }
 
-export function safeIdParam(req: Request, key = 'id') {
+function safeIdParam(req: Request, key = 'id') {
   const value = new URL(req.url).searchParams.get(key);
   if (!value) throw badRequest(`${key} is required`);
   return value;

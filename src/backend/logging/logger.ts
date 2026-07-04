@@ -141,4 +141,4 @@ class StructuredLogger {
 }
 
 export const logger = new StructuredLogger();
-export default logger;
+logger;

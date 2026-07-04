@@ -373,10 +373,10 @@ export default function Analyzer() {
                             <span className="font-bold text-sm tracking-tight">Job Description</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                            <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--surface-elevated)] text-[var(--muted)] hover:text-blue-400 transition-all text-[11px] font-bold uppercase tracking-wider border border-[var(--hairline)]" onClick={handlePaste} title="Paste from Clipboard">
+                            <button type="button" className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--surface-elevated)] text-[var(--muted)] hover:text-blue-400 transition-all text-[11px] font-bold uppercase tracking-wider border border-[var(--hairline)]" onClick={handlePaste} title="Paste from Clipboard">
                                 <Clipboard size={12} /> Paste
                             </button>
-                            <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--surface-elevated)] text-[var(--muted)] hover:text-red-400 transition-all text-[11px] font-bold uppercase tracking-wider border border-[var(--hairline)]" onClick={() => setJobText('')} title="Clear Text">
+                            <button type="button" className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--surface-elevated)] text-[var(--muted)] hover:text-red-400 transition-all text-[11px] font-bold uppercase tracking-wider border border-[var(--hairline)]" onClick={() => setJobText('')} title="Clear Text">
                                 <Trash2 size={12} /> Clear
                             </button>
                         </div>
@@ -436,8 +436,7 @@ export default function Analyzer() {
                                         <div className="text-xs font-bold text-[var(--on-dark)] truncate">{posterFile.name}</div>
                                         <div className="text-[10px] text-[var(--muted)]">{(posterFile.size / 1024 / 1024).toFixed(2)} MB</div>
                                     </div>
-                                    <button 
-                                        className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors" 
+                                    <button type="button" className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors" 
                                         onClick={(e) => { e.stopPropagation(); setPosterFile(null); setPosterPreview(null); }}
                                     >
                                         <X size={14} />
@@ -474,8 +473,7 @@ export default function Analyzer() {
                                     <div className="text-xs font-bold text-[var(--on-dark)] truncate">{posterFile.name}</div>
                                     <div className="text-[9px] text-[var(--muted)]">{(posterFile.size / 1024 / 1024).toFixed(2)} MB</div>
                                 </div>
-                                <button 
-                                    className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors" 
+                                <button type="button" className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors" 
                                     onClick={(e) => { e.stopPropagation(); setPosterFile(null); setPosterPreview(null); }}
                                 >
                                     <X size={14} />
@@ -490,8 +488,7 @@ export default function Analyzer() {
 
             {/* SECTION 3: Analyze Button (Desktop Only) */}
             <div className="mb-8 hidden md:block">
-                <button
-                    className="w-full relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 hover:from-blue-500 hover:to-sky-500 text-white py-4 rounded-2xl font-black text-sm tracking-widest shadow-[0_4px_20px_rgba(59,130,246,0.15)] hover:shadow-[0_4px_25px_rgba(59,130,246,0.25)] hover:scale-[1.002] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                <button type="button" className="w-full relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 hover:from-blue-500 hover:to-sky-500 text-white py-4 rounded-2xl font-black text-sm tracking-widest shadow-[0_4px_20px_rgba(59,130,246,0.15)] hover:shadow-[0_4px_25px_rgba(59,130,246,0.25)] hover:scale-[1.002] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                     onClick={handleAnalyze}
                     disabled={loading}
                 >
@@ -546,7 +543,7 @@ export default function Analyzer() {
                                 <p className="text-[var(--muted)] text-xs m-0 mt-1">Scan Type: <strong className="text-[var(--on-dark)] uppercase">{result.scanType}</strong></p>
                             </div>
                         </div>
-                        <button className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 font-bold text-xs uppercase tracking-wider hover:bg-red-500/15 hover:scale-105 transition-all shadow-sm w-full md:w-auto" onClick={handleReport}>
+                        <button type="button" className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 font-bold text-xs uppercase tracking-wider hover:bg-red-500/15 hover:scale-105 transition-all shadow-sm w-full md:w-auto" onClick={handleReport}>
                             <Flag size={13} /> Flag Scam
                         </button>
                     </div>
@@ -571,7 +568,7 @@ export default function Analyzer() {
                                     <h4 className="text-[11px] font-black uppercase tracking-widest text-[var(--muted)] mb-4 flex items-center gap-2"><Briefcase size={14} className="text-emerald-400"/> Analysis Criteria</h4>
                                     <div className="flex flex-col gap-3">
                                         {(result.breakdown || []).map((item, i) => (
-                                            <div key={i} className="flex flex-col gap-1.5">
+                                            <div key={item.label || i} className="flex flex-col gap-1.5">
                                                 <div className="flex justify-between items-center text-[11px] font-bold">
                                                     <span className="text-[var(--on-dark)]">{item.label}</span>
                                                     <span className={item.value < 40 ? 'text-red-400' : item.value < 75 ? 'text-amber-400' : 'text-emerald-400'}>{item.value}%</span>
@@ -619,7 +616,7 @@ export default function Analyzer() {
                             </AlertTitle>
                             <AlertDescription className="flex flex-col gap-2.5 mt-2">
                                 {result.redFlags?.length > 0 ? result.redFlags.map((flag, i) => (
-                                    <div key={i} className="px-3.5 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-200 text-xs leading-relaxed flex items-start gap-2.5">
+                                    <div key={flag || i} className="px-3.5 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-200 text-xs leading-relaxed flex items-start gap-2.5">
                                         <span className="status-dot red mt-1.5"></span><div className="font-medium">{flag}</div>
                                     </div>
                                 )) : <div className="text-xs text-[var(--muted)] italic p-2">No critical red flags identified.</div>}
@@ -639,7 +636,7 @@ export default function Analyzer() {
                                 <div className="flex flex-col gap-2 border-t border-[var(--hairline)] pt-4 mt-2">
                                     <h6 className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1 flex items-center gap-1.5"><CheckSquare size={12}/> Positive Signals</h6>
                                     {result.positiveSignals.map((sig, i) => (
-                                        <div key={i} className="text-[11px] text-[var(--body)] flex items-start gap-2"><span className="text-emerald-500">✓</span> {sig}</div>
+                                        <div key={sig || i} className="text-[11px] text-[var(--body)] flex items-start gap-2"><span className="text-emerald-500">✓</span> {sig}</div>
                                     ))}
                                 </div>
                             )}
@@ -699,14 +696,12 @@ export default function Analyzer() {
                                     <p className="text-[9px] text-gray-400 m-0 mt-0.5">Scan Type: <strong className="text-white uppercase">{result.scanType}</strong></p>
                                 </div>
                                 <div className="flex items-center gap-1.5 flex-shrink-0">
-                                    <button 
-                                        className="flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 font-bold text-[9px] uppercase tracking-wider active:scale-95 transition-all" 
+                                    <button type="button" className="flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 font-bold text-[9px] uppercase tracking-wider active:scale-95 transition-all" 
                                         onClick={handleReport}
                                     >
                                         <Flag size={11} /> Flag
                                     </button>
-                                    <button 
-                                        className="p-1 rounded-lg border border-white/10 text-gray-400 hover:text-white bg-slate-900/50 flex items-center justify-center w-7 h-7 active:scale-95 transition-all" 
+                                    <button type="button" className="p-1 rounded-lg border border-white/10 text-gray-400 hover:text-white bg-slate-900/50 flex items-center justify-center w-7 h-7 active:scale-95 transition-all" 
                                         onClick={() => setShowBottomSheet(false)}
                                     >
                                         <X size={14} />
@@ -747,7 +742,7 @@ export default function Analyzer() {
                                             </h4>
                                             <div className="flex flex-col gap-2.5">
                                                 {(result.breakdown || []).map((item, i) => (
-                                                    <div key={i} className="flex flex-col gap-1">
+                                                    <div key={item.label || i} className="flex flex-col gap-1.5">
                                                         <div className="flex justify-between items-center text-[10px] font-bold">
                                                             <span className="text-gray-300">{item.label}</span>
                                                             <span className={item.value < 40 ? 'text-red-400' : item.value < 75 ? 'text-amber-400' : 'text-emerald-400'}>{item.value}%</span>
@@ -782,7 +777,7 @@ export default function Analyzer() {
                                             </AlertTitle>
                                             <AlertDescription className="flex flex-col gap-2">
                                                 {result.redFlags?.length > 0 ? result.redFlags.map((flag, i) => (
-                                                    <div key={i} className="px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-200 text-[11px] leading-relaxed flex items-start gap-2">
+                                                    <div key={flag || i} className="px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] leading-relaxed flex items-start gap-2 font-medium">
                                                         <span className="status-dot red mt-1.5"></span><div className="font-medium">{flag}</div>
                                                     </div>
                                                 )) : <div className="text-[10px] text-gray-400 italic">No critical red flags identified.</div>}
@@ -809,7 +804,7 @@ export default function Analyzer() {
                                                 </h5>
                                                 <div className="flex flex-col gap-1.5">
                                                     {result.positiveSignals.map((sig, i) => (
-                                                        <div key={i} className="text-[11px] text-gray-300 flex items-start gap-1.5"><span className="text-emerald-500">✓</span> {sig}</div>
+                                                        <div key={sig || i} className="text-[10px] text-gray-300 flex items-start gap-2"><span className="text-emerald-500 font-bold">✓</span> <span className="pt-0.5">{sig}</span></div>
                                                     ))}
                                                 </div>
                                             </div>
@@ -828,8 +823,7 @@ export default function Analyzer() {
                     className="md:hidden fixed left-4 right-4 z-40"
                     style={{ bottom: 'calc(76px + env(safe-area-inset-bottom, 0px))' }}
                 >
-                    <button 
-                        className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-xs uppercase tracking-widest shadow-lg border border-blue-500/30 flex items-center justify-center gap-2 active:scale-95 transition-all"
+                    <button type="button" className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-xs uppercase tracking-widest shadow-lg border border-blue-500/30 flex items-center justify-center gap-2 active:scale-95 transition-all"
                         onClick={() => setShowBottomSheet(true)}
                     >
                         <ShieldCheck size={14} /> View Latest Result ({result.score}%)
@@ -856,8 +850,7 @@ export default function Analyzer() {
                 className="md:hidden fixed left-0 right-0 z-40 bg-[var(--canvas)]/80 backdrop-blur-md border-t border-[var(--hairline)] p-3.5 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]"
                 style={{ bottom: 'calc(64px + env(safe-area-inset-bottom, 0px))' }}
             >
-                <button
-                    className="w-full relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 active:scale-[0.98] text-white py-3.5 rounded-xl font-black text-xs tracking-widest transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                <button type="button" className="w-full relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 active:scale-[0.98] text-white py-3.5 rounded-xl font-black text-xs tracking-widest transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                     onClick={handleAnalyze}
                     disabled={loading}
                 >

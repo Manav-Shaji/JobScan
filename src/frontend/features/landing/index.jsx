@@ -569,12 +569,12 @@ export function FooterSection() {
                             The world&apos;s most advanced AI-powered job fraud detection engine. Protecting millions of career seekers from sophisticated employment scams.
                         </p>
                         <div className="flex gap-3">
-                            <a href="#" aria-label="Twitter X profile" className="social-icon-btn" style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)' }}>
+                            <Link href="/" aria-label="Twitter X profile" className="social-icon-btn" style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)' }}>
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
-                            </a>
-                            <a href="#" aria-label="LinkedIn profile" className="social-icon-btn" style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)' }}>
+                            </Link>
+                            <Link href="/" aria-label="LinkedIn profile" className="social-icon-btn" style={{ width: '36px', height: '36px', borderRadius: '10px', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)' }}>
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
-                            </a>
+                            </Link>
                         </div>
                     </div>
  
@@ -591,8 +591,8 @@ export function FooterSection() {
                             <div>
                                 <h6 style={{ fontWeight: 800, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '24px', color: 'var(--on-dark)' }}>Legal</h6>
                                 <ul className="flex flex-col gap-3">
-                                    <li><a href="#" className="footer-link-premium" style={{ color: 'var(--muted)', textDecoration: 'none', fontSize: '15px' }}>Privacy Policy</a></li>
-                                    <li><a href="#" className="footer-link-premium" style={{ color: 'var(--muted)', textDecoration: 'none', fontSize: '15px' }}>Terms of Service</a></li>
+                                    <li><Link href="/privacy" className="footer-link-premium" style={{ color: 'var(--muted)', textDecoration: 'none', fontSize: '15px' }}>Privacy Policy</Link></li>
+                                    <li><Link href="/terms" className="footer-link-premium" style={{ color: 'var(--muted)', textDecoration: 'none', fontSize: '15px' }}>Terms of Service</Link></li>
                                     <li><a href="#contact" className="footer-link-premium" style={{ color: 'var(--muted)', textDecoration: 'none', fontSize: '15px' }}>Contact</a></li>
                                 </ul>
                             </div>
@@ -604,7 +604,7 @@ export function FooterSection() {
                         <p style={{ fontSize: '14px', color: 'var(--muted)', marginBottom: '20px' }}>Join 10k+ subscribers getting weekly career safety tips.</p>
                         <div className="newsletter-wrap flex items-center gap-0" style={{ background: 'var(--surface-elevated)', borderRadius: '14px', padding: '4px', border: '1px solid var(--hairline)', boxShadow: '0 4px 10px rgba(0,0,0,0.05)', backdropFilter: 'blur(8px)' }}>
                             <input type="email" aria-label="Newsletter email address" placeholder="Email address" style={{ flex: 1, padding: '10px 16px', borderRadius: '12px', background: 'transparent', border: 'none', fontSize: '14px', color: 'var(--on-dark)', outline: 'none', width: '100%' }} />
-                            <button aria-label="Subscribe to newsletter" style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'var(--cta)', border: 'none', color: '#fff', fontSize: '16px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(var(--cta-rgb), 0.3)' }}><ArrowRight size={16} /></button>
+                            <button type="button" aria-label="Subscribe to newsletter" style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'var(--cta)', border: 'none', color: '#fff', fontSize: '16px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(var(--cta-rgb), 0.3)' }}><ArrowRight size={16} /></button>
                         </div>
                     </div>
                 </div>

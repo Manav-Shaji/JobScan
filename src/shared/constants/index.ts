@@ -1,19 +1,19 @@
-export const SCAN_COOLDOWN_MS = 10 * 1000;
+const SCAN_COOLDOWN_MS = 10 * 1000;
 
-export const RISK_LEVELS = {
+const RISK_LEVELS = {
   LOW: 'LOW',
   MEDIUM: 'MEDIUM',
   HIGH: 'HIGH',
   CRITICAL: 'CRITICAL',
 } as const;
 
-export const VERDICTS = {
+const VERDICTS = {
   SAFE: 'safe',
   CAUTION: 'caution',
   SCAM: 'scam',
 } as const;
 
-export const CACHE_KEYS = {
+const CACHE_KEYS = {
   ANALYZE_RATE_LIMIT: 'analyze',
   USER_RATE_LIMIT: 'user',
 } as const;

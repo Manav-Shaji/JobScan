@@ -90,8 +90,7 @@ export function ChatWidget() {
 
   return (
     <>
-      <button 
-        className={`fixed bottom-6 right-6 w-14 h-14 rounded-full flex items-center justify-center text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] z-[1001] transition-all duration-300 hover:scale-110 ${isOpen ? 'bg-slate-800 rotate-90 shadow-none' : 'bg-gradient-to-tr from-blue-600 to-indigo-600'}`} 
+      <button type="button" className={`fixed bottom-6 right-6 w-14 h-14 rounded-full flex items-center justify-center text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] z-[1001] transition-all duration-300 hover:scale-110 ${isOpen ? 'bg-slate-800 rotate-90 shadow-none' : 'bg-gradient-to-tr from-blue-600 to-indigo-600'}`} 
         onClick={() => setIsOpen(prev => !prev)}
       >
         {isOpen ? <X size={24} /> : <Sparkles size={24} />}

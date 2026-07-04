@@ -126,7 +126,7 @@ export function Toaster() {
     <ToastProvider>
       {toasts.map(function ({ id, title, description, action, variant, ...props }) {
         return (
-          <Toast key={id} variant={variant} {...props} className="border-none shadow-2xl">
+          <Toast variant={variant} {...props} key={id} className="border-none shadow-2xl">
             <div className="flex gap-4 w-full items-start">
               <div className={`shrink-0 flex items-center justify-center h-10 w-10 rounded-full border ${
                 variant === 'destructive' ? 'bg-red-500/10 border-red-500/20' : 

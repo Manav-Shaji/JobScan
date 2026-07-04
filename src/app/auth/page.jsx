@@ -344,12 +344,12 @@ function AuthContent() {
                                                 Remember me
                                             </span>
                                         </label>
-                                        <a
-                                            href="#"
+                                        <Link
+                                            href="/"
                                             className="text-xs text-[var(--cta)] hover:text-[var(--cta-hover)] font-semibold transition-colors text-decoration-none"
                                         >
                                             Forgot password?
-                                        </a>
+                                        </Link>
                                     </div>
 
                                     {/* Submit Button */}
@@ -509,7 +509,7 @@ function AuthContent() {
                                             className="mt-0.5 w-4 h-4 rounded border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-[var(--cta)] focus:ring-offset-0 focus:ring-[var(--cta)]"
                                         />
                                         <span className="text-xs text-[var(--muted)] group-hover:text-[var(--on-dark)] transition-colors leading-tight">
-                                            I agree to the <a href="#" className="text-[var(--cta)] hover:underline">Terms</a> and <a href="#" className="text-[var(--cta)] hover:underline">Policy</a>
+                                            I agree to the <Link href="/terms" className="text-[var(--cta)] hover:underline">Terms</Link> and <Link href="/policy" className="text-[var(--cta)] hover:underline">Policy</Link>
                                         </span>
                                     </label>
 

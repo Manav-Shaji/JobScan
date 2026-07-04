@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "ext:dev": "wxt src/extension",
-    "ext:build": "wxt build src/extension"
+    "ext:dev": "wxt extension",
+    "ext:build": "wxt build extension"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

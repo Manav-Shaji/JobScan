@@ -15,8 +15,7 @@ export default function OfflinePage() {
         You are currently offline. Please check your network connection to continue analyzing job postings.
       </p>
 
-      <button 
-        onClick={() => window.location.reload()}
+      <button type="button" onClick={() => window.location.reload()}
         className="button-primary mb-4 w-full max-w-[280px]"
       >
         Retry Connection
