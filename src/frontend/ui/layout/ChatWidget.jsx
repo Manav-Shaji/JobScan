@@ -86,7 +86,7 @@ export function ChatWidget() {
     } finally { setIsLoading(false); }
   }, [input, isLoading, currentJobContext]);
 
-  if (!mounted) return null;
+  if (!mounted || !user) return null;
 
   return (
     <>

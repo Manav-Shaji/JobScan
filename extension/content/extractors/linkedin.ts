@@ -3,7 +3,9 @@ import { JobData, JobExtractor } from '../types';
 
 export class LinkedInExtractor implements JobExtractor {
   canHandle(url: string): boolean {
-    return url.includes('linkedin.com/jobs/view/') || url.includes('linkedin.com/jobs/collections/');
+    return url.includes('linkedin.com/jobs/view/') || 
+           url.includes('linkedin.com/jobs/collections/') || 
+           url.includes('linkedin.com/jobs/search/');
   }
 
   async extract(): Promise<JobData | null> {

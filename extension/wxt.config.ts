@@ -31,11 +31,11 @@ export default defineConfig({
     },
     resolve: {
       alias: {
-        '@/frontend': path.resolve(__dirname, '../frontend'),
+        '@/frontend': path.resolve(__dirname, '../src/frontend'),
         '@/extension': path.resolve(__dirname, './'),
-        '@/shared': path.resolve(__dirname, '../shared'),
-        '@/lib': path.resolve(__dirname, '../lib'),
-        '@/backend': path.resolve(__dirname, '../backend')
+        '@/shared': path.resolve(__dirname, '../src/shared'),
+        '@/lib': path.resolve(__dirname, '../src/lib'),
+        '@/backend': path.resolve(__dirname, '../src/backend')
       }
     },
     build: {

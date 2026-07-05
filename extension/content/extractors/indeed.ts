@@ -5,7 +5,7 @@ export class IndeedExtractor implements JobExtractor {
   canHandle(url: string): boolean {
     return url.includes('indeed.com/viewjob') || 
            url.includes('indeed.com/rc/clk') || 
-           (url.includes('indeed.com/jobs') && url.includes('vjk='));
+           url.includes('indeed.com/jobs');
   }
 
   async extract(): Promise<JobData | null> {

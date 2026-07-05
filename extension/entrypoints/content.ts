@@ -3,18 +3,32 @@ import { getExtractor } from '../content/extractors/registry';
 
 export default defineContentScript({
   matches: [
-    '*://*.linkedin.com/jobs/*',
+    '*://*.linkedin.com/*',
     '*://*.indeed.com/*',
     '*://*.naukri.com/*'
   ],
   main() {
-    console.log('JobScan Content Script Loaded');
+    console.log('🔥 JobScan Content Script Loaded on URL:', window.location.href);
+    
+    // Visual indicator that the script ran (flashes body red for 500ms)
+    if (document.body) {
+      const originalBg = document.body.style.backgroundColor;
+      document.body.style.backgroundColor = '#ffcccc';
+      setTimeout(() => { document.body.style.backgroundColor = originalBg; }, 500);
+    }
 
     const injectButton = () => {
-      if (!document.body) return; // Wait until body exists
-      if (document.getElementById('jobscan-analyze-btn')) return; // Check DOM instead of boolean
+      console.log('🔥 JobScan: injectButton triggered');
+      if (!document.body && !document.documentElement) {
+        console.log('🔥 JobScan: document.body not ready');
+        return;
+      }
+      if (document.getElementById('jobscan-analyze-btn')) {
+        return;
+      }
       
       const extractor = getExtractor(window.location.href);
+      console.log('🔥 JobScan: Extractor found:', !!extractor, 'for URL:', window.location.href);
       if (!extractor) return;
 
       const btn = document.createElement('button');
@@ -23,30 +37,29 @@ export default defineContentScript({
       btn.style.position = 'fixed';
       btn.style.bottom = '24px';
       btn.style.right = '24px';
-      btn.style.zIndex = '999999';
+      btn.style.zIndex = '2147483647'; // Max safe z-index to guarantee visibility
       btn.style.backgroundColor = '#2563eb';
       btn.style.color = '#ffffff';
       btn.style.padding = '12px 24px';
       btn.style.borderRadius = '9999px';
       btn.style.fontWeight = 'bold';
-      btn.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
+      btn.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.5)'; // Darker shadow
       btn.style.cursor = 'pointer';
-      btn.style.border = 'none';
+      btn.style.border = '2px solid white'; // White border to pop out
+      btn.style.transform = 'translateZ(0)'; // Force hardware acceleration to bypass some hidden overflows
+      btn.style.display = 'block';
 
       btn.onclick = async () => {
         btn.textContent = 'Extracting...';
         btn.style.opacity = '0.8';
         
         // IMPORTANT: Open sidepanel IMMEDIATELY to preserve the user gesture token!
-        // If we wait for extract() to finish, Chrome will block the sidepanel from opening.
         chrome.runtime.sendMessage({ action: 'OPEN_SIDEPANEL' });
         
         try {
           const data = await extractor.extract();
           if (data) {
-            // Save to storage
             await chrome.storage.local.set({ latestJobExtraction: data });
-            
             btn.textContent = 'Job Extracted!';
             btn.style.backgroundColor = '#16a34a';
           } else {
@@ -66,7 +79,8 @@ export default defineContentScript({
         }, 3000);
       };
 
-      document.body.appendChild(btn);
+      // Append directly to HTML tag (documentElement) to bypass body transforms/overflow issues
+      (document.documentElement || document.body).appendChild(btn);
     };
 
     let lastUrl = window.location.href;
@@ -77,8 +91,8 @@ export default defineContentScript({
       if (observer) observer.disconnect();
       
       // Route-aware execution
-      const isJobPage = window.location.href.includes('/jobs/') || window.location.href.includes('/job/');
-      if (!isJobPage) return;
+      const hasExtractor = getExtractor(window.location.href) !== null;
+      if (!hasExtractor) return;
 
       observer = new MutationObserver(() => {
         if (throttleTimer) return;
@@ -88,8 +102,10 @@ export default defineContentScript({
         }, 500); // Throttling
       });
 
-      const targetNode = document.body; // Ideally scoped to job panel, but fallback to body with throttle
-      observer.observe(targetNode, { childList: true, subtree: true });
+      const targetNode = document.body || document.documentElement;
+      if (targetNode) {
+        observer.observe(targetNode, { childList: true, subtree: true });
+      }
     };
 
     setInterval(() => {

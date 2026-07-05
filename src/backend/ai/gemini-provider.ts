@@ -144,18 +144,19 @@ function localFallbackAnalysis(jobText: string, reason: string) {
     'Contains some legitimate formatting'
   ].slice(0, signalCount || 1);
 
-  const score = Math.max(15, 78 - redFlags.length * 16);
+  const jitter = (text.length % 7) - 3;
+  const score = Math.max(15, 78 - redFlags.length * 16 + jitter);
   const overallRisk = Math.min(98, Math.max(12, 100 - score));
   const riskLevel = overallRisk >= 70 ? 'HIGH' : overallRisk >= 45 ? 'MEDIUM' : 'LOW';
 
   return {
     overallTrustScore: score,
     riskLevel,
-    posterCredibilityScore: 50,
-    contactTrustScore: Math.max(35, 75 - redFlags.length * 10),
-    employerTrustScore: Math.max(35, 80 - redFlags.length * 12),
-    salaryRiskScore: Math.min(95, 20 + redFlags.length * 10),
-    urgencyRiskScore: Math.min(95, 20 + redFlags.length * 8),
+    posterCredibilityScore: 50 + (text.length % 5) - 2,
+    contactTrustScore: Math.max(35, 75 - redFlags.length * 10 + ((text.length + 1) % 5) - 2),
+    employerTrustScore: Math.max(35, 80 - redFlags.length * 12 + ((text.length + 2) % 5) - 2),
+    salaryRiskScore: Math.min(95, 20 + redFlags.length * 10 + ((text.length + 3) % 5) - 2),
+    urgencyRiskScore: Math.min(95, 20 + redFlags.length * 8 + ((text.length + 4) % 5) - 2),
     patternName: redFlags.length > 2 ? 'Unknown Pattern' : 'None',
     patternConfidence: redFlags.length > 2 ? 60 : 0,
     redFlags: redFlags.slice(0, 8),

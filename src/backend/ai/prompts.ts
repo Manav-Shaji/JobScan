@@ -10,6 +10,7 @@ SCHEMA:
 {"overallTrustScore":0,"riskLevel":"LOW","posterCredibilityScore":0,"contactTrustScore":0,"employerTrustScore":0,"salaryRiskScore":0,"urgencyRiskScore":0,"patternName":"Unknown","patternConfidence":0,"redFlags":[],"positiveSignals":[],"summary":"","extractedText":""}
 
 SCORING (0-100): Trust (0=Extremely Untrustworthy, 100=Highly Trustworthy), Risk (0=Safe, 100=Dangerous).
+DO NOT use rounded numbers (like 85, 45, 60). Use precise, highly variable integers (e.g. 83, 47, 62) to reflect organic nuance.
 RISK LEVELS: LOW, MEDIUM, HIGH, CRITICAL.
 
 WEIGHTED SIGNALS:
