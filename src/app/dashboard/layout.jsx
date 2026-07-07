@@ -1,4 +1,4 @@
-import { AppClientWrapper } from '@/frontend/ui/layout/AppClientWrapper'
+import { AppClientWrapper } from '@/core/ui/AppClientWrapper'
 
 export default function AppLayout({ children }) {
   return (

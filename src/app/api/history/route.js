@@ -1,5 +1,5 @@
-import { createRouteHandler } from '@/backend/api/route-utils';
-import { getUserHistory } from '@/backend/services/user-service';
+import { createRouteHandler } from '@/core/api/route-utils';
+import { getUserHistory } from '@/features/users/service';
 
 export const GET = createRouteHandler({
   auth: 'user',

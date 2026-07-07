@@ -9,15 +9,6 @@
       ],
       "@/extension/*": [
         "./extension/*"
-      ],
-      "@/frontend/*": [
-        "./src/frontend/*"
-      ],
-      "@/backend/*": [
-        "./src/backend/*"
-      ],
-      "@/shared/*": [
-        "./src/shared/*"
       ]
     },
     "jsx": "preserve",

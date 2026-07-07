@@ -1,6 +1,5 @@
-import { createRouteHandler } from '@/backend/api/route-utils';
-import { reportSchema } from '@/shared/validators/report';
-import { createReport } from '@/backend/services/report-service';
+import { createRouteHandler } from '@/core/api/route-utils';
+import { reportSchema, createReport } from '@/features/reports/service';
 
 export const POST = createRouteHandler({
   auth: 'user',

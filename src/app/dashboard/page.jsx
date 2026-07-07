@@ -2,18 +2,17 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useAuth } from '@/frontend/providers/auth-provider';
-import api from '@/frontend/utils/api-client';
-import { TabsContent } from "@/frontend/ui/navigation";
-import { useToast } from "@/frontend/hooks/use-toast";
-import { Toaster } from "@/frontend/ui/feedback/toasts";
-import { DashboardLayout } from '@/frontend/features/dashboard/DashboardLayout';
+import { useAuth } from '@/core/providers/auth-provider';
+import api from '@/core/lib/api-client';
+import { Tabs, TabsContent } from "@/core/ui/navigation";
+import { useToast } from "@/core/ui/use-toast";
+import { Toaster } from "@/core/ui/toasts";
 import dynamic from 'next/dynamic';
 
-const Overview = dynamic(() => import('@/frontend/features/dashboard/Overview').then(mod => mod.Overview), { ssr: false });
-const History = dynamic(() => import('@/frontend/features/dashboard/History').then(mod => mod.History), { ssr: false });
-const Profile = dynamic(() => import('@/frontend/features/dashboard/Profile').then(mod => mod.Profile), { ssr: false });
-const Settings = dynamic(() => import('@/frontend/features/dashboard/Settings').then(mod => mod.Settings), { ssr: false });
+const Overview = dynamic(() => import('@/features/scans/Overview').then(mod => mod.Overview), { ssr: false });
+const History = dynamic(() => import('@/features/scans/History').then(mod => mod.History), { ssr: false });
+const Profile = dynamic(() => import('@/features/users/Profile').then(mod => mod.Profile), { ssr: false });
+const Settings = dynamic(() => import('@/features/users/Settings').then(mod => mod.Settings), { ssr: false });
 const Analyzer = dynamic(() => import('./analyzer/page'), { ssr: false });
 
 export default function SuperDashboard() {
@@ -114,7 +113,7 @@ export default function SuperDashboard() {
     };
 
     return (
-        <DashboardLayout activeTab={activeTab} setActiveTab={setActiveTab}>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full fade-in">
             <Toaster />
             
             {/* --- Tab: Analyzer --- */}
@@ -151,6 +150,6 @@ export default function SuperDashboard() {
             <TabsContent value="settings">
                 <Settings formData={formData} setFormData={setFormData} loading={loading} />
             </TabsContent>
-        </DashboardLayout>
+        </Tabs>
     );
 }

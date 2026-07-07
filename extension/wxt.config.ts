@@ -2,8 +2,6 @@
 import { defineConfig } from 'wxt';
 import path from 'path';
 
-
-
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   outDir: '../../dist-ext',
@@ -24,18 +22,14 @@ export default defineConfig({
     }
   },
   vite: () => ({
-    esbuild: {
-      loader: 'tsx',
-      include: /src\/.*\.[tj]sx?$/,
-      exclude: []
-    },
+
     resolve: {
       alias: {
-        '@/frontend': path.resolve(__dirname, '../src/frontend'),
-        '@/extension': path.resolve(__dirname, './'),
+        '@/core': path.resolve(__dirname, '../src/core'),
+        '@/features': path.resolve(__dirname, '../src/features'),
         '@/shared': path.resolve(__dirname, '../src/shared'),
-        '@/lib': path.resolve(__dirname, '../src/lib'),
-        '@/backend': path.resolve(__dirname, '../src/backend')
+        '@/app': path.resolve(__dirname, '../src/app'),
+        '@/extension': path.resolve(__dirname, './')
       }
     },
     build: {
@@ -48,6 +42,10 @@ export default defineConfig({
             return;
           }
           warn(warning);
+        },
+        moduleTypes: {
+          '.tsx': 'tsx',
+          '.jsx': 'jsx',
         }
       }
     }

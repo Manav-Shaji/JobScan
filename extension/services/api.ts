@@ -1,7 +1,57 @@
 /* eslint-disable */
-// API Adapter for Chrome Extension
 
-import { getApiBaseUrl } from './environment';
+// --- Environment Detection ---
+
+const LOCAL_API = 'http://localhost:3000/api';
+const PROD_API = 'https://job-scan-black.vercel.app/api';
+
+const CACHE_DURATION_MS = 60 * 1000;
+let cachedUrl: string | null = null;
+let cacheExpiry: number = 0;
+
+async function detectEnvironment(): Promise<string> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1000);
+
+    const response = await fetch(`${LOCAL_API}/stats`, {
+      method: 'GET',
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (response) {
+      return LOCAL_API;
+    }
+  } catch (error) {
+    // Ignore errors (timeout, connection refused, etc.) and fallback to PROD
+  }
+  
+  return PROD_API;
+}
+
+async function getApiBaseUrl(): Promise<string> {
+  const now = Date.now();
+
+  if (cachedUrl && now < cacheExpiry) {
+    return cachedUrl;
+  }
+
+  const url = await detectEnvironment();
+  cachedUrl = url;
+  cacheExpiry = now + CACHE_DURATION_MS;
+
+  console.log(`[JobScan Env] Active API Base: ${url} (Cached for 60s)`);
+  return url;
+}
+
+export function clearEnvironmentCache(): void {
+  cachedUrl = null;
+  cacheExpiry = 0;
+}
+
+// --- API ---
 
 export async function analyzeJob(
   jobData: any,

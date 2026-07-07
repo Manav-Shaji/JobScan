@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, Separator, Skeleton, Alert, Switch, Label } from '@/extension/shared/ui';
+import { Card, CardHeader, CardTitle, CardContent, Separator, Skeleton, Alert, Switch, Label } from '@/extension/ui';
 import { analyzeJob } from '@/extension/services/api';
 import { getHistory, addHistory, clearHistory, getCachedAnalysis, HistoryItem } from '@/extension/services/history';
 

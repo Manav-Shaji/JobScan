@@ -1,7 +1,7 @@
-import { createRouteHandler } from '@/backend/api/route-utils';
-import { registerSchema } from '@/shared/validators/auth';
-import { registerUser } from '@/backend/services/auth-service';
-import { ApiError } from '@/backend/api/errors';
+import { createRouteHandler } from '@/core/api/route-utils';
+import { registerSchema } from '@/features/users/validation';
+import { registerUser } from '@/features/users/auth.service';
+import { ApiError } from '@/core/api/response';
 
 export const POST = createRouteHandler({
   auth: 'none',

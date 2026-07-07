@@ -1,14 +1,12 @@
-import NextAuth from 'next-auth';
-import { authConfig } from '@/backend/auth/config';
+import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
 
-const { auth } = NextAuth({
-    ...authConfig,
-    secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
-});
-
-export default auth((req) => {
-    const isLoggedIn = !!req.auth;
+export async function middleware(req) {
+    const token = await getToken({ 
+        req, 
+        secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET 
+    });
+    const isLoggedIn = !!token;
     const isAuthPage = req.nextUrl.pathname.startsWith('/auth');
     const isAppPage = req.nextUrl.pathname.startsWith('/dashboard');
 
@@ -16,7 +14,7 @@ export default auth((req) => {
         if (isLoggedIn) {
             return NextResponse.redirect(new URL('/dashboard', req.url));
         }
-        return null;
+        return NextResponse.next();
     }
 
     if (isAppPage && !isLoggedIn && req.nextUrl.pathname !== '/dashboard/analyzer') {
@@ -29,8 +27,8 @@ export default auth((req) => {
         );
     }
 
-    return null;
-});
+    return NextResponse.next();
+}
 
 export const config = {
     matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],

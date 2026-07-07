@@ -3,8 +3,8 @@
 import { useState, Suspense, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useAuth } from '@/frontend/providers/auth-provider';
-import { ThemeToggle } from '@/frontend/ui/layout/ThemeToggle';
+import { useAuth } from '@/core/providers/auth-provider';
+import { ThemeToggle } from '@/core/ui/ThemeToggle';
 import { 
     ShieldCheck, 
     AlertTriangle, 
@@ -16,7 +16,9 @@ import {
     Globe, 
     Smartphone 
 } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/frontend/ui/navigation";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/core/ui/navigation";
+import { motion, AnimatePresence } from 'motion/react';
+import { scaleUp, slideUp } from '@/core/motion';
 
 function AuthContent() {
     const searchParams = useSearchParams();
@@ -195,7 +197,7 @@ function AuthContent() {
             </nav>
 
             {/* Card Wrapper with Animated Rotating Border Glow */}
-            <div className="auth-card-wrapper fade-in-section is-visible z-10 mx-4">
+            <motion.div className="auth-card-wrapper z-10 mx-4" variants={scaleUp} initial="hidden" animate="visible">
                 <div className="auth-card-inner">
                     
                     {/* Left Branding Panel */}
@@ -269,12 +271,14 @@ function AuthContent() {
                                     <p className="text-xs text-[var(--muted)] font-medium">Verify your identity to proceed</p>
                                 </div>
 
+                                <AnimatePresence mode="wait">
                                 {error && mode === 'login' && (
-                                    <div className="mb-4 flex items-center gap-2.5 text-xs p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 font-semibold animate-field-2">
+                                    <motion.div key="login-error" variants={slideUp} initial="hidden" animate="visible" exit="exit" className="mb-4 flex items-center gap-2.5 text-xs p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 font-semibold">
                                         <AlertTriangle size={16} className="shrink-0 text-red-400" />
                                         <span>{error}</span>
-                                    </div>
+                                    </motion.div>
                                 )}
+                                </AnimatePresence>
 
                                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                                     {/* Email */}
@@ -395,12 +399,14 @@ function AuthContent() {
                                     <p className="text-xs text-[var(--muted)] font-medium">Request system access</p>
                                 </div>
 
+                                <AnimatePresence mode="wait">
                                 {error && mode === 'signup' && (
-                                    <div className="mb-4 flex items-center gap-2.5 text-xs p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 font-semibold animate-field-2">
+                                    <motion.div key="signup-error" variants={slideUp} initial="hidden" animate="visible" exit="exit" className="mb-4 flex items-center gap-2.5 text-xs p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 font-semibold">
                                         <AlertTriangle size={16} className="shrink-0 text-red-400" />
                                         <span>{error}</span>
-                                    </div>
+                                    </motion.div>
                                 )}
+                                </AnimatePresence>
 
                                 <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
                                     {/* Full Name */}
@@ -543,7 +549,7 @@ function AuthContent() {
                     </div>
 
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 }

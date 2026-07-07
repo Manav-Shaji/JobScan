@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { getExtractor } from '../content/extractors/registry';
+import { getExtractor } from '../extractors/registry';
 
 export default defineContentScript({
   matches: [

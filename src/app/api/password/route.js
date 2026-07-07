@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
-import { createRouteHandler } from '@/backend/api/route-utils';
-import { updatePasswordSchema } from '@/shared/validators/auth';
-import { updatePassword } from '@/backend/services/user-service';
+import { createRouteHandler } from '@/core/api/route-utils';
+import { updatePasswordSchema } from '@/features/users/validation';
+import { updatePassword } from '@/features/users/service';
 
 export const POST = createRouteHandler({
   auth: 'user',

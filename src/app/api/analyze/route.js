@@ -1,7 +1,7 @@
-import { createRouteHandler } from '@/backend/api/route-utils';
-import { scanSchema } from '@/shared/validators/scan';
-import { analyzeJob } from '@/backend/services/scan-service';
-import { UPLOAD_LIMITS } from '@/shared/constants/index';
+import { createRouteHandler } from '@/core/api/route-utils';
+import { scanSchema } from '@/features/scans/validation';
+import { analyzeJob } from '@/features/scans/service';
+import { UPLOAD_LIMITS } from '@/shared/constants';
 
 export const POST = createRouteHandler({
   auth: 'optional',

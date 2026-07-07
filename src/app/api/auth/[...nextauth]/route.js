@@ -1,3 +1,3 @@
-import { handlers } from '@/backend/auth';
+import { handlers } from '@/core/auth';
 
 export const { GET, POST } = handlers;

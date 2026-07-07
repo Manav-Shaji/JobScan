@@ -4,11 +4,11 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@/frontend/*": ["../frontend/*"],
-      "@/extension/*": ["./*"],
-      "@/shared/*": ["../shared/*"],
-      "@/lib/*": ["../lib/*"],
-      "@/backend/*": ["../backend/*"]
+      "@/core/*": ["../src/core/*"],
+      "@/features/*": ["../src/features/*"],
+      "@/shared/*": ["../src/shared/*"],
+      "@/app/*": ["../src/app/*"],
+      "@/extension/*": ["./*"]
     }
   }
 }

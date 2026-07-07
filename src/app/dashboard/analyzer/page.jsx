@@ -2,13 +2,13 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
-const TrustScore = dynamic(() => import('@/frontend/features/landing/features').then(mod => mod.TrustScore));
-const SignupWall = dynamic(() => import('@/frontend/features/landing/features').then(mod => mod.SignupWall));
-import api from '@/frontend/utils/api-client';
-import { useScanLimit } from '@/frontend/hooks/use-scan-limit';
-import { useJob } from '@/frontend/providers/job-provider';
-import { useToast } from "@/frontend/hooks/use-toast";
-import { Toaster } from "@/frontend/ui/feedback/toasts";
+const TrustScore = dynamic(() => import('@/app/(landing)/features').then(mod => mod.TrustScore));
+const SignupWall = dynamic(() => import('@/app/(landing)/features').then(mod => mod.SignupWall));
+import api from '@/core/lib/api-client';
+import { useScanLimit } from '@/features/scans/use-scan-limit';
+import { useJob } from '@/core/providers/providers';
+import { useToast } from "@/core/ui/use-toast";
+import { Toaster } from "@/core/ui/toasts";
 import {
     ShieldCheck,
     Cpu,
@@ -33,10 +33,12 @@ import {
     CheckSquare,
     FileSearch
 } from 'lucide-react';
-import { Textarea } from "@/frontend/ui/forms";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/frontend/ui/navigation";
-import { Alert, AlertDescription, AlertTitle } from "@/frontend/ui/feedback/Alert";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/frontend/ui/layout";
+import { Textarea } from "@/core/ui/forms";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/core/ui/navigation";
+import { Alert, AlertDescription, AlertTitle } from "@/core/ui/Alert";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/core/ui/layout";
+import { motion, AnimatePresence } from 'motion/react';
+import { staggerContainer, slideUp, scaleUp } from '@/core/motion';
 
 export default function Analyzer() {
     const { setCurrentJobContext } = useJob();
@@ -499,8 +501,9 @@ export default function Analyzer() {
             </div>
 
             {/* --- Loading State --- */}
+            <AnimatePresence>
             {loading && (
-                <div className="glass-card premium-card-edge rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden border border-blue-500/20 soft-glow fade-slide-up-in mb-6">
+                <motion.div variants={scaleUp} initial="hidden" animate="visible" exit="exit" className="glass-card premium-card-edge rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden border border-blue-500/20 soft-glow mb-6">
                     <div className="text-center mb-8">
                         <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 mx-auto mb-4 shadow-[0_0_25px_rgba(59,130,246,0.15)]">
                             <Fingerprint size={32} className="animate-pulse text-blue-400" />
@@ -529,13 +532,14 @@ export default function Analyzer() {
                     <div className="w-56 h-1.5 bg-[var(--hairline)] rounded-full mx-auto overflow-hidden border border-[var(--hairline-strong)]">
                         <div className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-500 rounded-full transition-all duration-300 ease-out" style={{ width: `${Math.min(100, ((activeStage) / loadingMessages.length) * 100)}%` }}></div>
                     </div>
-                </div>
+                </motion.div>
             )}
+            </AnimatePresence>
 
             {/* --- Results View --- */}
             {result && !result.error && !loading && (
-                <div className="hidden md:block fade-in space-y-6">
-                    <div className="flex flex-col md:flex-row justify-between items-center md:items-center gap-4 p-4 bg-[rgba(var(--primary-rgb),0.03)] rounded-2xl border border-[var(--hairline)]">
+                <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="hidden md:block space-y-6">
+                    <motion.div variants={slideUp} className="flex flex-col md:flex-row justify-between items-center md:items-center gap-4 p-4 bg-[rgba(var(--primary-rgb),0.03)] rounded-2xl border border-[var(--hairline)]">
                         <div className="flex items-center gap-3">
                             <div className="w-1.5 h-8 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
                             <div>
@@ -546,11 +550,11 @@ export default function Analyzer() {
                         <button type="button" className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 font-bold text-xs uppercase tracking-wider hover:bg-red-500/15 hover:scale-105 transition-all shadow-sm w-full md:w-auto" onClick={handleReport}>
                             <Flag size={13} /> Flag Scam
                         </button>
-                    </div>
+                    </motion.div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                         {/* 1. Trust Assessment Score Card */}
-                        <div className="lg:col-span-4 flex flex-col">
+                        <motion.div variants={slideUp} className="lg:col-span-4 flex flex-col">
                             <div className="glass-card premium-card-edge rounded-3xl p-6 shadow-xl flex-1 flex flex-col items-center justify-center relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
                                 <h4 className="text-[11px] font-black uppercase tracking-widest text-[var(--muted)] mb-4 relative z-10 w-full text-center">OVERALL TRUST SCORE</h4>
@@ -558,13 +562,13 @@ export default function Analyzer() {
                                     <TrustScore score={result.score} visible={true} />
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
 
                         {/* Analysis Grid & Extracted Text */}
                         <div className="lg:col-span-8 flex flex-col gap-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {/* 3. Poster Analysis or Breakdown */}
-                                <div className="glass-card premium-card-edge rounded-3xl p-5 shadow-xl relative overflow-hidden">
+                                <motion.div variants={slideUp} className="glass-card premium-card-edge rounded-3xl p-5 shadow-xl relative overflow-hidden">
                                     <h4 className="text-[11px] font-black uppercase tracking-widest text-[var(--muted)] mb-4 flex items-center gap-2"><Briefcase size={14} className="text-emerald-400"/> Analysis Criteria</h4>
                                     <div className="flex flex-col gap-3">
                                         {(result.breakdown || []).map((item, i) => (
@@ -579,10 +583,10 @@ export default function Analyzer() {
                                             </div>
                                         ))}
                                     </div>
-                                </div>
+                                </motion.div>
 
                                 {/* 4. Scam Pattern Match */}
-                                <div className="glass-card premium-card-edge rounded-3xl p-5 shadow-xl relative overflow-hidden bg-gradient-to-br from-[rgba(var(--primary-rgb),0.02)] to-[rgba(var(--surface-elevated-rgb),1)]">
+                                <motion.div variants={slideUp} className="glass-card premium-card-edge rounded-3xl p-5 shadow-xl relative overflow-hidden bg-gradient-to-br from-[rgba(var(--primary-rgb),0.02)] to-[rgba(var(--surface-elevated-rgb),1)]">
                                     <h4 className="text-[11px] font-black uppercase tracking-widest text-[var(--muted)] mb-4 flex items-center gap-2"><Fingerprint size={14} className="text-purple-400"/> Scam Pattern Match</h4>
                                     <div className="flex flex-col items-center justify-center h-full pb-4">
                                         <div className={`px-4 py-2 rounded-xl border text-sm font-black text-center mb-3 ${result.patternName !== 'Unknown Pattern' && result.patternName !== 'None' ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'}`}>
@@ -592,39 +596,41 @@ export default function Analyzer() {
                                             Confidence: <span className="text-[var(--on-dark)]">{result.patternConfidence}%</span>
                                         </div>
                                     </div>
-                                </div>
+                                </motion.div>
                             </div>
 
                             {/* 2. Extracted Information & Consistency Check */}
                             {result.extractedText && (
-                                <div className="glass-card premium-card-edge rounded-3xl p-5 shadow-xl relative overflow-hidden">
+                                <motion.div variants={slideUp} className="glass-card premium-card-edge rounded-3xl p-5 shadow-xl relative overflow-hidden">
                                     <h4 className="text-[11px] font-black uppercase tracking-widest text-[var(--muted)] mb-3 flex items-center gap-2"><FileSearch size={14} className="text-blue-400"/> Extracted Information (OCR)</h4>
                                     <div className="p-4 rounded-xl bg-[var(--surface-elevated)] border border-[var(--hairline)] max-h-32 overflow-y-auto custom-scrollbar">
                                         <p className="text-[11px] text-[var(--body)] font-mono leading-relaxed whitespace-pre-wrap">{result.extractedText}</p>
                                     </div>
-                                </div>
+                                </motion.div>
                             )}
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* 5. Detected Red Flags */}
-                        <Alert variant="destructive" className="bg-red-500/5 border-red-500/10 rounded-3xl p-6 shadow-lg hover-lift transition-all group">
-                            <div className="w-8 h-8 rounded-xl bg-red-500/10 flex items-center justify-center border border-red-500/20 mb-4 text-red-400"><AlertTriangle size={16} /></div>
-                            <AlertTitle className="text-red-400 font-bold text-sm tracking-tight">
-                                Detected Red Flags ({result.redFlags?.length || 0})
-                            </AlertTitle>
-                            <AlertDescription className="flex flex-col gap-2.5 mt-2">
-                                {result.redFlags?.length > 0 ? result.redFlags.map((flag, i) => (
-                                    <div key={flag || i} className="px-3.5 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-200 text-xs leading-relaxed flex items-start gap-2.5">
-                                        <span className="status-dot red mt-1.5"></span><div className="font-medium">{flag}</div>
-                                    </div>
-                                )) : <div className="text-xs text-[var(--muted)] italic p-2">No critical red flags identified.</div>}
-                            </AlertDescription>
-                        </Alert>
+                        <motion.div variants={slideUp}>
+                            <Alert variant="destructive" className="bg-red-500/5 border-red-500/10 rounded-3xl p-6 shadow-lg hover-lift transition-all group h-full">
+                                <div className="w-8 h-8 rounded-xl bg-red-500/10 flex items-center justify-center border border-red-500/20 mb-4 text-red-400"><AlertTriangle size={16} /></div>
+                                <AlertTitle className="text-red-400 font-bold text-sm tracking-tight">
+                                    Detected Red Flags ({result.redFlags?.length || 0})
+                                </AlertTitle>
+                                <AlertDescription className="flex flex-col gap-2.5 mt-2">
+                                    {result.redFlags?.length > 0 ? result.redFlags.map((flag, i) => (
+                                        <div key={flag || i} className="px-3.5 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-200 text-xs leading-relaxed flex items-start gap-2.5">
+                                            <span className="status-dot red mt-1.5"></span><div className="font-medium">{flag}</div>
+                                        </div>
+                                    )) : <div className="text-xs text-[var(--muted)] italic p-2">No critical red flags identified.</div>}
+                                </AlertDescription>
+                            </Alert>
+                        </motion.div>
 
                         {/* 7. AI Summary */}
-                        <div className="bg-blue-500/5 border border-blue-500/10 rounded-3xl p-6 shadow-lg hover-lift transition-all group h-full">
+                        <motion.div variants={slideUp} className="bg-blue-500/5 border border-blue-500/10 rounded-3xl p-6 shadow-lg hover-lift transition-all group h-full">
                             <h5 className="flex items-center gap-2.5 text-blue-400 font-bold text-sm mb-4 tracking-tight">
                                 <div className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20"><Search size={16} /></div>
                                 AI Summary & Consistency Check
@@ -640,9 +646,9 @@ export default function Analyzer() {
                                     ))}
                                 </div>
                             )}
-                        </div>
+                        </motion.div>
                     </div>
-                </div>
+                </motion.div>
             )}
 
             {/* --- Mobile Bottom Sheet Results View --- */}

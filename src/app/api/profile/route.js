@@ -1,6 +1,6 @@
-import { createRouteHandler } from '@/backend/api/route-utils';
-import { updateProfileSchema } from '@/shared/validators/auth';
-import { updateProfile, deleteAccount, updateRetentionDays } from '@/backend/services/user-service';
+import { createRouteHandler } from '@/core/api/route-utils';
+import { updateProfileSchema } from '@/features/users/validation';
+import { updateProfile, deleteAccount, updateRetentionDays } from '@/features/users/service';
 
 export const POST = createRouteHandler({
   auth: 'user',
