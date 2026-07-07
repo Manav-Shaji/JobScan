@@ -1,15 +1,10 @@
 "use client";
 
-import { useEffect } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { Suspense, useEffect } from 'react'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/core/providers/auth-provider'
 import { TopNavbar } from '@/core/ui/Navbar'
 import { BottomNavigation } from '@/core/ui/BottomNavigation'
-import dynamic from 'next/dynamic'
-
-const ChatWidget = dynamic(() => import('@/core/ui/ChatWidget').then(mod => mod.ChatWidget), {
-  ssr: false
-})
 import { PwaUpdater } from '@/core/ui/PwaUpdater'
 
 export function AppClientWrapper({ children }) {
@@ -58,9 +53,6 @@ export function AppClientWrapper({ children }) {
           </div>
         </main>
         <BottomNavigation />
-        <div className="hidden md:block">
-          <ChatWidget />
-        </div>
         <PwaUpdater />
       </div>
     </>

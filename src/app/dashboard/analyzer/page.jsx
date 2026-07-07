@@ -21,6 +21,7 @@ import { useAnalyzer, loadingMessages } from '@/features/scans/hooks/useAnalyzer
 
 const AnalyzerDesktopResults = dynamic(() => import('@/features/scans/components/AnalyzerDesktopResults').then(mod => mod.AnalyzerDesktopResults));
 const AnalyzerMobileResults = dynamic(() => import('@/features/scans/components/AnalyzerMobileResults').then(mod => mod.AnalyzerMobileResults));
+const ChatWidget = dynamic(() => import('@/core/ui/ChatWidget').then(mod => mod.ChatWidget), { ssr: false });
 
 export default function Analyzer() {
     const { state, setters, handlers, scanLimit } = useAnalyzer();
@@ -175,17 +176,7 @@ export default function Analyzer() {
                 handleReport={handleReport}
             />
 
-            {/* --- Empty State --- */}
-            {!result && !loading && (
-                <div className="p-8 md:p-12 text-center rounded-3xl border border-dashed border-[var(--hairline-strong)] bg-[rgba(var(--primary-rgb),0.02)] flex flex-col items-center justify-center shadow-inner">
-                    <div className="w-14 h-14 rounded-2xl bg-blue-500/5 border border-blue-500/10 flex items-center justify-center text-blue-500/50 mb-4"><Briefcase size={24} /></div>
-                    <h4 className="font-bold text-sm mb-1 text-[var(--on-dark)] tracking-tight">Ready for Verification</h4>
-                    <p className="text-xs text-[var(--muted)] max-w-md leading-relaxed mb-4">
-                        Upload a job poster and paste the description to perform a comprehensive multimodal consistency check.
-                    </p>
-                    <div className="flex items-center gap-2 text-[10px] text-blue-500/50 font-bold tracking-widest uppercase"><span className="status-dot blue"></span> Multimodal Engine Active</div>
-                </div>
-            )}
+
 
             {showSignupWall && <SignupWall onClose={dismissSignupWall} />}
 
@@ -211,6 +202,13 @@ export default function Analyzer() {
                     )}
                 </button>
             </div>
+
+            {/* Chat Widget Container */}
+            {(loading || result) && (
+                <div className="hidden md:block">
+                    <ChatWidget />
+                </div>
+            )}
         </div>
     );
 }

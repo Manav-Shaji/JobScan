@@ -153,12 +153,14 @@ export function AnalyzerMobileResults({
                                                 <Fingerprint size={12} className="text-purple-400"/> Scam Pattern Match
                                             </h4>
                                             <div className="flex flex-col items-center justify-center py-2">
-                                                <div className={`px-3 py-1.5 rounded-lg border text-xs font-black text-center mb-2 bg-[#081124] ${result.patternName !== 'Unknown Pattern' && result.patternName !== 'None' ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'}`}>
-                                                    {result.patternName}
+                                                <div className={`px-3 py-1.5 rounded-lg border text-xs font-black text-center mb-2 bg-[#081124] ${result.patternName && result.patternName !== 'Unknown Pattern' && result.patternName !== 'None' ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'}`}>
+                                                    {result.patternName && result.patternName !== 'None' ? result.patternName : 'None Detected'}
                                                 </div>
-                                                <div className="text-[9px] uppercase font-bold text-gray-400 tracking-widest">
-                                                    Confidence: <span className="text-white">{result.patternConfidence}%</span>
-                                                </div>
+                                                {result.patternConfidence != null && (
+                                                    <div className="text-[9px] uppercase font-bold text-gray-400 tracking-widest">
+                                                        Confidence: <span className="text-white">{result.patternConfidence}%</span>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
 
