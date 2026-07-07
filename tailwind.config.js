@@ -2,11 +2,10 @@
 module.exports = {
   darkMode: ['attribute', 'data-theme', 'class'],
   content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/frontend/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/extension/**/*.{js,ts,jsx,tsx,html}',
+    './src/core/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/features/**/*.{js,ts,jsx,tsx,mdx}',
+    './extension/**/*.{js,ts,jsx,tsx,html}',
   ],
   theme: {
   	extend: {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '@/core/providers/auth-provider';
 import { useJob } from '@/core/providers/providers';
@@ -46,28 +46,29 @@ export function ChatWidget() {
   const [mounted, setMounted] = useState(false);
   const messagesEndRef = useRef(null);
 
-  useEffect(() => { setMounted(true); }, []);
-
-  const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
+    const scrollToBottom = () => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
     if (isOpen) scrollToBottom();
-  }, [messages, isOpen, scrollToBottom]);
-
-  const fetchHistory = useCallback(async () => {
-    try {
-      const data = await api.getChatHistory();
-      if (Array.isArray(data) && data.length > 0) setMessages(data);
-    } catch (error) { console.error("Failed to fetch history:", error); }
-  }, []);
+  }, [messages, isOpen]);
 
   useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const data = await api.getChatHistory();
+        if (Array.isArray(data) && data.length > 0) setMessages(data);
+      } catch (error) { console.error("Failed to fetch history:", error); }
+    };
     if (isOpen && messages.length === 0 && user) fetchHistory();
-  }, [isOpen, messages.length, fetchHistory, user]);
+  }, [isOpen, messages.length, user]);
 
-  const handleSend = useCallback(async (e) => {
+  const handleSend = async (e) => {
     e?.preventDefault();
     const messageText = input.trim();
     if (!messageText || isLoading) return;
@@ -83,8 +84,9 @@ export function ChatWidget() {
     } catch (error) {
       console.error("Chat error:", error);
       setMessages(prev => [...prev, { role: 'assistant', content: "Error connecting to AI. Please try again later." }]);
-    } finally { setIsLoading(false); }
-  }, [input, isLoading, currentJobContext]);
+    }
+    setIsLoading(false);
+  };
 
   if (!mounted || !user) return null;
 
@@ -133,9 +135,9 @@ export function ChatWidget() {
                 <Bot size={16} />
               </div>
               <div className="bg-[#0f172a] border border-slate-800 p-3.5 px-4 rounded-2xl rounded-tl-sm flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50 animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50 animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50 animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50 animate-pulse" style={{ animationDelay: '0ms' }}></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50 animate-pulse" style={{ animationDelay: '150ms' }}></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50 animate-pulse" style={{ animationDelay: '300ms' }}></span>
               </div>
             </div>
           )}

@@ -56,15 +56,15 @@ const AccordionContent = React.forwardRef<
 ))
 AccordionContent.displayName = AccordionPrimitive.Content.displayName
 
-import { motion } from "motion/react"
+import { m } from 'motion/react'
 import { cardGestures } from "@/core/motion"
 
 // --- Card ---
 const Card = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<typeof motion.div>
+  React.ComponentProps<typeof m.div>
 >(({ className, ...props }, ref) => (
-  <motion.div
+  <m.div
     ref={ref}
     {...cardGestures}
     className={cn(

@@ -33,6 +33,8 @@ if (!global.pgPool) {
     port: parseInt(process.env.DB_PORT || '5432'),
     // SSL required in production (Vercel serverless environment)
     ssl: isProduction ? { rejectUnauthorized: false } : false,
+    max: 10,
+    idleTimeoutMillis: 15000,
   });
 }
 pool = global.pgPool;

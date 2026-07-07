@@ -15,11 +15,14 @@ function ThemeProvider({ children }) {
 
   useEffect(() => {
     const stored = localStorage.getItem('jobscan_theme');
-    if (stored === 'dark') {
-      setTheme('dark');
-      document.documentElement.setAttribute('data-theme', 'dark');
-    }
-    setMounted(true);
+    const timer = setTimeout(() => {
+      if (stored === 'dark') {
+        setTheme('dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+      setMounted(true);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -32,11 +35,11 @@ function ThemeProvider({ children }) {
     }
   }, [theme, mounted]);
 
-  const toggleTheme = useCallback(() => {
+  const toggleTheme = () => {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-  }, []);
+  };
 
-  const value = useMemo(() => ({ theme, toggleTheme }), [theme, toggleTheme]);
+  const value = { theme, toggleTheme };
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
@@ -71,22 +74,24 @@ export function useJob() {
 
 // --- Root Provider ---
 
-import { MotionConfig } from 'motion/react';
+import { MotionConfig, LazyMotion, domAnimation } from 'motion/react';
 
 export default function Providers({ children }) {
   return (
-    <SessionProvider>
-      <ThemeProvider>
-        <AuthProvider>
-          <JobProvider>
-            <PwaProvider>
-              <MotionConfig reducedMotion="user">
-                {children}
-              </MotionConfig>
-            </PwaProvider>
-          </JobProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </SessionProvider>
+    <LazyMotion features={domAnimation} strict>
+      <MotionConfig reducedMotion="user">
+        <SessionProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <JobProvider>
+                <PwaProvider>
+                  {children}
+                </PwaProvider>
+              </JobProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </SessionProvider>
+      </MotionConfig>
+    </LazyMotion>
   );
 }

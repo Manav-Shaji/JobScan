@@ -1,7 +1,7 @@
 import { transitions } from './transitions';
 import type { Variants } from 'motion/react';
 
-export const fade: Variants = {
+const fade: Variants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1,
@@ -13,7 +13,7 @@ export const fade: Variants = {
   }
 };
 
-export const fadeFast: Variants = {
+const fadeFast: Variants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1,

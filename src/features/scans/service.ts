@@ -2,6 +2,7 @@ import 'server-only';
 import crypto from 'crypto';
 import { geminiService } from '@/core/lib/gemini';
 import { findCachedScan, insertScanResult } from './repository';
+import { deriveVerdict } from './utils';
 import { ApiError } from '@/core/api/response';
 import { MemoryCache } from '@/core/lib/cache';
 import { logger } from '@/core/lib/logger';
@@ -72,6 +73,11 @@ export async function analyzeJob(
     try {
       logger.logApp('Forwarding job data to Gemini AI for analysis...', { userId, scanType });
       const analysis = await geminiService.analyzeJobMultimodal(jobDescription, posterBase64, posterMimeType);
+      
+      // Bubble up structured AI errors (like missing keys or exhausted retries)
+      if ((analysis as any).success === false) {
+        return analysis;
+      }
       
       logger.logApp('Evaluating Gemini analysis trust score breakdown...');
       const evalRes = geminiService.evaluateTrustScore(analysis);
@@ -168,11 +174,3 @@ export async function analyzeJob(
   return scanPromise;
 }
 
-// --- Utils ---
-
-export function deriveVerdict(score: number, riskLevel: string) {
-  const cleanRisk = (riskLevel || '').toUpperCase();
-  if (cleanRisk === 'CRITICAL' || score < 45) return 'scam';
-  if (score < 75) return 'caution';
-  return 'safe';
-}

@@ -1,13 +1,13 @@
-import { 
-    Navbar, 
-    HeroSection, 
-    HowItWorks, 
-    FeaturesSection, 
-    AboutSection, 
-    TestimonialsSection, 
-    ContactSection, 
-    FooterSection 
-} from './index';
+import { Navbar } from './components/Navbar';
+import { HeroSection } from './components/HeroSection';
+import { HowItWorks } from './components/HowItWorks';
+import dynamic from 'next/dynamic';
+
+const FeaturesSection = dynamic(() => import('./components/FeaturesSection').then(mod => mod.FeaturesSection));
+const AboutSection = dynamic(() => import('./components/AboutSection').then(mod => mod.AboutSection));
+const TestimonialsSection = dynamic(() => import('./components/TestimonialsSection').then(mod => mod.TestimonialsSection));
+const ContactSection = dynamic(() => import('./components/ContactSection').then(mod => mod.ContactSection));
+const FooterSection = dynamic(() => import('./components/FooterSection').then(mod => mod.FooterSection));
 
 export default function Landing() {
     return (

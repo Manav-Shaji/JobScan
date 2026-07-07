@@ -15,7 +15,7 @@ export const slideUp: Variants = {
   }
 };
 
-export const slideDown: Variants = {
+const slideDown: Variants = {
   hidden: { opacity: 0, y: -15 },
   visible: { 
     opacity: 1, 
@@ -29,7 +29,7 @@ export const slideDown: Variants = {
   }
 };
 
-export const slideInRight: Variants = {
+const slideInRight: Variants = {
   hidden: { opacity: 0, x: 20 },
   visible: { 
     opacity: 1, 

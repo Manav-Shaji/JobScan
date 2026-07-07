@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useMemo, memo } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
   Dialog,
@@ -12,11 +12,11 @@ import {
 import { Shield, Infinity, History, TrendingUp, MessageSquare, Rocket } from 'lucide-react';
 
 // --- TrustScore Component ---
-export const TrustScore = memo(function TrustScore({ score = 0, visible = false }) {
+export function TrustScore({ score = 0, visible = false }) {
     const [displayScore, setDisplayScore] = useState(0);
     const intervalRef = useRef(null);
 
-    const scoreInfo = useMemo(() => {
+    const scoreInfo = (() => {
         // Lower score = Scam
         if (score <= 40) return { 
             color: '#ef4444', 
@@ -42,10 +42,10 @@ export const TrustScore = memo(function TrustScore({ score = 0, visible = false 
             dotClass: 'bg-emerald-500',
             gradientId: 'safeGradient'
         };
-    }, [score]);
+    })();
 
     useEffect(() => {
-        if (!visible || score === 0) { setDisplayScore(0); return; }
+        if (!visible || score === 0) return;
         let startTimestamp = null;
         const duration = 1500;
         const animate = (timestamp) => {
@@ -64,10 +64,11 @@ export const TrustScore = memo(function TrustScore({ score = 0, visible = false 
     const circumference = 2 * Math.PI * radius;
     // For Trust Score, higher is better (more filled). For scams (low score), we might want the red to fill up from the other side, but standard is just filling to the score.
     // Let's just fill the score amount.
-    const strokeDashoffset = circumference - (displayScore / 100) * circumference;
+    const actualDisplayScore = (!visible || score === 0) ? 0 : displayScore;
+    const strokeDashoffset = circumference - (actualDisplayScore / 100) * circumference;
 
     return (
-        <div className="flex flex-col items-center justify-center w-full" aria-label={`Trust Score ${displayScore} percent`} role="img">
+        <div className="flex flex-col items-center justify-center w-full" aria-label={`Trust Score ${actualDisplayScore} percent`} role="img">
             <div className="relative flex items-center justify-center w-40 h-40 mb-4">
                 <svg className="w-full h-full transform -rotate-90 drop-shadow-2xl relative z-0" viewBox="0 0 200 200">
                     <defs>
@@ -104,11 +105,11 @@ export const TrustScore = memo(function TrustScore({ score = 0, visible = false 
                     />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-                    <span className="font-black tracking-tighter transition-all leading-none text-5xl lg:text-6xl flex items-baseline" style={{ 
+                    <span className="font-black tracking-tighter transition-all leading-none text-5xl lg:text-6xl flex items-baseline z-10" style={{ 
                         color,
                         textShadow: `0 0 15px ${color}60, 0 0 35px ${color}30`
                     }}>
-                        {displayScore}
+                        {actualDisplayScore}
                         <span className="text-xl lg:text-2xl ml-0.5">%</span>
                     </span>
                     <span className="text-[9px] text-[var(--muted)] font-black tracking-[0.15em] mt-1.5 uppercase">Trust Score</span>
@@ -133,7 +134,7 @@ export const TrustScore = memo(function TrustScore({ score = 0, visible = false 
             </p>
         </div>
     );
-});
+};
 
 // --- SignupWall Component ---
 export function SignupWall({ onClose }) {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/core/providers/auth-provider';
 const FREE_SCAN_LIMIT = 3;
 const STORAGE_KEY = 'jobscan_free_scans';
@@ -16,8 +16,10 @@ export function useScanLimit() {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const count = parseInt(stored);
-        setScanCount(count);
         scanCountRef.current = count;
+        // Schedule state update using setTimeout to move it out of the synchronous effect execution
+        const timer = setTimeout(() => setScanCount(count), 0);
+        return () => clearTimeout(timer);
       }
     }
   }, []);
@@ -28,27 +30,27 @@ export function useScanLimit() {
 
   const remainingScans = Math.max(0, FREE_SCAN_LIMIT - scanCount);
 
-  const incrementScan = useCallback(() => {
+  const incrementScan = () => {
     if (user) return;
     setScanCount(prev => {
       const newCount = prev + 1;
       localStorage.setItem(STORAGE_KEY, newCount.toString());
       return newCount;
     });
-  }, [user]);
+  };
 
-  const checkCanScan = useCallback(() => {
+  const checkCanScan = () => {
     if (user) return true;
     if (scanCountRef.current >= FREE_SCAN_LIMIT) {
       setShowSignupWall(true);
       return false;
     }
     return true;
-  }, [user]);
+  };
 
-  const dismissSignupWall = useCallback(() => {
+  const dismissSignupWall = () => {
     setShowSignupWall(false);
-  }, []);
+  };
 
   return {
     scanCount,

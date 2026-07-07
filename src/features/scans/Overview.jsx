@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Skeleton } from "@/core/ui/layout";
 import { Card, CardContent } from "@/core/ui/layout";
 import Link from 'next/link';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { staggerContainer, slideUp } from '@/core/motion';
 
 const formatDate = (dateString) => {
@@ -53,10 +53,9 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
         await onRefresh();
       } catch (err) {
         console.error(err);
-      } finally {
-        setRefreshing(false);
-        setPullDistance(0);
       }
+      setRefreshing(false);
+      setPullDistance(0);
     } else {
       setPullDistance(0);
     }
@@ -172,9 +171,9 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
         </div>
 
         {/* --- Metrics Grid --- */}
-        <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" variants={staggerContainer} initial="hidden" animate="visible">
+        <m.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" variants={staggerContainer} initial="hidden" animate="visible">
           {statCards.map((s, i) => (
-            <motion.div key={s.label || i} variants={slideUp}>
+            <m.div key={s.label || i} variants={slideUp}>
               <Card className="glass-card premium-card-edge h-full rounded-2xl p-5 shadow-lg hover-lift transition-all group border-[var(--hairline)]">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[10px] font-black tracking-widest text-[var(--muted)] uppercase">{s.label}</span>
@@ -185,9 +184,9 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
                 <div className="text-2xl font-black tracking-tight text-[var(--on-dark)] leading-none">{s.value}</div>
                 <div className="text-[10px] text-[var(--muted)] mt-2 font-medium">{s.description}</div>
               </Card>
-            </motion.div>
+            </m.div>
           ))}
-        </motion.div>
+        </m.div>
 
         {/* --- Main Dashboard Rows (2 Columns) --- */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -200,13 +199,13 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
                 <span className="text-[10px] font-bold text-indigo-400 bg-indigo-500/10 px-2.5 py-0.5 rounded-full border border-indigo-500/20">Audited Activity</span>
               </div>
               
-              <motion.div className="divide-y divide-[var(--hairline)] flex-1 flex flex-col" style={{ background: 'rgba(var(--primary-rgb), 0.01)' }} variants={staggerContainer} initial="hidden" animate="visible">
+              <m.div className="divide-y divide-[var(--hairline)] flex-1 flex flex-col" style={{ background: 'rgba(var(--primary-rgb), 0.01)' }} variants={staggerContainer} initial="hidden" animate="visible">
                 {recentActivities?.map((a, i) => {
                   const { date, time } = formatDate(a.createdAt);
                   const isScam = a.type === 'scam';
 
                   return (
-                    <motion.div key={a.id || `recent-${i}`} variants={slideUp} className="flex items-center justify-between py-2.5 px-5 hover:bg-[rgba(var(--primary-rgb),0.04)] transition-colors group">
+                    <m.div key={a.id || `recent-${i}`} variants={slideUp} className="flex items-center justify-between py-2.5 px-5 hover:bg-[rgba(var(--primary-rgb),0.04)] transition-colors group">
                       <div className="flex items-center gap-3.5 flex-1 min-w-0">
                         <div className="w-8 h-8 rounded-lg flex items-center justify-center text-blue-400 flex-shrink-0 group-hover:scale-105 transition-transform border border-[var(--hairline)] bg-[var(--surface-elevated)]">
                           <FileText size={14} />
@@ -225,7 +224,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
                         {isScam ? <span className="relative flex h-1.5 w-1.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500"></span></span> : null}
                         {(a.type || 'safe').toUpperCase()}
                       </div>
-                    </motion.div>
+                    </m.div>
                   );
                 })}
 
@@ -240,7 +239,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
                     </p>
                   </div>
                 )}
-              </motion.div>
+              </m.div>
             </div>
           </div>
 

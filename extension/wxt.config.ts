@@ -4,6 +4,7 @@ import path from 'path';
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
+  modules: ['@wxt-dev/module-react'],
   outDir: '../../dist-ext',
   manifest: {
     name: 'JobScan Trust Analyzer',

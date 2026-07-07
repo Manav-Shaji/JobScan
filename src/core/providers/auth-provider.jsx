@@ -76,14 +76,15 @@ export const AuthProvider = ({ children }) => {
         return { success: res.ok, message: res.ok ? 'Success' : 'Update failed' };
       } catch (err) { return { success: false, message: err.message }; }
     },
-    updatePassword: async (password) => {
+    updatePassword: async (oldPassword, password) => {
       try {
         const res = await fetch('/api/password', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password }),
+          body: JSON.stringify({ oldPassword, password }),
         });
-        return { success: res.ok, message: res.ok ? 'Success' : 'Password update failed' };
+        const data = await res.json().catch(() => ({}));
+        return { success: res.ok, message: res.ok ? 'Success' : data.error || data.message || 'Password update failed' };
       } catch (err) { return { success: false, message: err.message }; }
     },
   };

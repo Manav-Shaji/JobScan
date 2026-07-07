@@ -58,10 +58,19 @@ const CREDENTIALS_LOOKUP = `
   WHERE email = $1
 `;
 
+const GET_USER_PASSWORD_HASH = `
+  SELECT password_hash FROM users WHERE id = $1
+`;
+
 // Repository access functions
 export async function findUserByEmail(email: string, client: any = query) {
   const res = await client.query(CHECK_USER_EXISTS, [email]);
   return res.rows;
+}
+
+export async function findPasswordHashById(userId: string) {
+  const res = await query(GET_USER_PASSWORD_HASH, [userId]);
+  return res.rows[0]?.password_hash;
 }
 
 export async function createUser(email: string, name: string, passwordHash: string, client: any = query) {

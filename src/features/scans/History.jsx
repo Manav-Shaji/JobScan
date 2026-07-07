@@ -1,8 +1,8 @@
 import { FileText, Search, Filter, ChevronDown, Calendar, AlertTriangle, MoreVertical, Briefcase } from 'lucide-react';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/core/ui/forms";
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious, PaginationLink } from "@/core/ui/navigation";
-import { motion, AnimatePresence } from 'motion/react';
+import { m, AnimatePresence } from 'motion/react';
 import { staggerContainer, slideUp } from '@/core/motion';
 
 const formatDate = (dateString) => {
@@ -14,7 +14,7 @@ const formatDate = (dateString) => {
   };
 };
 
-const ScoreCircle = React.memo(({ score }) => {
+const ScoreCircle = ({ score }) => {
   const radius = 18;
   const circumference = 2 * Math.PI * radius;
   const isScam = score < 50;
@@ -52,9 +52,7 @@ const ScoreCircle = React.memo(({ score }) => {
       </div>
     </div>
   );
-});
-
-ScoreCircle.displayName = 'ScoreCircle';
+};
 
 const filterOptions = [
   { value: 'all', label: 'All Scans' },
@@ -69,22 +67,20 @@ export function History({ fullHistory, loading }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   
-  const filteredHistory = useMemo(() => {
-    return fullHistory?.filter(h => {
-      const term = searchTerm.toLowerCase();
-      const matchesSearch = (
-        (h.content?.toLowerCase().includes(term)) ||
-        (h.title?.toLowerCase().includes(term)) ||
-        (h.type?.toLowerCase().includes(term))
-      );
-      if (!matchesSearch) return false;
-      if (filterType === 'all') return true;
-      if (filterType === 'scam') return h.type === 'scam' || (h.score ?? 100) < 50;
-      if (filterType === 'safe') return h.type === 'safe' || (h.score ?? 0) >= 70;
-      if (filterType === 'caution') return h.type === 'caution' || ((h.score ?? 0) >= 50 && (h.score ?? 0) < 70);
-      return true;
-    }) || [];
-  }, [fullHistory, searchTerm, filterType]);
+  const filteredHistory = fullHistory?.filter(h => {
+    const term = searchTerm.toLowerCase();
+    const matchesSearch = (
+      (h.content?.toLowerCase().includes(term)) ||
+      (h.title?.toLowerCase().includes(term)) ||
+      (h.type?.toLowerCase().includes(term))
+    );
+    if (!matchesSearch) return false;
+    if (filterType === 'all') return true;
+    if (filterType === 'scam') return h.type === 'scam' || (h.score ?? 100) < 50;
+    if (filterType === 'safe') return h.type === 'safe' || (h.score ?? 0) >= 70;
+    if (filterType === 'caution') return h.type === 'caution' || ((h.score ?? 0) >= 50 && (h.score ?? 0) < 70);
+    return true;
+  }) || [];
 
   const totalPages = Math.ceil(filteredHistory.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -173,7 +169,7 @@ export function History({ fullHistory, loading }) {
       </div>
 
       {/* --- Table Content --- */}
-      <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="divide-y divide-[var(--hairline)]">
+      <m.div variants={staggerContainer} initial="hidden" animate="visible" className="divide-y divide-[var(--hairline)]">
         <AnimatePresence mode="popLayout">
         {paginatedHistory.map((h, i) => {
           const { date, time } = formatDate(h.createdAt);
@@ -182,7 +178,7 @@ export function History({ fullHistory, loading }) {
           const isCaution = !isScam && (h.type === 'caution' || (score >= 50 && score < 70));
           
           return (
-            <motion.div variants={slideUp} layout initial="hidden" animate="visible" exit={{ opacity: 0, y: -10 }} key={h.id || `${h.createdAt}-${i}`} className="group">
+            <m.div variants={slideUp} layout initial="hidden" animate="visible" exit={{ opacity: 0, y: -10 }} key={h.id || `${h.createdAt}-${i}`} className="group">
               {/* Desktop View */}
               <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4.5 items-center hover:bg-[rgba(var(--primary-rgb),0.04)] transition-colors">
                 <div className="col-span-3 flex items-center gap-3.5">
@@ -279,7 +275,7 @@ export function History({ fullHistory, loading }) {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           );
         })}
 
@@ -295,7 +291,7 @@ export function History({ fullHistory, loading }) {
           </div>
         )}
         </AnimatePresence>
-      </motion.div>
+      </m.div>
 
       {/* --- Footer Pagination Controls --- */}
       <div className="px-4 md:px-6 py-4.5 border-t border-[var(--hairline)] flex items-center justify-between bg-[rgba(var(--primary-rgb),0.01)] text-xs">

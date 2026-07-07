@@ -1,6 +1,6 @@
 import 'server-only';
 import { cache } from 'react';
-import { query } from '@/core/db/client';
+import { query, pool } from '@/core/db/client';
 import { logger } from '@/core/lib/logger';
 import {
   updateUserNameAndEmail,
@@ -11,17 +11,28 @@ import {
   deleteUserAccount,
 } from './repository';
 
-import { deriveVerdict } from '@/features/scans/service';
+import { deriveVerdict } from '@/features/scans/utils';
 
 export async function updateProfile(userId: string, name: string, email?: string) {
+  const client = await pool.connect();
   try {
     logger.logApp('Updating user profile', { userId, name, email });
-    await updateUserNameAndEmail(userId, name, email);
+    await client.query('BEGIN');
+    
+    if (email) {
+      await client.query(`UPDATE users SET name = $1, email = $2 WHERE id = $3`, [name, email, userId]);
+    } else {
+      await client.query(`UPDATE users SET name = $1 WHERE id = $2`, [name, userId]);
+    }
 
+    await client.query('COMMIT');
     return { success: true };
   } catch (error) {
+    await client.query('ROLLBACK');
     logger.error('Database error in updateProfile', error, { userId });
     throw error;
+  } finally {
+    client.release();
   }
 }
 
@@ -82,15 +93,21 @@ export async function updateRetentionDays(userId: string, days: number) {
 }
 
 export async function deleteAccount(userId: string) {
+  const client = await pool.connect();
   try {
     logger.logApp('Executing complete user account deletion flow', { userId });
+    await client.query('BEGIN');
     
     // ON DELETE CASCADE automatically cleans up scans, reports, and chat messages
-    await deleteUserAccount(userId);
+    await client.query(`DELETE FROM users WHERE id = $1`, [userId]);
 
+    await client.query('COMMIT');
     return { success: true };
   } catch (error) {
+    await client.query('ROLLBACK');
     logger.error('Database error deleting user account', error, { userId });
     throw error;
+  } finally {
+    client.release();
   }
 }

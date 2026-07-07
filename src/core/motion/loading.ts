@@ -1,6 +1,6 @@
 import type { Variants } from 'motion/react';
 
-export const shimmer: Variants = {
+const shimmer: Variants = {
   initial: { x: "-100%" },
   animate: {
     x: "100%",
@@ -12,7 +12,7 @@ export const shimmer: Variants = {
   },
 };
 
-export const pulse: Variants = {
+const pulse: Variants = {
   initial: { opacity: 0.5 },
   animate: {
     opacity: 1,

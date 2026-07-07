@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useToast } from "@/core/ui/use-toast";
 import { usePwa } from "@/core/providers/pwa-provider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/core/ui/dialog";
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { staggerContainer, slideUp } from '@/core/motion';
 
 export function Settings({ formData, setFormData, loading }) {
@@ -46,7 +46,14 @@ export function Settings({ formData, setFormData, loading }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ retentionDays: days })
       });
-      if (!res.ok) throw new Error('Failed to update settings');
+      if (!res.ok) {
+        toast({
+          title: "Error",
+          description: "Failed to update retention settings",
+          variant: "destructive"
+        });
+        return;
+      }
       
       toast({
         title: "Settings Updated",
@@ -66,7 +73,14 @@ export function Settings({ formData, setFormData, loading }) {
   const handleExportData = async () => {
     try {
       const res = await fetch('/api/history');
-      if (!res.ok) throw new Error('Failed to fetch history');
+      if (!res.ok) {
+        toast({
+          title: "Export Failed",
+          description: "Could not download scan history.",
+          variant: "destructive"
+        });
+        return;
+      }
       const data = await res.json();
       
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -99,7 +113,14 @@ export function Settings({ formData, setFormData, loading }) {
       const res = await fetch('/api/profile', {
         method: 'DELETE'
       });
-      if (!res.ok) throw new Error('Failed to delete account');
+      if (!res.ok) {
+        toast({
+          title: "Error",
+          description: "Failed to delete account",
+          variant: "destructive"
+        });
+        return;
+      }
       
       toast({
         title: "Account Deleted",
@@ -124,10 +145,10 @@ export function Settings({ formData, setFormData, loading }) {
   };
 
   return (
-    <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="max-w-3xl mx-auto px-4 py-6 flex flex-col gap-8">
+    <m.div variants={staggerContainer} initial="hidden" animate="visible" className="max-w-3xl mx-auto px-4 py-6 flex flex-col gap-8">
       
       {/* 1. Notifications Section */}
-      <motion.div variants={slideUp} className="glass-card p-6 border border-[var(--hairline)] rounded-2xl shadow-xl">
+      <m.div variants={slideUp} className="glass-card p-6 border border-[var(--hairline)] rounded-2xl shadow-xl">
         <div className="flex items-center gap-4 mb-6">
           <div className="w-10 h-10 rounded-lg bg-blue-900/20 border border-blue-700/30 flex items-center justify-center text-blue-500">
             <Bell size={20} />
@@ -153,10 +174,10 @@ export function Settings({ formData, setFormData, loading }) {
             onCheckedChange={v => setFormData({...formData, notifications: v})} 
           />
         </div>
-      </motion.div>
+      </m.div>
 
       {/* 2. Privacy & Data Management */}
-      <motion.div variants={slideUp} className="glass-card p-6 border border-[var(--hairline)] rounded-2xl shadow-xl">
+      <m.div variants={slideUp} className="glass-card p-6 border border-[var(--hairline)] rounded-2xl shadow-xl">
         <div className="flex items-center gap-4 mb-6">
           <div className="w-10 h-10 rounded-lg bg-purple-900/20 border border-purple-700/30 flex items-center justify-center text-purple-500">
             <Database size={20} />
@@ -211,10 +232,10 @@ export function Settings({ formData, setFormData, loading }) {
             </button>
           </div>
         </div>
-      </motion.div>
+      </m.div>
 
       {/* 3. Display & Accessibility */}
-      <motion.div variants={slideUp} className="glass-card p-6 border border-[var(--hairline)] rounded-2xl shadow-xl">
+      <m.div variants={slideUp} className="glass-card p-6 border border-[var(--hairline)] rounded-2xl shadow-xl">
         <div className="flex items-center gap-4 mb-6">
           <div className="w-10 h-10 rounded-lg bg-amber-900/20 border border-amber-700/30 flex items-center justify-center text-amber-500">
             <Eye size={20} />
@@ -263,10 +284,10 @@ export function Settings({ formData, setFormData, loading }) {
             <Switch checked={compactMode} onCheckedChange={setCompactMode} />
           </div>
         </div>
-      </motion.div>
+      </m.div>
 
       {/* 4. Application Section */}
-      <motion.div variants={slideUp} className="glass-card p-6 border border-[var(--hairline)] rounded-2xl shadow-xl">
+      <m.div variants={slideUp} className="glass-card p-6 border border-[var(--hairline)] rounded-2xl shadow-xl">
         <div className="flex items-center gap-4 mb-6">
           <div className="w-10 h-10 rounded-lg bg-emerald-900/20 border border-emerald-700/30 flex items-center justify-center text-emerald-500">
             <AppWindow size={20} />
@@ -360,7 +381,7 @@ export function Settings({ formData, setFormData, loading }) {
             </button>
           </div>
         </div>
-      </motion.div>
+      </m.div>
 
       <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
         <DialogContent className="border-[var(--hairline)] max-w-md bg-[var(--canvas)] rounded-2xl shadow-2xl p-8">
@@ -388,6 +409,6 @@ export function Settings({ formData, setFormData, loading }) {
         </DialogContent>
       </Dialog>
 
-    </motion.div>
+    </m.div>
   );
 }

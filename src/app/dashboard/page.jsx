@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/core/providers/auth-provider';
 import api from '@/core/lib/api-client';
@@ -22,6 +22,15 @@ export default function SuperDashboard() {
     const tabParam = searchParams.get('tab');
     const { toast } = useToast();
     const [activeTab, setActiveTab] = useState(tabParam || 'overview');
+    const [prevTabParam, setPrevTabParam] = useState(tabParam);
+    
+    if (tabParam !== prevTabParam) {
+        setPrevTabParam(tabParam);
+        if (tabParam) {
+            // Delay state update to avoid cascading render warnings
+            setTimeout(() => setActiveTab(tabParam), 0);
+        }
+    }
     
     // --- State: Overview ---
     const [statsData, setStatsData] = useState({ totalScans: 0, scamsDetected: 0, avgTrustScore: 0 });
@@ -33,7 +42,7 @@ export default function SuperDashboard() {
     
     // --- State: Settings ---
     const [formData, setFormData] = useState({ name: '', email: '', notifications: true });
-    const [passwordData, setPasswordData] = useState({ newPassword: '', confirmPassword: '' });
+    const [passwordData, setPasswordData] = useState({ oldPassword: '', newPassword: '', confirmPassword: '' });
     const [saving, setSaving] = useState(false);
     const [savingPassword, setSavingPassword] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -42,17 +51,31 @@ export default function SuperDashboard() {
         if (!authLoading && !user) router.replace('/dashboard/analyzer');
     }, [user, authLoading, router]);
 
-    useEffect(() => {
-        if (tabParam) {
-            setActiveTab(tabParam);
-        }
-    }, [tabParam]);
+    // tabParam is synced during render
 
-    const fetchData = useCallback(async () => {
+    useEffect(() => {
+        const doFetch = async () => {
+            if (!user) return;
+            try {
+                const [statsRes, historyRes] = await Promise.all([api.getStats(), api.getHistory()]);
+                const stats = statsRes?.success ? statsRes.data : statsRes;
+                const history = historyRes?.success ? historyRes.data : (Array.isArray(historyRes) ? historyRes : []);
+
+                setStatsData(stats || { totalScans: 0, scamsDetected: 0, avgTrustScore: 0 });
+                setRecentActivities(Array.isArray(history) ? history.slice(0, 5) : []);
+                setFullHistory(Array.isArray(history) ? history : []);
+                setFormData({ name: user.name || '', email: user.email || '', notifications: true });
+            } catch (err) { console.error('Data fetch failed:', err); }
+            setLoading(false);
+        };
+        
+        if (user) doFetch();
+    }, [user]);
+
+    const fetchData = async () => {
         if (!user) return;
         try {
             const [statsRes, historyRes] = await Promise.all([api.getStats(), api.getHistory()]);
-            
             const stats = statsRes?.success ? statsRes.data : statsRes;
             const history = historyRes?.success ? historyRes.data : (Array.isArray(historyRes) ? historyRes : []);
 
@@ -61,14 +84,8 @@ export default function SuperDashboard() {
             setFullHistory(Array.isArray(history) ? history : []);
             setFormData({ name: user.name || '', email: user.email || '', notifications: true });
         } catch (err) { console.error('Data fetch failed:', err); }
-        finally { setLoading(false); }
-    }, [user]);
-
-    useEffect(() => {
-        if (user) {
-            fetchData();
-        }
-    }, [user, fetchData]);
+        setLoading(false);
+    };
 
     if (authLoading || !user) {
         return (
@@ -85,14 +102,21 @@ export default function SuperDashboard() {
         setSaving(true);
         try {
             const res = await updateProfile({ name: formData.name, email: formData.email });
-            if (res.success) toast({ title: "Profile Saved", description: "Profile updated successfully." });
-            else throw new Error(res.message);
+            if (res.success) {
+                toast({ title: "Profile Saved", description: "Profile updated successfully." });
+            } else {
+                toast({ title: "Error", description: res.message, variant: "destructive" });
+            }
         } catch (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
-        finally { setSaving(false); }
+        setSaving(false);
     };
 
     const handleSavePassword = async (e) => {
         e.preventDefault();
+        if (!passwordData.oldPassword) {
+            toast({ title: "Error", description: "Old password is required.", variant: "destructive" });
+            return;
+        }
         if (passwordData.newPassword !== passwordData.confirmPassword) {
             toast({ title: "Error", description: "Passwords do not match.", variant: "destructive" });
             return;
@@ -103,13 +127,15 @@ export default function SuperDashboard() {
         }
         setSavingPassword(true);
         try {
-            const res = await updatePassword(passwordData.newPassword);
+            const res = await updatePassword(passwordData.oldPassword, passwordData.newPassword);
             if (res.success) {
                 toast({ title: "Success", description: "Password updated securely." });
-                setPasswordData({ newPassword: '', confirmPassword: '' });
-            } else throw new Error(res.message);
+                setPasswordData({ oldPassword: '', newPassword: '', confirmPassword: '' });
+            } else {
+                toast({ title: "Error", description: res.message, variant: "destructive" });
+            }
         } catch (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
-        finally { setSavingPassword(false); }
+        setSavingPassword(false);
     };
 
     return (

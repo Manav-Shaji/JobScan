@@ -45,7 +45,7 @@ export function successResponse<T>(data: T, message = 'Success', status = 200) {
   );
 }
 
-export function errorResponse(message: string, status = 500, errors?: any[]) {
+function errorResponse(message: string, status = 500, errors?: any[]) {
   return NextResponse.json(
     {
       success: false,

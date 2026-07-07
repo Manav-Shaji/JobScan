@@ -21,7 +21,7 @@ const INSERT_SCAN_RESULT = `
   RETURNING *
 `;
 
-import { deriveVerdict } from '@/features/scans/service';
+import { deriveVerdict } from '@/features/scans/utils';
 
 function mapRowToScan(row: any) {
   if (!row) return null;

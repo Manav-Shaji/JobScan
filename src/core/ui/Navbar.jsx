@@ -16,6 +16,12 @@ export function TopNavbar() {
     const searchParams = useSearchParams();
     const tabParam = searchParams?.get('tab') || 'overview';
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [prevPath, setPrevPath] = useState({ pathname, tabParam });
+
+    if (pathname !== prevPath.pathname || tabParam !== prevPath.tabParam) {
+        setPrevPath({ pathname, tabParam });
+        setMobileMenuOpen(false);
+    }
 
     const handleLogout = async (e) => {
         e.preventDefault();
@@ -34,22 +40,9 @@ export function TopNavbar() {
         };
     }, [mobileMenuOpen]);
 
-    // Automatically close mobile menu when tab/pathname changes
-    useEffect(() => {
-        setMobileMenuOpen(false);
-    }, [pathname, tabParam]);
+    // Menu automatically closes when tab/pathname changes via render-phase state sync
 
     const { isInstallable, installApp } = usePwa();
-
-    const [isMobile, setIsMobile] = useState(false);
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
-        const media = window.matchMedia('(max-width: 767px)');
-        setIsMobile(media.matches);
-        const listener = (e) => setIsMobile(e.matches);
-        media.addEventListener('change', listener);
-        return () => media.removeEventListener('change', listener);
-    }, []);
 
     return (
         <>
@@ -310,21 +303,21 @@ export function TopNavbar() {
                         <div className="flex flex-col gap-6 mt-4">
                             {/* Section 1: Compact User Info Card */}
                             <div className="flex items-center gap-3 p-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-[var(--hairline)]">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white text-[11px] font-black shadow-inner flex-shrink-0">
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white text-xs font-black shadow-inner flex-shrink-0">
                                     {user.name
                                         ? user.name.split(' ').map((n) => n[0]).join('').toUpperCase().substring(0, 2)
                                         : user.email ? user.email.substring(0, 2).toUpperCase() : 'U'}
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                    <div className="text-[11px] font-black text-[var(--on-dark)] truncate leading-tight">{user.name || 'User'}</div>
-                                    <div className="text-[9px] text-[var(--muted)] truncate mt-0.5 leading-none">{user.email}</div>
+                                    <div className="text-xs font-black text-[var(--on-dark)] truncate leading-tight">{user.name || 'User'}</div>
+                                    <div className="text-xs text-[var(--muted)] truncate mt-0.5 leading-none">{user.email}</div>
                                 </div>
                             </div>
 
                             {/* Section 2: Appearance & PWA Install */}
                             <div className="flex flex-col gap-2 bg-black/5 dark:bg-white/5 p-2.5 rounded-xl border border-[var(--hairline)]">
                                 <div className="flex items-center justify-between px-1">
-                                    <span className="text-[10px] font-black text-[var(--muted)] uppercase tracking-wider">Theme Mode</span>
+                                    <span className="text-xs font-black text-[var(--muted)] uppercase tracking-wider">Theme Mode</span>
                                     <ThemeToggle />
                                 </div>
                                 {isInstallable && (
@@ -333,7 +326,7 @@ export function TopNavbar() {
                                             installApp(); 
                                             if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
                                         }}
-                                        className="w-full flex items-center justify-center gap-1.5 text-[10px] font-black uppercase tracking-wider py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors border border-blue-500/20"
+                                        className="w-full flex items-center justify-center gap-1.5 text-xs font-black uppercase tracking-wider py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors border border-blue-500/20"
                                     >
                                         <Download size={12} className="animate-bounce" /> Install Application
                                     </button>
@@ -342,7 +335,7 @@ export function TopNavbar() {
 
                             {/* Section 3: Settings & System Console Links */}
                             <nav className="flex flex-col gap-1">
-                                <span className="text-[9px] font-black text-[var(--muted)] uppercase tracking-widest px-1.5 mb-1.5 block">Console Controls</span>
+                                <span className="text-xs font-black text-[var(--muted)] uppercase tracking-widest px-1.5 mb-1.5 block">Console Controls</span>
                                 <Link
                                     href="/dashboard?tab=settings"
                                     onClick={() => {
