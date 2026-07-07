@@ -6,16 +6,17 @@ import { useTheme } from "@/core/providers/providers";
 import { useState } from "react";
 import { useToast } from "@/core/ui/use-toast";
 import { usePwa } from "@/core/providers/pwa-provider";
+import { useAuth } from "@/core/providers/auth-provider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/core/ui/dialog";
 import { m } from 'motion/react';
 import { staggerContainer, slideUp } from '@/core/motion';
 
 export function Settings({ formData, setFormData, loading }) {
   const { theme, toggleTheme } = useTheme();
-  const [compactMode, setCompactMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const { toast } = useToast();
   const { isInstallable, isInstalled, isExtensionInstalled, installApp, requestNotificationPermission } = usePwa();
+  const { logout } = useAuth();
 
   if (loading) {
     return (
@@ -131,8 +132,8 @@ export function Settings({ formData, setFormData, loading }) {
       setShowDeleteConfirm(false);
       
       // Redirect to signout
-      setTimeout(() => {
-        window.location.href = '/api/auth/signout';
+      setTimeout(async () => {
+        await logout();
       }, 1500);
     } catch (error) {
       console.error(error);
@@ -147,35 +148,6 @@ export function Settings({ formData, setFormData, loading }) {
   return (
     <m.div variants={staggerContainer} initial="hidden" animate="visible" className="max-w-3xl mx-auto px-4 py-6 flex flex-col gap-8">
       
-      {/* 1. Notifications Section */}
-      <m.div variants={slideUp} className="glass-card p-6 border border-[var(--hairline)] rounded-2xl shadow-xl">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="w-10 h-10 rounded-lg bg-blue-900/20 border border-blue-700/30 flex items-center justify-center text-blue-500">
-            <Bell size={20} />
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-[var(--on-dark)] m-0">Notifications</h3>
-            <p className="text-[var(--muted)] text-sm m-0">Manage your preferences and alerts.</p>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between p-4 bg-[var(--surface-elevated)] border border-[var(--hairline)] rounded-xl hover:bg-[rgba(var(--primary-rgb),0.02)] transition-colors">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-[rgba(var(--primary-rgb),0.1)] flex items-center justify-center text-blue-500">
-              <Shield size={16} />
-            </div>
-            <div>
-              <div className="font-semibold text-[var(--on-dark)] text-sm">Email Notifications</div>
-              <div className="text-[var(--muted)] text-xs mt-0.5">Receive alerts for suspicious scans</div>
-            </div>
-          </div>
-          <Switch 
-            checked={formData.notifications} 
-            onCheckedChange={v => setFormData({...formData, notifications: v})} 
-          />
-        </div>
-      </m.div>
-
       {/* 2. Privacy & Data Management */}
       <m.div variants={slideUp} className="glass-card p-6 border border-[var(--hairline)] rounded-2xl shadow-xl">
         <div className="flex items-center gap-4 mb-6">
@@ -266,23 +238,9 @@ export function Settings({ formData, setFormData, loading }) {
               >
                 <Moon size={16} />
               </button>
-              <button type="button" className="p-1.5 rounded-md text-[var(--muted)] cursor-not-allowed opacity-50" 
-                title="System Default (Coming Soon)"
-                disabled
-              >
-                <Laptop size={16} />
-              </button>
             </div>
           </div>
 
-          {/* Compact Mode */}
-          <div className="flex items-center justify-between p-4 bg-[var(--surface-elevated)] border border-[var(--hairline)] rounded-xl">
-            <div>
-              <div className="font-semibold text-[var(--on-dark)] text-sm">Compact Mode</div>
-              <div className="text-[var(--muted)] text-xs mt-0.5">Reduce padding in tables to see more data at once</div>
-            </div>
-            <Switch checked={compactMode} onCheckedChange={setCompactMode} />
-          </div>
         </div>
       </m.div>
 
