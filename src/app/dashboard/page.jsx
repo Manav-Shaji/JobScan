@@ -14,8 +14,9 @@ const History = dynamic(() => import('@/features/scans/History').then(mod => mod
 const Profile = dynamic(() => import('@/features/users/Profile').then(mod => mod.Profile), { ssr: false });
 const Settings = dynamic(() => import('@/features/users/Settings').then(mod => mod.Settings), { ssr: false });
 const Analyzer = dynamic(() => import('./analyzer/page'), { ssr: false });
+import { Suspense } from 'react';
 
-export default function SuperDashboard() {
+function DashboardContent() {
     const { user, loading: authLoading, updateProfile, updatePassword } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -177,5 +178,19 @@ export default function SuperDashboard() {
                 <Settings formData={formData} setFormData={setFormData} loading={loading} />
             </TabsContent>
         </Tabs>
+    );
+}
+
+export default function SuperDashboard() {
+    return (
+        <Suspense fallback={
+            <div className="flex justify-center items-center" style={{ height: '100dvh', background: 'var(--canvas)' }}>
+                <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" role="status">
+                    <span className="sr-only">Loading...</span>
+                </div>
+            </div>
+        }>
+            <DashboardContent />
+        </Suspense>
     );
 }
