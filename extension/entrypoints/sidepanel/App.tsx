@@ -12,10 +12,14 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [settings, setSettings] = useState({ autoAnalyze: true, notifications: true, theme: 'dark' });
+  const [customApiUrl, setCustomApiUrl] = useState('');
 
   // Load history on mount
   useEffect(() => {
     getHistory().then(setHistory);
+    chrome.storage.local.get(['customApiUrl']).then(res => {
+      if (res.customApiUrl) setCustomApiUrl(res.customApiUrl);
+    });
   }, [activeTab]);
 
   useEffect(() => {
@@ -349,6 +353,30 @@ export default function App() {
       <h2 className="text-lg font-bold">Settings</h2>
       
       <div className="space-y-4">
+        <div className="space-y-2">
+          <Label className="text-base">Backend URL</Label>
+          <p className="text-xs text-muted-foreground">Override the default JobScan API URL</p>
+          <div className="flex gap-2">
+            <input 
+              type="text" 
+              value={customApiUrl} 
+              onChange={(e) => setCustomApiUrl(e.target.value)} 
+              placeholder="https://your-jobscan.vercel.app"
+              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            />
+            <button 
+              onClick={() => {
+                chrome.storage.local.set({ customApiUrl });
+                import('@/extension/services/api').then(api => api.clearEnvironmentCache());
+              }} 
+              className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 whitespace-nowrap"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+        <Separator />
+        
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label className="text-base">Auto Analysis</Label>

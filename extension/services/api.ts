@@ -38,6 +38,16 @@ async function getApiBaseUrl(): Promise<string> {
     return cachedUrl;
   }
 
+  // Check user settings first
+  const { customApiUrl } = await chrome.storage.local.get(['customApiUrl']);
+  if (customApiUrl && customApiUrl.trim() !== '') {
+    const url = customApiUrl.endsWith('/api') ? customApiUrl : `${customApiUrl}/api`;
+    cachedUrl = url;
+    cacheExpiry = now + CACHE_DURATION_MS;
+    console.log(`[JobScan Env] Active API Base (Custom): ${url}`);
+    return url;
+  }
+
   const url = await detectEnvironment();
   cachedUrl = url;
   cacheExpiry = now + CACHE_DURATION_MS;
