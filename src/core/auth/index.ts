@@ -14,7 +14,7 @@ const authConfig = {
     callbacks: {
         async jwt({ token, user }: any) {
             if (user) {
-                token.id = user.id;
+                token.id = user.id || token.sub;
                 if (user.rememberMe === false) {
                     token.exp = Math.floor(Date.now() / 1000) + (24 * 60 * 60);
                 }
@@ -23,7 +23,7 @@ const authConfig = {
         },
         async session({ session, token }: any) {
             if (session.user) {
-                session.user.id = token.id as string;
+                session.user.id = (token.id || token.sub) as string;
             }
             return session;
         },
