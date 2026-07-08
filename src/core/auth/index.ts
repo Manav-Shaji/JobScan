@@ -78,6 +78,20 @@ const nextAuth = NextAuth({
     ...authConfig,
     secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
     providers: [credentialsProvider],
+    logger: {
+        error(err: any) {
+            if (err?.name === 'CredentialsSignin' || err?.message?.includes('CredentialsSignin')) {
+                return; // Suppress noisy CredentialsSignin stack trace
+            }
+            logger.error('NextAuth Error', err);
+        },
+        warn(code) {
+            logger.warn(`NextAuth Warning: ${code}`);
+        },
+        debug(code, metadata) {
+            logger.debug(`NextAuth Debug: ${code}`, metadata);
+        }
+    }
 });
 
 export const { handlers, auth } = nextAuth;
