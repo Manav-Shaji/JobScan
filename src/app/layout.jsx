@@ -19,6 +19,9 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
+      <head>
+        <meta name="jobscan-app" content="true" />
+      </head>
       <body className={inter.className}>
         <Providers>
           {children}
