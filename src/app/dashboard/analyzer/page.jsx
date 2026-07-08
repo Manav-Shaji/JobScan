@@ -124,7 +124,7 @@ export default function Analyzer() {
             {/* --- Loading State --- */}
             <AnimatePresence>
             {loading && (
-                <m.div variants={scaleUp} initial="hidden" animate="visible" exit="exit" className="glass-card premium-card-edge rounded-2xl p-5 md:p-6 shadow-xl relative overflow-hidden border border-blue-500/20 soft-glow mb-6">
+                <m.div key="analyzer-loading-state" variants={scaleUp} initial="hidden" animate="visible" exit="exit" className="glass-card premium-card-edge rounded-2xl p-5 md:p-6 shadow-xl relative overflow-hidden border border-blue-500/20 soft-glow mb-6">
                     <div className="text-center mb-5">
                         <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 mx-auto mb-3 shadow-[0_0_20px_rgba(59,130,246,0.15)]">
                             <Fingerprint size={24} className="animate-pulse text-blue-400" />
