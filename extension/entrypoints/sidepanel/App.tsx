@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, Separator, Skeleton, Alert, Switch, Label } from '@/extension/ui';
-import { analyzeJob } from '@/extension/services/api';
+import { analyzeJob, clearEnvironmentCache } from '@/extension/services/api';
 import { getHistory, addHistory, clearHistory, getCachedAnalysis, HistoryItem } from '@/extension/services/history';
 
 export default function App() {
@@ -367,7 +367,7 @@ export default function App() {
             <button 
               onClick={() => {
                 chrome.storage.local.set({ customApiUrl });
-                import('@/extension/services/api').then(api => api.clearEnvironmentCache());
+                clearEnvironmentCache();
               }} 
               className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 whitespace-nowrap"
             >
