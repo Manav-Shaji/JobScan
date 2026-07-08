@@ -17,7 +17,7 @@ export default function App() {
   // Load history on mount
   useEffect(() => {
     getHistory().then(setHistory);
-    chrome.storage.local.get(['customApiUrl']).then(res => {
+    chrome.storage.local.get(['customApiUrl']).then((res: { [key: string]: any }) => {
       if (res.customApiUrl) setCustomApiUrl(res.customApiUrl);
     });
   }, [activeTab]);
@@ -64,7 +64,7 @@ export default function App() {
       }
     };
 
-    chrome.storage.local.get(['latestJobExtraction'], (result) => {
+    chrome.storage.local.get(['latestJobExtraction'], (result: { [key: string]: any }) => {
       if (result.latestJobExtraction) {
         handleNewJob(result.latestJobExtraction);
       }
@@ -104,7 +104,7 @@ export default function App() {
         // @ts-ignore - null means current window in MV3
         null, 
         { format: 'jpeg', quality: 80 }, 
-        async (dataUrl) => {
+        async (dataUrl: string | undefined) => {
           if (chrome.runtime.lastError || !dataUrl) {
             setError(chrome.runtime.lastError?.message || 'Failed to capture screenshot');
             setLoading(false);
