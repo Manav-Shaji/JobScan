@@ -134,9 +134,7 @@ class StructuredLogger {
   }
 
   debug(message: string, meta?: any) {
-    if (!this.isProduction && this.shouldLogToConsole('debug')) {
-      console.log(this.format('debug', message, meta));
-    }
+    console.log(this.format('debug', message, meta));
   }
 }
 
