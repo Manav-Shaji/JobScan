@@ -18,21 +18,8 @@ const credentialsProvider = CredentialsProvider({
         }
         const cleanEmail = (credentials.email as string).toLowerCase().trim();
         try {
-            logger.debug('Auth DB connection check', {
-              host: process.env.DB_HOST,
-              database: process.env.DB_NAME,
-              // NEVER log DB_PASSWORD or credentials.password
-            });
             const result = await query('SELECT id, email, name, password_hash FROM users WHERE email = $1', [cleanEmail]);
             const user = result.rows[0];
-            
-            logger.debug('Auth lookup result', {
-              email: cleanEmail,
-              userFound: !!user,
-              hashExists: !!user?.password_hash,
-              hashLength: user?.password_hash?.length,
-              hashPrefix: user?.password_hash?.slice(0, 4),
-            });
             
             if (!user || !user.password_hash) {
                 logger.logSecurity('Failed login attempt: User email not found', { email: cleanEmail });
