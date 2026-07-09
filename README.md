@@ -231,15 +231,11 @@ Android:
 
 ```text
 src/
-├── app/               # App Router & API Endpoints
-├── backend/
-│   ├── ai/            # Gemini integration
-│   ├── repositories/  # Database access & SQL execution
-│   └── services/      # Core business logic
-├── frontend/
-│   └── components/    # Reusable React components
-├── database/          # Schemas & migrations
-└── shared/            # Types & utilities
+├── app/               # Next.js App Router & API Endpoints
+├── core/              # Infrastructure & Shared Libs (auth, db, caching, UI components)
+├── features/          # Feature Modules (scans, users, reports)
+├── shared/            # Common constants & utilities
+└── middleware.js      # Next.js middleware routing
 
 extension/             # Chrome Extension (WXT)
 public/                # Static assets

@@ -21,7 +21,7 @@ Target users include active job seekers, recent graduates, remote workers, and a
 ### AI Job Scam Detection
 *   **Purpose:** The core engine that evaluates job descriptions for scam indicators.
 *   **User workflow:** A user pastes a job description into the web app or uses the extension to scan a page. The system analyzes the text and returns an assessment.
-*   **Technical implementation:** Uses Google Gemini AI via `src/backend/ai/gemini-provider.ts` to analyze text against a predefined system prompt (`prompts.ts`). It identifies red flags, positive signals, and outputs a structured JSON response. A local, Regex-based fallback analysis is included for quota limits or API failures.
+*   **Technical implementation:** Uses Google Gemini AI via `src/core/lib/gemini.ts` to analyze text against a predefined system prompt (`src/core/lib/ai/prompts.ts`). It identifies red flags, positive signals, and outputs a structured JSON response. A local, Regex-based fallback analysis is included for quota limits or API failures.
 
 ### Gemini Analysis
 *   **Purpose:** Provides deep, contextual understanding of job listings.
@@ -41,7 +41,7 @@ Target users include active job seekers, recent graduates, remote workers, and a
 ### Scan History
 *   **Purpose:** Allows users to review previously analyzed jobs.
 *   **User workflow:** Users navigate to the history tab in their dashboard to see past scans.
-*   **Technical implementation:** Handled by the `Scans` module (`src/backend/modules/scans`). Data is persisted in the PostgreSQL `job_scans` table and retrieved via the `/api/history` route.
+*   **Technical implementation:** Handled by the `Scans` feature (`src/features/scans/`). Data is persisted in the PostgreSQL `job_scans` table and retrieved via the `/api/history` route.
 
 ### User Dashboard
 *   **Purpose:** The central hub for users to view stats, history, and manage their profile.
@@ -51,17 +51,17 @@ Target users include active job seekers, recent graduates, remote workers, and a
 ### Authentication
 *   **Purpose:** Secures user accounts and scan histories.
 *   **User workflow:** Users register/login using an email and password.
-*   **Technical implementation:** Implemented with NextAuth v5 (`src/backend/auth/index.ts`). Uses `bcryptjs` for secure password hashing. Token-based session management protects backend API routes.
+*   **Technical implementation:** Implemented with NextAuth v5 (`src/core/auth/index.ts`). Uses `bcryptjs` for secure password hashing. Token-based session management protects backend API routes.
 
 ### Reporting System
 *   **Purpose:** Allows users to manually report known scams to improve the system.
 *   **User workflow:** Users click "Report Scam" on a scanned job and provide a reason.
-*   **Technical implementation:** Handled by the `Reports` module (`src/backend/modules/reports`) and stored in the `scam_reports` database table. Exposed via `/api/reports`.
+*   **Technical implementation:** Handled by reports repository logic and stored in the `scam_reports` database table. Exposed via `/api/reports`.
 
 ### Browser Extension
 *   **Purpose:** Brings JobScan's capabilities directly to job boards.
 *   **User workflow:** The user opens a job on LinkedIn/Indeed, clicks the extension, and gets an instant rating.
-*   **Technical implementation:** A Chrome extension built using `wxt` (Manifest V3). It injects content scripts (`src/extension/content.ts`) into supported sites, extracts DOM text, and communicates with the Next.js API.
+*   **Technical implementation:** A Chrome extension built using `wxt` (Manifest V3). It injects content scripts (`extension/entrypoints/content.ts`) into supported sites, extracts DOM text, and communicates with the Next.js API.
 
 ### Progressive Web App
 *   **Purpose:** Provides a native app experience on mobile and desktop.
@@ -212,11 +212,10 @@ PostgreSQL      Gemini AI
 | Folder | Responsibility |
 | :--- | :--- |
 | `src/app` | Routing |
-| `src/backend` | Business Logic |
-| `src/frontend` | UI Layer |
-| `src/database` | Database Layer |
+| `src/app` | Routing & Pages |
+| `src/core` | Core Infrastructure |
+| `src/features` | Feature Modules |
 | `extension` | Browser Extension |
-| `scripts` | Utility Scripts |
 
 ## Folder Structure
 
@@ -228,39 +227,28 @@ src/
 │   ├── dashboard/     # Frontend user dashboard pages
 │   ├── ~offline/      # PWA offline fallback page
 │   └── sw.ts          # Service Worker configuration
-├── backend/           # Core Backend Architecture
-│   ├── ai/            # Gemini AI integration and prompts
-│   ├── auth/          # NextAuth configuration
-│   ├── api/           # API handlers and middlewares
-│   ├── cache/         # In-memory caching utilities
-│   ├── logging/       # Custom application loggers
-│   ├── repositories/  # Data access layer (Raw SQL queries)
-│   └── services/      # Business logic and orchestration
-├── database/          # Database definitions
-│   ├── migrations/    # Database migrations
-│   ├── connection/    # PostgreSQL connection pool
-│   └── schema.sql     # PostgreSQL table definitions
-├── extension/         # Browser Extension source code
-│   ├── content/       # Content scripts injected into web pages
-│   ├── entrypoints/   # Extension entry points (background, sidepanel)
-│   └── wxt.config.ts  # WXT build configuration
-├── frontend/          # Reusable Frontend Architecture
-│   ├── components/    # Reusable React components (UI, layout)
-│   ├── context/       # React Context providers (Auth, Job, PWA)
-│   └── hooks/         # Custom React hooks
-└── shared/            # Shared types, constants, and utilities
+├── core/              # Shared infrastructure & core services
+│   ├── auth/          # NextAuth configuration & providers
+│   ├── db/            # PostgreSQL client & SQL schema
+│   ├── lib/           # App libraries (AI Gemini, caching, logging)
+│   ├── motion/        # Animation utilities
+│   ├── providers/     # React Context providers (Theme, Job, PWA)
+│   └── ui/            # UI components (Radix, Toast, theme toggles)
+├── features/          # Modular feature-driven vertical slices
+│   ├── scans/         # Scan history, overview page, scan services/repos
+│   └── users/         # Profile/Settings UI, auth services/repos
+└── shared/            # Common constants & typings
 ```
 
 ## Frontend Architecture
 
-The frontend uses Next.js App Router (`src/app`) for page routing and `src/frontend` for reusable architecture.
+The frontend uses Next.js App Router (`src/app`) for page routing and `src/core/` and `src/features/` for UI and context logic.
 
 *   **App Router Structure:** Pages are defined in `page.jsx` files within routing folders. Layouts (`layout.jsx`) wrap pages to provide persistent UI elements (navbars, sidebars).
-*   **Context Providers:** Located in `src/frontend/context/`.
-    *   `auth-context.jsx`: Manages user session state, login, logout, and profile updates. Wraps NextAuth's `useSession`.
-    *   `job-context.jsx`: Manages the state of the currently analyzed job across the dashboard.
-    *   `pwa-context.jsx`: Handles PWA installation prompts and service worker lifecycle events.
-*   **Components:** Modular UI elements built with Radix UI primitives and Tailwind CSS. Grouped logically (e.g., `dashboard`, `landing`, `ui`).
+*   **Context Providers:** Located in `src/core/providers/`.
+    *   `auth-provider.jsx`: Manages user session state, login, logout, and profile updates. Wraps NextAuth's `useSession`.
+    *   `pwa-provider.jsx`: Handles PWA installation prompts and service worker lifecycle events.
+*   **Components:** Modular UI elements built with Radix UI primitives and Tailwind CSS. Grouped logically under `src/core/ui/` and `src/features/`.
 
 ## Backend Architecture
 
@@ -279,17 +267,14 @@ The frontend uses Next.js App Router (`src/app`) for page routing and `src/front
 
 ### Business Services & Repositories
 
-Located in `src/backend/services/` and `src/backend/repositories/`. This strictly separates database operations from business logic.
+Located under feature modules (`src/features/*`). This strictly separates database operations from business logic.
 
-*   **User Layer:** Manages user creation and updates (`user-service.ts`) using SQL defined in `user-repository.ts`.
-*   **Scan Layer:** Handles orchestration of AI scanning (`scan-service.ts`) and storing results (`scan-repository.ts`).
-*   **Report Layer:** Manages the submission of user scam reports (`report-service.ts` and `report-repository.ts`).
-*   **Chat Layer:** Manages the storage of user-AI conversations (`chat-service.ts` and `chat-repository.ts`).
-*   **Cleanup Layer:** Handles dormant secure cleanup operations for expired scans (`cleanup-service.ts`).
+*   **User Layer:** Manages user profile/settings updates (`src/features/users/service.ts`) and authentication (`src/features/users/auth.service.ts`) using SQL queries defined in `src/features/users/repository.ts`.
+*   **Scan Layer:** Handles orchestration of AI scanning (`src/features/scans/service.ts`) and storing/loading results (`src/features/scans/repository.ts`).
 
 ## Database Design
 
-Defined in `src/database/schema.sql`.
+Defined in `src/core/db/schema.sql`.
 
 *   **`users`**: Stores user accounts.
     *   `id` (UUID), `email`, `name`, `password_hash`, `retention_days`.
@@ -440,7 +425,7 @@ Graceful degradation. The user can view the offline page, and native installatio
 ### Database Setup
 1.  Open your PostgreSQL CLI or GUI.
 2.  Create a database: `CREATE DATABASE jobscan;`
-3.  Run the schema file: `psql -d jobscan -f src/database/schema.sql`
+3.  Run the schema file: `psql -d jobscan -f src/core/db/schema.sql`
 
 ### Environment Setup
 Create a `.env.local` file in the root directory using the Configuration section above as a template.
@@ -525,17 +510,17 @@ Checklist:
 2.  **API Route:** Request hits `src/app/api/analyze/route.js`.
 3.  **Validation:** NextAuth `auth()` ensures the user is logged in. Input is checked for length/validity.
 4.  **Service / AI:** `geminiService.analyzeJobMultimodal` is invoked. It checks the cache. If missed, it sends the prompt to the Gemini API.
-5.  **Database:** The resulting trust score and parsed JSON are passed to `insertScanResult` (in `src/backend/repositories/scan-repository.ts`), which executes an `INSERT` statement into the PostgreSQL `job_scans` table.
+5.  Database: The resulting trust score and parsed JSON are passed to `insertScanResult` (in `src/features/scans/repository.ts`), which executes an `INSERT` statement into the PostgreSQL `job_scans` table.
 6.  **Response:** The API returns a 200 status with the structured JSON analysis, which the frontend renders.
 
 ## Important Files
 
 *   **`package.json`**: Defines all dependencies (Next.js, Radix UI, Serwist, WXT) and project scripts.
 *   **`src/database/schema.sql`**: The single source of truth for the database structure.
-*   **`src/backend/ai/gemini-provider.ts`**: The core logic engine connecting the application to AI, containing crucial fallback and parsing logic.
-*   **`src/backend/auth/index.ts`**: NextAuth configuration, securing the entire application.
+*   **`src/core/lib/gemini.ts`**: The core logic engine connecting the application to AI, containing crucial fallback and parsing logic.
+*   **`src/core/auth/index.ts`**: NextAuth configuration, securing the entire application.
 *   **`src/app/sw.ts`**: Service worker configuration defining PWA caching behavior.
-*   **`src/extension/wxt.config.ts`**: Configures the browser extension build, permissions, and host targeting.
+*   **`extension/wxt.config.ts`**: Configures the browser extension build, permissions, and host targeting.
 
 ## Known Risks & Limitations
 
@@ -554,10 +539,10 @@ Checklist:
 
 ## Developer Onboarding Guide
 
-*   **Where to start:** Read `src/database/schema.sql` to understand the data model. Next, look at `src/backend/ai/gemini-provider.ts` to understand the core feature. Finally, browse `src/app/api/analyze/route.js` to see how the pieces connect.
+*   **Where to start:** Read `src/core/db/schema.sql` to understand the data model. Next, look at `src/core/lib/gemini.ts` to understand the core feature. Finally, browse `src/app/api/analyze/route.js` to see how the pieces connect.
 *   **Recommended learning order:** React/Next.js App Router -> NextAuth -> PostgreSQL/`pg` -> Chrome Extension APIs (via WXT).
 *   **Important architecture decisions:** Using raw SQL instead of an ORM for explicit control. Implementing a multimodal AI provider to handle both text and images seamlessly.
-*   **Common mistakes:** Modifying database tables without updating the corresponding `SELECT`/`INSERT` queries in `src/backend/modules/`. Forgetting to add `"use client"` directives to interactive React components.
+*   **Common mistakes:** Modifying database tables without updating the corresponding `SELECT`/`INSERT` queries in `src/features/`. Forgetting to add `"use client"` directives to interactive React components.
 
 ## AI Assistant Development Rules
 
@@ -584,7 +569,7 @@ Preserve:
 
 **Project-Specific Constraints:**
 *   **Coding conventions:** Use standard Next.js conventions. Server components by default, `"use client"` where interactivity is needed. Use Tailwind for all styling.
-*   **Folder responsibilities:** Never place business logic directly in `src/app/api/` routes; always extract to `src/backend/modules/`. Keep AI specific logic isolated in `src/backend/ai/`.
+*   **Folder responsibilities:** Never place business logic directly in `src/app/api/` routes; always extract to `src/features/` or helper library modules. Keep AI specific logic isolated in `src/core/lib/`.
 *   **Architectural rules:** Database operations must use parameterized queries (`$1, $2`) to prevent SQL injection.
 *   **Important dependencies:** `@google/generative-ai`, `next-auth`, `pg`, `serwist`, `wxt`, `radix-ui`.
 *   **Careful modifications:** Editing `gemini-provider.ts` or `prompts.ts` can drastically alter the accuracy of the platform. Always test changes against both obvious scams and legitimate job postings.
