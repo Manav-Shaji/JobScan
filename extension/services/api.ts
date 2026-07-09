@@ -9,25 +9,56 @@ const CACHE_DURATION_MS = 60 * 1000;
 let cachedUrl: string | null = null;
 let cacheExpiry: number = 0;
 
-async function detectEnvironment(): Promise<string> {
+async function checkUrl(apiUrl: string): Promise<boolean> {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 1000);
 
-    const response = await fetch(`${LOCAL_API}/stats`, {
+    const response = await fetch(`${apiUrl}/auth/csrf`, {
       method: 'GET',
       signal: controller.signal,
     });
 
     clearTimeout(timeoutId);
 
-    if (response) {
-      return LOCAL_API;
-    }
+    return response.ok || response.status === 401 || response.status === 403;
   } catch (error) {
-    // Ignore errors (timeout, connection refused, etc.) and fallback to PROD
+    return false;
   }
-  
+}
+
+async function getActiveTabUrl(): Promise<string | null> {
+  try {
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    return tabs[0]?.url || null;
+  } catch (error) {
+    return null;
+  }
+}
+
+async function detectEnvironment(): Promise<string> {
+  const activeUrl = await getActiveTabUrl();
+  if (activeUrl) {
+    if (activeUrl.includes('localhost:3000') || activeUrl.includes('127.0.0.1:3000')) {
+      const isLocalUp = await checkUrl(LOCAL_API);
+      if (isLocalUp) {
+        return LOCAL_API;
+      }
+    }
+    if (activeUrl.includes('vercel.app') || activeUrl.includes('job-scan-black.vercel.app')) {
+      const isProdUp = await checkUrl(PROD_API);
+      if (isProdUp) {
+        return PROD_API;
+      }
+    }
+  }
+
+  // Fallback to probing availability
+  const isLocalUp = await checkUrl(LOCAL_API);
+  if (isLocalUp) {
+    return LOCAL_API;
+  }
+
   return PROD_API;
 }
 
@@ -38,21 +69,24 @@ async function getApiBaseUrl(): Promise<string> {
     return cachedUrl;
   }
 
-  // Check user settings first
+  // Check user settings / detected URL first
   const { customApiUrl } = await chrome.storage.local.get(['customApiUrl']);
   if (customApiUrl && customApiUrl.trim() !== '') {
     const url = customApiUrl.endsWith('/api') ? customApiUrl : `${customApiUrl}/api`;
-    cachedUrl = url;
-    cacheExpiry = now + CACHE_DURATION_MS;
-    console.log(`[JobScan Env] Active API Base (Custom): ${url}`);
-    return url;
+    const isAvailable = await checkUrl(url);
+    if (isAvailable) {
+      cachedUrl = url;
+      cacheExpiry = now + CACHE_DURATION_MS;
+      console.log(`[JobScan Env] Active API Base (Custom/Detected): ${url}`);
+      return url;
+    }
   }
 
   const url = await detectEnvironment();
   cachedUrl = url;
   cacheExpiry = now + CACHE_DURATION_MS;
 
-  console.log(`[JobScan Env] Active API Base: ${url} (Cached for 60s)`);
+  console.log(`[JobScan Env] Active API Base (Auto): ${url} (Cached for 60s)`);
   return url;
 }
 
