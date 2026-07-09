@@ -4,18 +4,26 @@ import bcrypt from 'bcryptjs';
 
 export async function GET() {
   try {
-    const result = await query('SELECT id, email, password_hash FROM users WHERE email = $1', ['john007@gmail.com']);
-    const user = result.rows[0];
+    const email = 'john007@gmail.com';
+    const password = '@john#007';
 
-    let isValid = false;
-    if (user && user.password_hash) {
-      isValid = await bcrypt.compare('@john#007', user.password_hash);
-    }
-    
+    // Generate new hash
+    const salt = await bcrypt.genSalt(12);
+    const newHash = await bcrypt.hash(password, salt);
+
+    // Update the database
+    const updateResult = await query('UPDATE users SET password_hash = $1 WHERE email = $2 RETURNING id, email', [newHash, email]);
+    const updatedUser = updateResult.rows[0];
+
+    // Verify the update
+    const verifyResult = await query('SELECT password_hash FROM users WHERE email = $1', [email]);
+    const verifiedUser = verifyResult.rows[0];
+    const isValid = verifiedUser ? await bcrypt.compare(password, verifiedUser.password_hash) : false;
+
     return NextResponse.json({
-      email: 'john007@gmail.com',
-      userFound: !!user,
-      passwordMatchesHashInProd: isValid,
+      email,
+      updated: !!updatedUser,
+      verifiedMatchesNewHash: isValid,
     });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });
