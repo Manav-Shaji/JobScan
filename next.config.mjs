@@ -49,7 +49,6 @@ const nextConfig = {
             'lucide-react',
             '@radix-ui/react-dialog',
             '@radix-ui/react-label',
-            '@radix-ui/react-radio-group',
             '@radix-ui/react-switch',
             '@radix-ui/react-tabs',
             '@radix-ui/react-toast'

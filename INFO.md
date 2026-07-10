@@ -207,21 +207,11 @@ PostgreSQL      Gemini AI
 4.  **AI Engine:** The `gemini-provider.ts` handles communication with Google's APIs, including prompt construction, parsing, and local fallback logic.
 5.  **Database Layer:** Raw SQL queries execute against the PostgreSQL database to persist scans, users, and reports.
 
-## Folder Responsibilities
-
-| Folder | Responsibility |
-| :--- | :--- |
-| `src/app` | Routing |
-| `src/app` | Routing & Pages |
-| `src/core` | Core Infrastructure |
-| `src/features` | Feature Modules |
-| `extension` | Browser Extension |
-
-## Folder Structure
+## Folder Structure & Responsibilities
 
 ```text
 src/
-├── app/               # Next.js App Router structure
+├── app/               # Next.js App Router structure (Routing & Pages)
 │   ├── api/           # Backend REST API routes
 │   ├── auth/          # Frontend authentication pages
 │   ├── dashboard/     # Frontend user dashboard pages
@@ -238,6 +228,8 @@ src/
 │   ├── scans/         # Scan history, overview page, scan services/repos
 │   └── users/         # Profile/Settings UI, auth services/repos
 └── shared/            # Common constants & typings
+
+extension/             # Browser Extension files
 ```
 
 ## Frontend Architecture
@@ -336,67 +328,43 @@ Located entirely within `src/backend/ai/gemini-provider.ts`.
 ## Browser Extension
 
 *   **Architecture:** Built with `wxt` (Manifest V3). Consists of a background script (`src/extension/entrypoints/background.ts`) and content scripts (`src/extension/content/`).
-*   **Communication Flow:** The content script injects a floating UI or button into supported sites (LinkedIn, Indeed). When clicked, it extracts the job description from the DOM and sends it to the JobScan backend API (`http://localhost:3000` or production URL).
-*   **Build Commands:**
-    *   `npm run ext:dev`: Runs the extension in development mode with HMR.
-    *   `npm run ext:build`: Compiles the extension to the `dist-ext/` directory for deployment.
-
-## Browser Extension Development
-
-*   **Extension architecture:** Built using a Background Script (for service worker tasks) and Content Scripts (injected into job boards to extract DOM text and render the overlay).
 *   **Manifest V3:** The extension strictly adheres to Manifest V3 guidelines, ensuring modern security, privacy, and performance standards.
-*   **WXT usage:** WXT is used as the build framework, abstracting away complex manifest management and providing a Vite-powered development experience.
+*   **WXT Usage:** WXT is used as the build framework, abstracting away complex manifest management and providing a Vite-powered development experience.
+*   **Communication Flow:**
+    1. Content script detects a job posting on a supported site.
+    2. User triggers analysis via the extension UI.
+    3. Content script extracts the text and sends an HTTP POST request to the JobScan API.
+    4. The Next.js API processes the request via Gemini and returns the JSON result.
+    5. Content script renders the result directly on the job board page.
 
-### Development Commands
-```bash
-npm run ext:dev
-npm run ext:build
-```
-
-### How to load unpacked extension
-1. Open Chrome and navigate to `chrome://extensions`.
-2. Enable "Developer mode" in the top right.
-3. Click "Load unpacked" and select the generated `dist-ext/` folder.
-
-### Supported websites
+### Supported Websites
 *   LinkedIn
 *   Indeed
 *   Naukri
 *   Foundit
 *   Internshala
 
-### Extension communication flow
-1. Content script detects a job posting on a supported site.
-2. User triggers analysis via the extension UI.
-3. Content script extracts the text and sends an HTTP POST request to the JobScan API.
-4. The Next.js API processes the request via Gemini and returns the JSON result.
-5. Content script renders the result directly on the job board page.
+### Development Commands
+*   `npm run ext:dev`: Runs the extension in development mode with HMR.
+*   `npm run ext:build`: Compiles the extension to the `dist-ext/` directory for deployment.
 
-## Progressive Web App
-
-*   **Offline Support:** Utilizes a Service Worker (`src/app/sw.ts`) configured by Serwist. It caches static assets and provides a custom offline page (`/~offline/page.jsx`) when no network is available.
-*   **Manifest:** Next.js generates the PWA manifest dynamically or via static configuration to define app icons, colors, and display modes.
-*   **Installation:** Managed by `src/frontend/context/pwa-context.jsx`, which intercepts the `beforeinstallprompt` event to show a custom installation button to the user.
+### How to Load Unpacked Extension
+1. Open Chrome and navigate to `chrome://extensions`.
+2. Enable "Developer mode" in the top right.
+3. Click "Load unpacked" and select the generated `dist-ext/` folder.
 
 ## Progressive Web App (PWA)
 
-*   **Serwist integration:** Uses `@serwist/next` to auto-generate the Service Worker during the build process.
-*   **Service Worker behavior:** The SW intercepts network requests. API routes are configured as `NetworkOnly`, while static assets use caching.
-*   **Offline fallback:** If the network is unavailable, the SW serves a custom offline page (`/~offline`).
-*   **Install prompt:** A custom context intercepts the browser's `beforeinstallprompt` event to show an install button.
-*   **Update flow:** The Service Worker takes effect immediately upon reload.
+*   **Serwist Integration:** Uses `@serwist/next` to auto-generate the Service Worker (`src/app/sw.ts`) during the build process.
+*   **Manifest:** Next.js generates the PWA manifest dynamically or via static configuration to define app icons, colors, and display modes.
+*   **Installation:** Managed by `src/frontend/context/pwa-context.jsx`, which intercepts the `beforeinstallprompt` event to show a custom installation button to the user.
+*   **Service Worker Behavior & Caching Strategy:** The SW intercepts network requests. API routes are configured as `NetworkOnly`, while static assets are cached via Serwist defaults. The Service Worker takes effect immediately upon reload.
+*   **Offline Fallback:** If the network is unavailable, the SW serves a custom offline page (`/~offline/page.jsx`). The user can view the offline page, and native installation continues to function gracefully.
 
-### PWA lifecycle
+### PWA Lifecycle
 1. Registration
 2. Installation
 3. Activation
-
-### Caching strategy
-*   API Routes: `NetworkOnly`
-*   Static Assets: Cached via Serwist defaults
-
-### Offline behavior
-Graceful degradation. The user can view the offline page, and native installation continues to function.
 
 ## Configuration
 

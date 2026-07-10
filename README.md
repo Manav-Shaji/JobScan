@@ -80,29 +80,6 @@ Built as an MCA final-year project, JobScan combines modern web technologies, ar
 
 ---
 
-## Architecture
-
-```text
-User
- │
- ▼
-JobScan Web App / Browser Extension
- │
- ▼
-Next.js Backend
- │
- ├── PostgreSQL Database
- │
- ├── Gemini AI Analysis
- │
- └── OCR Processing
- │
- ▼
-Trust Score + Scam Detection Results
-```
-
----
-
 ## Installation
 
 ### Clone Repository
@@ -182,63 +159,6 @@ Open:
 
 ```text
 http://localhost:3000
-```
-
----
-
-## Browser Extension
-
-Location:
-
-```text
-extension/
-```
-
-Load manually:
-
-1. Open Chrome
-2. Navigate to:
-
-```text
-chrome://extensions
-```
-
-3. Enable Developer Mode
-4. Click Load Unpacked
-5. Select:
-
-```text
-extension/
-```
-
----
-
-## PWA Installation
-
-Desktop:
-
-- Open JobScan
-- Click Install App
-
-Android:
-
-- Open in Chrome
-- Add to Home Screen
-
----
-
-## Project Structure
-
-```text
-src/
-├── app/               # Next.js App Router & API Endpoints
-├── core/              # Infrastructure & Shared Libs (auth, db, caching, UI components)
-├── features/          # Feature Modules (scans, users, reports)
-├── shared/            # Common constants & utilities
-└── middleware.js      # Next.js middleware routing
-
-extension/             # Chrome Extension (WXT)
-public/                # Static assets
 ```
 
 ---
