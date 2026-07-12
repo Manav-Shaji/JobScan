@@ -23,7 +23,7 @@ export function FooterSection() {
                         <div className="flex items-center gap-3 mb-4">
                             <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'linear-gradient(135deg, var(--cta) 0%, var(--primary) 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', fontWeight: 900, color: '#fff', boxShadow: '0 10px 20px rgba(var(--cta-rgb), 0.2)' }}>J</div>
                             <div>
-                                <h5 style={{ fontSize: '22px', fontWeight: 900, margin: 0, color: 'var(--on-dark)', letterSpacing: '-0.5px' }}>JobScan</h5>
+                                <h3 style={{ fontSize: '22px', fontWeight: 900, margin: 0, color: 'var(--on-dark)', letterSpacing: '-0.5px' }}>JobScan</h3>
                                 <div style={{ fontSize: '13px', color: 'var(--cta)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>AI Trust Platform</div>
                             </div>
                         </div>
@@ -43,7 +43,7 @@ export function FooterSection() {
                     <div className="md:col-span-8 lg:col-span-5">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <h6 style={{ fontWeight: 800, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '24px', color: 'var(--on-dark)' }}>Product</h6>
+                                <h4 style={{ fontWeight: 800, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '24px', color: 'var(--on-dark)' }}>Product</h4>
                                 <ul className="flex flex-col gap-3">
                                     <li><a href="#features" className="footer-link-premium" style={{ color: 'var(--muted)', textDecoration: 'none', fontSize: '15px' }}>Features</a></li>
                                     <li><a href="#about" className="footer-link-premium" style={{ color: 'var(--muted)', textDecoration: 'none', fontSize: '15px' }}>About Us</a></li>
@@ -51,7 +51,7 @@ export function FooterSection() {
                                 </ul>
                             </div>
                             <div>
-                                <h6 style={{ fontWeight: 800, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '24px', color: 'var(--on-dark)' }}>Legal</h6>
+                                <h4 style={{ fontWeight: 800, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '24px', color: 'var(--on-dark)' }}>Legal</h4>
                                 <ul className="flex flex-col gap-3">
                                     <li><Link href="/privacy" className="footer-link-premium" style={{ color: 'var(--muted)', textDecoration: 'none', fontSize: '15px' }}>Privacy Policy</Link></li>
                                     <li><Link href="/terms" className="footer-link-premium" style={{ color: 'var(--muted)', textDecoration: 'none', fontSize: '15px' }}>Terms of Service</Link></li>
@@ -62,7 +62,7 @@ export function FooterSection() {
                     </div>
  
                     <div className="md:col-span-4 lg:col-span-3">
-                        <h6 style={{ fontWeight: 800, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '24px', color: 'var(--on-dark)' }}>Stay Secure</h6>
+                        <h4 style={{ fontWeight: 800, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '24px', color: 'var(--on-dark)' }}>Stay Secure</h4>
                         <p style={{ fontSize: '14px', color: 'var(--muted)', marginBottom: '20px' }}>Join 10k+ subscribers getting weekly career safety tips.</p>
                         <div className="newsletter-wrap flex items-center gap-0" style={{ background: 'var(--surface-elevated)', borderRadius: '14px', padding: '4px', border: '1px solid var(--hairline)', boxShadow: '0 4px 10px rgba(0,0,0,0.05)', backdropFilter: 'blur(8px)' }}>
                             <input type="email" aria-label="Newsletter email address" placeholder="Email address" style={{ flex: 1, padding: '10px 16px', borderRadius: '12px', background: 'transparent', border: 'none', fontSize: '14px', color: 'var(--on-dark)', outline: 'none', width: '100%' }} />

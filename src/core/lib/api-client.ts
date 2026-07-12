@@ -1,7 +1,9 @@
+import { AnalyzeResponse, HistoryResponse, ChatResponse, DashboardStats } from '@/types/api';
+
 // --- API Client ---
 const API_BASE = '/api';
 
-async function analyzeJobDescription(jobDescription: string, posterFile: File | null = null): Promise<any> {
+async function analyzeJobDescription(jobDescription: string, posterFile: File | null = null): Promise<AnalyzeResponse> {
   let body: BodyInit;
   let headers: HeadersInit = {};
   
@@ -28,14 +30,14 @@ async function analyzeJobDescription(jobDescription: string, posterFile: File | 
   return payload;
 }
 
-async function getAnalysisHistory(): Promise<any[]> {
+async function getAnalysisHistory(): Promise<HistoryResponse[]> {
   try {
     const res = await fetch(`${API_BASE}/history`);
     return res.ok ? await res.json() : [];
   } catch (err) { return []; }
 }
 
-async function getAnalysisStats(): Promise<any> {
+async function getAnalysisStats(): Promise<DashboardStats> {
   const defaultStats = { totalScans: 0, scamsDetected: 0, avgTrustScore: 0 };
   try {
     const res = await fetch(`${API_BASE}/stats`);
@@ -62,6 +64,13 @@ async function getChatHistory(): Promise<any[]> {
   } catch (err) { return []; }
 }
 
+async function clearChatHistory(): Promise<any> {
+  const res = await fetch(`${API_BASE}/chat`, {
+    method: 'DELETE',
+  });
+  return res.json();
+}
+
 async function reportScam(scanId: any, reason: string): Promise<any> {
   const body = {
     scanId: typeof scanId === 'object' && scanId !== null ? (scanId.scanId || scanId.id) : scanId,
@@ -82,6 +91,7 @@ const api = {
   getStats: getAnalysisStats,
   sendMessage: sendChatMessage,
   getChatHistory: getChatHistory,
+  clearChatHistory: clearChatHistory,
   reportScam: reportScam,
 };
 

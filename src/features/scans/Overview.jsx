@@ -174,7 +174,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
         <m.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" variants={staggerContainer} initial="hidden" animate="visible">
           {statCards.map((s, i) => (
             <m.div key={s.label || i} variants={slideUp}>
-              <Card className="glass-card premium-card-edge h-full rounded-2xl p-5 shadow-lg hover-lift transition-all group border-[var(--hairline)]">
+              <Card className="glass-card premium-card-edge h-full rounded-2xl p-5 shadow-lg hover-lift transition group border-[var(--hairline)]">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[10px] font-black tracking-widest text-[var(--muted)] uppercase">{s.label}</span>
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${s.bg} ${s.border} ${s.color} group-hover:scale-105 transition-transform`}>
@@ -293,7 +293,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
         {/* Pull-to-refresh Indicator */}
         {(pullDistance > 0 || refreshing) && (
           <div 
-            className="flex items-center justify-center w-full transition-all duration-150 overflow-hidden"
+            className="flex items-center justify-center w-full transition duration-150 overflow-hidden"
             style={{ height: `${Math.min(60, pullDistance)}px` }}
           >
             <RefreshCw 
@@ -347,7 +347,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
                 cx="40"
                 cy="40"
                 r="34"
-                className={`transition-all duration-1000 ${
+                className={`transition duration-1000 ${
                   (statsData.avgTrustScore || 0) >= 75 ? 'stroke-emerald-400' :
                   (statsData.avgTrustScore || 0) >= 40 ? 'stroke-amber-400' :
                   'stroke-red-400'
@@ -372,7 +372,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
           <Link 
             href="/dashboard?tab=analyzer" 
             onClick={() => { if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20); }}
-            className="block text-decoration-none active:scale-[0.96] active:opacity-90 transition-all duration-150"
+            className="block text-decoration-none active:scale-[0.96] active:opacity-90 transition duration-150"
           >
             <div className="glass-card rounded-2xl p-3.5 flex flex-col justify-between min-h-[110px] max-h-[140px] border border-[var(--hairline)] hover:border-blue-500/20 active:bg-blue-500/5 h-full">
               <div className="flex justify-between items-start w-full">
@@ -387,7 +387,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
           <Link 
             href="/dashboard?tab=history" 
             onClick={() => { if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20); }}
-            className="block text-decoration-none active:scale-[0.96] active:opacity-90 transition-all duration-150"
+            className="block text-decoration-none active:scale-[0.96] active:opacity-90 transition duration-150"
           >
             <div className="glass-card rounded-2xl p-3.5 flex flex-col justify-between min-h-[110px] max-h-[140px] border border-[var(--hairline)] hover:border-emerald-500/20 active:bg-emerald-500/5 h-full">
               <div className="flex justify-between items-start w-full">
@@ -402,7 +402,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
           <Link 
             href="/dashboard?tab=profile" 
             onClick={() => { if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20); }}
-            className="block text-decoration-none active:scale-[0.96] active:opacity-90 transition-all duration-150"
+            className="block text-decoration-none active:scale-[0.96] active:opacity-90 transition duration-150"
           >
             <div className="glass-card rounded-2xl p-3.5 flex flex-col justify-between min-h-[110px] max-h-[140px] border border-[var(--hairline)] hover:border-purple-500/20 active:bg-purple-500/5 h-full">
               <div className="flex justify-between items-start w-full">
@@ -417,7 +417,7 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
           <Link 
             href="/dashboard?tab=settings" 
             onClick={() => { if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20); }}
-            className="block text-decoration-none active:scale-[0.96] active:opacity-90 transition-all duration-150"
+            className="block text-decoration-none active:scale-[0.96] active:opacity-90 transition duration-150"
           >
             <div className="glass-card rounded-2xl p-3.5 flex flex-col justify-between min-h-[110px] max-h-[140px] border border-[var(--hairline)] hover:border-amber-500/20 active:bg-amber-500/5 h-full">
               <div className="flex justify-between items-start w-full">

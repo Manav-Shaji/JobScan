@@ -90,9 +90,22 @@ function DashboardContent() {
 
     if (authLoading || !user) {
         return (
-            <div className="flex justify-center items-center" style={{ height: '100dvh', background: 'var(--canvas)' }}>
-                <div className="spinner-border text-primary" role="status">
-                    <span className="sr-only">Loading...</span>
+            <div className="flex flex-col gap-5 w-full fade-in pt-4">
+                <div className="hidden md:flex flex-col gap-5 w-full">
+                    <div className="rounded-3xl h-[70px] w-full skeleton" />
+                    <div className="grid grid-cols-4 gap-4 w-full">
+                        {[...Array(4)].map((_, i) => (
+                            <div key={i} className="rounded-2xl h-[106px] skeleton" />
+                        ))}
+                    </div>
+                </div>
+                <div className="md:hidden flex flex-col gap-4 w-full">
+                    <div className="rounded-2xl h-[112px] w-full skeleton" />
+                    <div className="grid grid-cols-2 gap-3 w-full">
+                        {[...Array(4)].map((_, i) => (
+                            <div key={i} className="rounded-2xl h-[96px] skeleton" />
+                        ))}
+                    </div>
                 </div>
             </div>
         );
@@ -184,9 +197,14 @@ function DashboardContent() {
 export default function SuperDashboard() {
     return (
         <Suspense fallback={
-            <div className="flex justify-center items-center" style={{ height: '100dvh', background: 'var(--canvas)' }}>
-                <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" role="status">
-                    <span className="sr-only">Loading...</span>
+            <div className="flex flex-col gap-5 w-full fade-in pt-4">
+                <div className="hidden md:flex flex-col gap-5 w-full">
+                    <div className="rounded-3xl h-[70px] w-full skeleton" />
+                    <div className="grid grid-cols-4 gap-4 w-full">
+                        {[...Array(4)].map((_, i) => (
+                            <div key={i} className="rounded-2xl h-[106px] skeleton" />
+                        ))}
+                    </div>
                 </div>
             </div>
         }>

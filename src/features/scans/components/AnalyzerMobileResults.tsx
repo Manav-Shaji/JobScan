@@ -100,12 +100,12 @@ export function AnalyzerMobileResults({
                                     <p className="text-[9px] text-gray-400 m-0 mt-0.5">Scan Type: <strong className="text-white uppercase">{result.scanType}</strong></p>
                                 </div>
                                 <div className="flex items-center gap-1.5 flex-shrink-0">
-                                    <button type="button" className="flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 font-bold text-[9px] uppercase tracking-wider active:scale-95 transition-all" 
+                                    <button type="button" className="flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 font-bold text-[9px] uppercase tracking-wider active:scale-95 transition" 
                                         onClick={handleReport}
                                     >
                                         <Flag size={11} /> Flag
                                     </button>
-                                    <button type="button" className="p-1 rounded-lg border border-white/10 text-gray-400 hover:text-white bg-slate-900/50 flex items-center justify-center w-7 h-7 active:scale-95 transition-all" 
+                                    <button type="button" className="p-1 rounded-lg border border-white/10 text-gray-400 hover:text-white bg-slate-900/50 flex items-center justify-center w-7 h-7 active:scale-95 transition" 
                                         onClick={() => setShowBottomSheet(false)}
                                     >
                                         <X size={14} />
@@ -152,7 +152,7 @@ export function AnalyzerMobileResults({
                                                             <span className={item.value < 40 ? 'text-red-400' : item.value < 75 ? 'text-amber-400' : 'text-emerald-400'}>{item.value}%</span>
                                                         </div>
                                                         <div className="h-1 bg-white/5 rounded-full overflow-hidden shadow-inner">
-                                                            <div className={`h-full rounded-full transition-all duration-1000 ${item.value < 40 ? 'bg-red-500' : item.value < 75 ? 'bg-amber-500' : 'bg-emerald-500'}`} style={{ width: `${item.value}%` }}></div>
+                                                            <div className={`h-full rounded-full transition duration-1000 ${item.value < 40 ? 'bg-red-500' : item.value < 75 ? 'bg-amber-500' : 'bg-emerald-500'}`} style={{ width: `${item.value}%` }}></div>
                                                         </div>
                                                     </div>
                                                 ))}
@@ -229,7 +229,7 @@ export function AnalyzerMobileResults({
                     className="md:hidden fixed left-4 right-4 z-40"
                     style={{ bottom: 'calc(76px + env(safe-area-inset-bottom, 0px))' }}
                 >
-                    <button type="button" className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-xs uppercase tracking-widest shadow-lg border border-blue-500/30 flex items-center justify-center gap-2 active:scale-95 transition-all"
+                    <button type="button" className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-xs uppercase tracking-widest shadow-lg border border-blue-500/30 flex items-center justify-center gap-2 active:scale-95 transition"
                         onClick={() => setShowBottomSheet(true)}
                     >
                         <ShieldCheck size={14} /> View Latest Result ({result.score}%)

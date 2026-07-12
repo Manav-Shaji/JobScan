@@ -76,8 +76,8 @@ function AuthContent() {
                         }} className="w-full max-w-[400px] mx-auto">
                             
                             <TabsList className="grid w-full grid-cols-2 mb-8 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl p-1 h-auto">
-                                <TabsTrigger value="login" className="py-2.5 rounded-lg text-xs font-bold data-[state=active]:bg-[var(--cta)] data-[state=active]:text-white transition-all">Sign In</TabsTrigger>
-                                <TabsTrigger value="signup" className="py-2.5 rounded-lg text-xs font-bold data-[state=active]:bg-[var(--cta)] data-[state=active]:text-white transition-all">Create Account</TabsTrigger>
+                                <TabsTrigger value="login" className="py-2.5 rounded-lg text-xs font-bold data-[state=active]:bg-[var(--cta)] data-[state=active]:text-white transition">Sign In</TabsTrigger>
+                                <TabsTrigger value="signup" className="py-2.5 rounded-lg text-xs font-bold data-[state=active]:bg-[var(--cta)] data-[state=active]:text-white transition">Create Account</TabsTrigger>
                             </TabsList>
                             
                             <TabsContent value="login" className="mt-0 outline-none">

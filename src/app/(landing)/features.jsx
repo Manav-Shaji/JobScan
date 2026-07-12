@@ -98,14 +98,14 @@ export function TrustScore({ score = 0, visible = false }) {
                         fill="transparent"
                         strokeDasharray={circumference}
                         strokeDashoffset={strokeDashoffset}
-                        className="transition-all duration-300 ease-out"
+                        className="transition duration-300 ease-out"
                         style={{ 
                             filter: `drop-shadow(0 0 10px ${color}70)`
                         }}
                     />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-                    <span className="font-black tracking-tighter transition-all leading-none text-5xl lg:text-6xl flex items-baseline z-10" style={{ 
+                    <span className="font-black tracking-tighter transition leading-none text-5xl lg:text-6xl flex items-baseline z-10" style={{ 
                         color,
                         textShadow: `0 0 15px ${color}60, 0 0 35px ${color}30`
                     }}>
@@ -116,7 +116,7 @@ export function TrustScore({ score = 0, visible = false }) {
                 </div>
             </div>
             
-            <div className="px-5 py-2 rounded-full border-2 mb-3 font-black text-xs uppercase tracking-widest flex items-center gap-2 transition-all" style={{
+            <div className="px-5 py-2 rounded-full border-2 mb-3 font-black text-xs uppercase tracking-widest flex items-center gap-2 transition" style={{
                 backgroundColor: `${color}12`,
                 borderColor: `${color}80`,
                 color: color,

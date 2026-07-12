@@ -1,6 +1,6 @@
 import { createRouteHandler } from '@/core/api/route-utils';
 import { chatSchema } from '@/features/chat/service';
-import { getChatHistory, processChatMessage } from '@/features/chat/service';
+import { getChatHistory, processChatMessage, clearChatHistory } from '@/features/chat/service';
 
 export const GET = createRouteHandler({
   auth: 'user',
@@ -15,5 +15,13 @@ export const POST = createRouteHandler({
   schema: chatSchema,
   async handler({ body, user }) {
     return await processChatMessage(user.id, body.message, body.context);
+  }
+});
+
+export const DELETE = createRouteHandler({
+  auth: 'user',
+  async handler({ user }) {
+    await clearChatHistory(user.id);
+    return { success: true };
   }
 });

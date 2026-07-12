@@ -33,12 +33,27 @@ const INSERT_CHAT_MESSAGE = `
   RETURNING *
 `;
 
+const DELETE_CHAT_HISTORY = `
+  DELETE FROM chat_messages 
+  WHERE user_id = $1
+`;
+
 async function fetchHistory(userId: string) {
   try {
     const res = await query(GET_CHAT_HISTORY, [userId]);
     return res.rows;
   } catch (error) {
     logger.error('Database error in getChatHistory', error, { userId });
+    throw error;
+  }
+}
+
+async function deleteHistory(userId: string) {
+  try {
+    await query(DELETE_CHAT_HISTORY, [userId]);
+    return true;
+  } catch (error) {
+    logger.error('Database error in deleteHistory', error, { userId });
     throw error;
   }
 }
@@ -55,6 +70,11 @@ async function saveChatMessage(userId: string, role: string, content: string) {
 }
 
 // --- Service ---
+
+export async function clearChatHistory(userId: string) {
+  logger.logApp('Clearing chat messages history for user', { userId });
+  return deleteHistory(userId);
+}
 
 export async function getChatHistory(userId: string) {
   logger.logApp('Fetching chat messages history for user', { userId });

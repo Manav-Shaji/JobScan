@@ -96,7 +96,7 @@ export function Profile({
               {/* Header Section */}
               <div className="flex items-center gap-4">
                 <div className="relative group">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 overflow-hidden transition-all group-hover:border-blue-500/40">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 overflow-hidden transition group-hover:border-blue-500/40">
                     <User size={22} />
                     <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                       <Camera size={16} className="text-white" />
@@ -121,7 +121,7 @@ export function Profile({
                       value={formData.name} 
                       onChange={e => setFormData({...formData, name: e.target.value})} 
                       placeholder="Your Full Name" 
-                      className="!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg transition-all"
+                      className="!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg transition"
                       aria-label="Display Name"
                     />
                   </div>
@@ -137,7 +137,7 @@ export function Profile({
                       value={formData.email} 
                       onChange={e => setFormData({...formData, email: e.target.value})} 
                       placeholder="you@example.com" 
-                      className="!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg transition-all"
+                      className="!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg transition"
                       aria-label="Email Address"
                     />
                   </div>
@@ -162,7 +162,7 @@ export function Profile({
                         </span>
                       </span>
                     ) : (
-                      <>Update Profile <ArrowRight size={14} className="opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" /></>
+                      <>Update Profile <ArrowRight size={14} className="opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition" /></>
                     )}
                   </m.button>
                 </div>
@@ -197,7 +197,7 @@ export function Profile({
                       value={passwordData?.oldPassword || ''} 
                       onChange={e => setPasswordData({...passwordData, oldPassword: e.target.value})} 
                       placeholder="••••••••" 
-                      className="!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-lg transition-all"
+                      className="!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-lg transition"
                       aria-label="Current Password"
                       required
                     />
@@ -214,7 +214,7 @@ export function Profile({
                       value={passwordData?.newPassword || ''} 
                       onChange={e => setPasswordData({...passwordData, newPassword: e.target.value})} 
                       placeholder="••••••••" 
-                      className="!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-lg transition-all"
+                      className="!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-lg transition"
                       aria-label="New Password"
                       required
                     />
@@ -231,7 +231,7 @@ export function Profile({
                       value={passwordData?.confirmPassword || ''} 
                       onChange={e => setPasswordData({...passwordData, confirmPassword: e.target.value})} 
                       placeholder="••••••••" 
-                      className="!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-lg transition-all"
+                      className="!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-lg transition"
                       aria-label="Confirm New Password"
                       required
                     />
@@ -257,7 +257,7 @@ export function Profile({
                         </span>
                       </span>
                     ) : (
-                      <>Change Password <ArrowRight size={14} className="opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" /></>
+                      <>Change Password <ArrowRight size={14} className="opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition" /></>
                     )}
                   </m.button>
                 </div>

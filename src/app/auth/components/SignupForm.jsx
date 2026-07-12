@@ -12,7 +12,9 @@ export function SignupForm() {
     const [formData, setFormData] = useState({ name: '', email: '', password: '' });
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
+    const [shakeError, setShakeError] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [capsLockActive, setCapsLockActive] = useState(false);
 
     const { register } = useAuth();
     const router = useRouter();
@@ -20,6 +22,13 @@ export function SignupForm() {
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         if (error) setError('');
+        if (shakeError) setShakeError(false);
+    };
+
+    const handleKeyUp = (e) => {
+        if (e.getModifierState) {
+            setCapsLockActive(e.getModifierState('CapsLock'));
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -37,6 +46,8 @@ export function SignupForm() {
                 userFriendlyError = 'An account with this email address already exists. Please sign in instead.';
             }
             setError(userFriendlyError);
+            setShakeError(true);
+            setTimeout(() => setShakeError(false), 1000);
         }
         setLoading(false);
     };
@@ -90,15 +101,15 @@ export function SignupForm() {
                         required
                         value={formData.name}
                         onChange={handleChange}
-                        className="peer block w-full px-4 pt-6 pb-2 text-sm text-[var(--on-dark)] bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl focus:border-[var(--cta)]/50 focus:bg-black/10 dark:focus:bg-white/10 focus:ring-0 outline-none transition-all duration-300"
+                        className={`peer block w-full px-4 pt-6 pb-2 text-sm text-[var(--on-dark)] bg-black/5 dark:bg-white/5 border rounded-xl focus:bg-black/10 dark:focus:bg-white/10 focus:ring-0 outline-none transition duration-300 ${shakeError ? 'border-red-500/50 animate-shake shadow-[0_0_15px_rgba(239,68,68,0.15)]' : 'border-black/10 dark:border-white/10 focus:border-[var(--cta)]/50'}`}
                     />
                     <label
                         htmlFor="signup-name"
-                        className="absolute left-4 top-4 text-[var(--muted)] text-xs pointer-events-none transition-all duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-[var(--cta)] peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs"
+                        className="absolute left-4 top-4 text-[var(--muted)] text-xs pointer-events-none transition duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-[var(--cta)] peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs"
                     >
                         Full Name
                     </label>
-                    <div className="absolute inset-0 rounded-xl border border-transparent peer-focus:border-[var(--cta)]/30 pointer-events-none transition-all duration-300 opacity-0 peer-focus:opacity-100 shadow-[0_0_15px_rgba(var(--cta-rgb),0.15)]"></div>
+                    <div className="absolute inset-0 rounded-xl border border-transparent peer-focus:border-[var(--cta)]/30 pointer-events-none transition duration-300 opacity-0 peer-focus:opacity-100 shadow-[0_0_15px_rgba(var(--cta-rgb),0.15)]"></div>
                 </div>
 
                 {/* Email */}
@@ -112,15 +123,15 @@ export function SignupForm() {
                         required
                         value={formData.email}
                         onChange={handleChange}
-                        className="peer block w-full px-4 pt-6 pb-2 text-sm text-[var(--on-dark)] bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl focus:border-[var(--cta)]/50 focus:bg-black/10 dark:focus:bg-white/10 focus:ring-0 outline-none transition-all duration-300"
+                        className={`peer block w-full px-4 pt-6 pb-2 text-sm text-[var(--on-dark)] bg-black/5 dark:bg-white/5 border rounded-xl focus:bg-black/10 dark:focus:bg-white/10 focus:ring-0 outline-none transition duration-300 ${shakeError ? 'border-red-500/50 animate-shake shadow-[0_0_15px_rgba(239,68,68,0.15)]' : 'border-black/10 dark:border-white/10 focus:border-[var(--cta)]/50'}`}
                     />
                     <label
                         htmlFor="signup-email"
-                        className="absolute left-4 top-4 text-[var(--muted)] text-xs pointer-events-none transition-all duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-[var(--cta)] peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs"
+                        className="absolute left-4 top-4 text-[var(--muted)] text-xs pointer-events-none transition duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-[var(--cta)] peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs"
                     >
                         Email Address
                     </label>
-                    <div className="absolute inset-0 rounded-xl border border-transparent peer-focus:border-[var(--cta)]/30 pointer-events-none transition-all duration-300 opacity-0 peer-focus:opacity-100 shadow-[0_0_15px_rgba(var(--cta-rgb),0.15)]"></div>
+                    <div className="absolute inset-0 rounded-xl border border-transparent peer-focus:border-[var(--cta)]/30 pointer-events-none transition duration-300 opacity-0 peer-focus:opacity-100 shadow-[0_0_15px_rgba(var(--cta-rgb),0.15)]"></div>
                 </div>
 
                 {/* Password */}
@@ -134,11 +145,12 @@ export function SignupForm() {
                         required
                         value={formData.password}
                         onChange={handleChange}
-                        className="peer block w-full pl-4 pr-12 pt-6 pb-2 text-sm text-[var(--on-dark)] bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl focus:border-[var(--cta)]/50 focus:bg-black/10 dark:focus:bg-white/10 focus:ring-0 outline-none transition-all duration-300"
+                        onKeyUp={handleKeyUp}
+                        className={`peer block w-full pl-4 pr-12 pt-6 pb-2 text-sm text-[var(--on-dark)] bg-black/5 dark:bg-white/5 border rounded-xl focus:bg-black/10 dark:focus:bg-white/10 focus:ring-0 outline-none transition duration-300 ${shakeError ? 'border-red-500/50 animate-shake shadow-[0_0_15px_rgba(239,68,68,0.15)]' : 'border-black/10 dark:border-white/10 focus:border-[var(--cta)]/50'}`}
                     />
                     <label
                         htmlFor="signup-password"
-                        className="absolute left-4 top-4 text-[var(--muted)] text-xs pointer-events-none transition-all duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-[var(--cta)] peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs"
+                        className="absolute left-4 top-4 text-[var(--muted)] text-xs pointer-events-none transition duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-[var(--cta)] peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs"
                     >
                         Password
                     </label>
@@ -150,7 +162,12 @@ export function SignupForm() {
                     >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
-                    <div className="absolute inset-0 rounded-xl border border-transparent peer-focus:border-[var(--cta)]/30 pointer-events-none transition-all duration-300 opacity-0 peer-focus:opacity-100 shadow-[0_0_15px_rgba(var(--cta-rgb),0.15)]"></div>
+                    <div className="absolute inset-0 rounded-xl border border-transparent peer-focus:border-[var(--cta)]/30 pointer-events-none transition duration-300 opacity-0 peer-focus:opacity-100 shadow-[0_0_15px_rgba(var(--cta-rgb),0.15)]"></div>
+                    {capsLockActive && (
+                        <div className="absolute right-12 top-1/2 -translate-y-1/2 flex items-center justify-center text-amber-500" title="Caps Lock is ON">
+                            <svg xmlns="http://www.3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20"/><path d="m5 9 7-7 7 7"/></svg>
+                        </div>
+                    )}
                 </div>
 
                 {/* Password Strength Indicator */}
@@ -163,13 +180,13 @@ export function SignupForm() {
                             </span>
                         </div>
                         <div className="flex gap-1 h-1">
-                            <div className={`h-full flex-1 rounded-full transition-all duration-300 ${
+                            <div className={`h-full flex-1 rounded-full transition duration-300 ${
                                 getPasswordStrength(formData.password).score >= 1 ? getPasswordStrength(formData.password).color : 'bg-black/10 dark:bg-white/10'
                             }`}></div>
-                            <div className={`h-full flex-1 rounded-full transition-all duration-300 ${
+                            <div className={`h-full flex-1 rounded-full transition duration-300 ${
                                 getPasswordStrength(formData.password).score >= 2 ? getPasswordStrength(formData.password).color : 'bg-white/10'
                             }`}></div>
-                            <div className={`h-full flex-1 rounded-full transition-all duration-300 ${
+                            <div className={`h-full flex-1 rounded-full transition duration-300 ${
                                 getPasswordStrength(formData.password).score >= 3 ? getPasswordStrength(formData.password).color : 'bg-white/10'
                             }`}></div>
                         </div>
@@ -193,7 +210,7 @@ export function SignupForm() {
                 <div className="mt-2 animate-field-5">
                     <button
                         type="submit"
-                        className="relative group w-full py-3.5 px-4 bg-gradient-to-r from-[var(--cta)] via-[var(--cta-hover)] to-[var(--cta)] text-white text-sm font-semibold rounded-xl overflow-hidden transition-all duration-300 shadow-[0_4px_15px_rgba(var(--cta-rgb),0.25)] hover:shadow-[0_4px_25px_rgba(var(--cta-rgb),0.45)] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="relative group w-full py-3.5 px-4 bg-gradient-to-r from-[var(--cta)] via-[var(--cta-hover)] to-[var(--cta)] text-white text-sm font-semibold rounded-xl overflow-hidden transition duration-300 shadow-[0_4px_15px_rgba(var(--cta-rgb),0.25)] hover:shadow-[0_4px_25px_rgba(var(--cta-rgb),0.45)] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled={loading}
                     >
                         <div className="absolute inset-0 w-full h-full bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

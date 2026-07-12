@@ -80,7 +80,7 @@ export function HowItWorks() {
                   </div>
   
                   <div>
-                    <h4 style={{ fontWeight: 800, marginBottom: '12px', fontSize: '22px', letterSpacing: '-0.5px', color: 'var(--on-dark)' }}>{step.title}</h4>
+                    <h3 style={{ fontWeight: 800, marginBottom: '12px', fontSize: '22px', letterSpacing: '-0.5px', color: 'var(--on-dark)' }}>{step.title}</h3>
                     <p className="text-[var(--text-secondary)] mb-0" style={{ fontSize: '16px', lineHeight: '1.6' }}>{step.description}</p>
                   </div>
                 </div>

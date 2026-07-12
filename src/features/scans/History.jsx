@@ -1,5 +1,6 @@
 import { FileText, Search, Filter, ChevronDown, Calendar, AlertTriangle, MoreVertical, Briefcase } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/core/ui/forms";
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious, PaginationLink } from "@/core/ui/navigation";
 import { m, AnimatePresence } from 'motion/react';
@@ -37,7 +38,7 @@ const ScoreCircle = ({ score }) => {
             fill="transparent"
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
-            className="transition-all duration-1000 ease-out"
+            className="transition duration-1000 ease-out"
           />
         </svg>
         <div className="absolute flex items-center justify-center inset-0 text-[var(--on-dark)] font-bold text-[11px]">
@@ -280,14 +281,24 @@ export function History({ fullHistory, loading }) {
         })}
 
         {filteredHistory.length === 0 && (
-          <div className="p-10 flex flex-col items-center justify-center text-center text-[var(--muted)]">
-            <div className="w-12 h-12 rounded-2xl bg-[var(--surface-elevated)] border border-[var(--hairline)] flex items-center justify-center mb-3">
-              <Briefcase size={20} className="text-[var(--muted)]" />
+          <div className="p-12 flex flex-col items-center justify-center text-center text-[var(--muted)] min-h-[300px]">
+            <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[var(--surface-elevated)] to-[rgba(var(--primary-rgb),0.02)] border border-[var(--hairline)] flex items-center justify-center mb-5 shadow-inner relative group">
+              <div className="absolute inset-0 bg-blue-500/5 rounded-3xl blur-xl group-hover:bg-blue-500/10 transition-colors duration-500"></div>
+              <Briefcase size={32} className="text-blue-500/60 relative z-10" />
             </div>
-            <h4 className="font-bold text-xs mb-1 text-[var(--on-dark)]">No Logs Found</h4>
-            <p className="text-[11px] text-[var(--muted)] leading-relaxed m-0">
-              {searchTerm ? 'No entries match your search criteria.' : 'Create an active scan and it will archive automatically.'}
+            <h4 className="font-black text-sm mb-2 text-[var(--on-dark)] tracking-tight">
+              {searchTerm ? 'No Results Found' : 'No Scan History Yet'}
+            </h4>
+            <p className="text-xs text-[var(--muted)] leading-relaxed max-w-xs mx-auto mb-6">
+              {searchTerm 
+                ? 'Try adjusting your search terms or filters to find what you are looking for.' 
+                : 'Analyze your first job posting to start building your history and tracking potential threats.'}
             </p>
+            {!searchTerm && (
+              <Link href="/dashboard/analyzer" className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-500 hover:to-sky-500 text-white font-bold text-[11px] tracking-wider uppercase transition shadow-[0_4px_15px_rgba(59,130,246,0.2)] hover:shadow-[0_4px_20px_rgba(59,130,246,0.3)] active:scale-[0.98]">
+                Analyze a Job
+              </Link>
+            )}
           </div>
         )}
         </AnimatePresence>

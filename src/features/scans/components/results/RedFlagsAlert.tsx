@@ -6,11 +6,11 @@ import { slideUp } from '@/core/motion';
 export function RedFlagsAlert({ redFlags }: { redFlags?: string[] }) {
     return (
         <m.div variants={slideUp}>
-            <Alert variant="destructive" className="bg-red-500/5 border-red-500/10 rounded-3xl p-6 shadow-lg hover-lift transition-all group h-full">
-                <div className="w-8 h-8 rounded-xl bg-red-500/10 flex items-center justify-center border border-red-500/20 mb-4 text-red-400">
-                    <AlertTriangle size={16} />
+            <Alert variant="destructive" className="bg-red-500/5 border-red-500/10 rounded-3xl p-5 shadow-lg hover-lift transition group h-full hover:shadow-[0_8px_30px_rgba(239,68,68,0.2)] hover:border-red-500/30">
+                <div className="w-7 h-7 rounded-xl bg-red-500/10 flex items-center justify-center border border-red-500/20 mb-3 text-red-400 group-hover:scale-110 transition-transform duration-300">
+                    <AlertTriangle size={14} />
                 </div>
-                <AlertTitle className="text-red-400 font-bold text-sm tracking-tight">
+                <AlertTitle className="text-red-400 font-bold text-xs tracking-tight">
                     Detected Red Flags ({redFlags?.length || 0})
                 </AlertTitle>
                 <AlertDescription className="flex flex-col gap-2.5 mt-2">

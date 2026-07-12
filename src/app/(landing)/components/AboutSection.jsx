@@ -59,14 +59,14 @@ export function AboutSection() {
                                 <li className="flex items-start gap-3 mb-3">
                                     <CheckCircle2 size={20} color="var(--cta)" />
                                     <div>
-                                        <h4 className="mb-1" style={{ fontSize: '18px', fontWeight: 700 }}>Heuristic Pattern Matching</h4>
+                                        <h3 className="mb-1" style={{ fontSize: '18px', fontWeight: 700 }}>Heuristic Pattern Matching</h3>
                                         <p className="text-[var(--muted)] mb-0" style={{ fontSize: '15px' }}>Detecting subtle red flags in job descriptions that humans often miss.</p>
                                     </div>
                                 </li>
                                 <li className="flex items-start gap-3 mb-3">
                                     <CheckCircle2 size={20} color="var(--cta)" />
                                     <div>
-                                        <h4 className="mb-1" style={{ fontSize: '18px', fontWeight: 700 }}>Global Trust & Verification</h4>
+                                        <h3 className="mb-1" style={{ fontSize: '18px', fontWeight: 700 }}>Global Trust & Verification</h3>
                                         <p className="text-[var(--muted)] mb-0" style={{ fontSize: '15px' }}>Real-time database of known scam domains and fraud techniques.</p>
                                     </div>
                                 </li>

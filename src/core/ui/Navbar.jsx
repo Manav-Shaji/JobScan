@@ -100,7 +100,7 @@ export function TopNavbar() {
                     >
                                 <Link
                                     href="/dashboard?tab=analyzer"
-                                    className={`nav-capsule-link px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 relative ${
+                                    className={`nav-capsule-link px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition flex items-center gap-2 relative ${
                                         pathname === '/dashboard/analyzer' || (pathname === '/dashboard' && tabParam === 'analyzer')
                                             ? 'shadow-sm border'
                                             : 'border border-transparent'
@@ -123,7 +123,7 @@ export function TopNavbar() {
                                 </Link>
                                 <Link
                                     href="/dashboard?tab=overview"
-                                    className={`nav-capsule-link px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 relative ${
+                                    className={`nav-capsule-link px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition flex items-center gap-2 relative ${
                                         pathname === '/dashboard' && tabParam === 'overview'
                                             ? 'shadow-sm border'
                                             : 'border border-transparent'
@@ -146,7 +146,7 @@ export function TopNavbar() {
                                 </Link>
                                 <Link
                                     href="/dashboard?tab=history"
-                                    className={`nav-capsule-link px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 relative ${
+                                    className={`nav-capsule-link px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition flex items-center gap-2 relative ${
                                         pathname === '/dashboard' && tabParam === 'history'
                                             ? 'shadow-sm border'
                                             : 'border border-transparent'
@@ -169,7 +169,7 @@ export function TopNavbar() {
                                 </Link>
                                 <Link
                                     href="/dashboard?tab=profile"
-                                    className={`nav-capsule-link px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 relative ${
+                                    className={`nav-capsule-link px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition flex items-center gap-2 relative ${
                                         pathname === '/dashboard' && tabParam === 'profile'
                                             ? 'shadow-sm border'
                                             : 'border border-transparent'
@@ -192,7 +192,7 @@ export function TopNavbar() {
                                 </Link>
                                 <Link
                                     href="/dashboard?tab=settings"
-                                    className={`nav-capsule-link px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 relative ${
+                                    className={`nav-capsule-link px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition flex items-center gap-2 relative ${
                                         pathname === '/dashboard' && tabParam === 'settings'
                                             ? 'shadow-sm border'
                                             : 'border border-transparent'
@@ -224,7 +224,7 @@ export function TopNavbar() {
                             setMobileMenuOpen(!mobileMenuOpen);
                             if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
                         }}
-                        className="md:hidden flex items-center justify-center p-2 rounded-xl transition-all border"
+                        className="md:hidden flex items-center justify-center p-2 rounded-xl transition border"
                         style={{
                             background: 'rgba(var(--primary-rgb), 0.05)',
                             borderColor: mobileMenuOpen ? 'rgba(var(--cta-rgb), 0.25)' : 'var(--hairline)',
@@ -342,7 +342,7 @@ export function TopNavbar() {
                                         setMobileMenuOpen(false);
                                         if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
                                     }}
-                                    className={`px-3 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2.5 border ${
+                                    className={`px-3 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition flex items-center gap-2.5 border ${
                                         pathname === '/dashboard' && tabParam === 'settings'
                                             ? 'bg-blue-500/10 text-[var(--cta)] border-[var(--cta)]/20 shadow-sm'
                                             : 'border-transparent text-[var(--muted)] hover:bg-black/5 dark:hover:bg-white/5 hover:text-[var(--on-dark)]'
@@ -355,7 +355,7 @@ export function TopNavbar() {
                                         if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
                                         alert("JobScan - AI Scam Detector v1.0.0. Designed for MCA Final-Year Project Demonstration.");
                                     }}
-                                    className="px-3 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2.5 border border-transparent text-[var(--muted)] hover:bg-black/5 dark:hover:bg-white/5 hover:text-[var(--on-dark)] text-left w-full bg-transparent"
+                                    className="px-3 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition flex items-center gap-2.5 border border-transparent text-[var(--muted)] hover:bg-black/5 dark:hover:bg-white/5 hover:text-[var(--on-dark)] text-left w-full bg-transparent"
                                 >
                                     <ShieldCheck size={14} /> About JobScan
                                 </button>

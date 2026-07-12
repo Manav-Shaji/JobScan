@@ -57,7 +57,7 @@ export function ContactSection() {
                                     <textarea id="contact-message" className="w-full block" rows="3" placeholder="Tell us more..." style={{ borderRadius: '10px', padding: '10px 14px', background: 'var(--surface-elevated)', border: '1px solid var(--hairline)', color: 'var(--on-dark)', fontSize: '14px' }}></textarea>
                                 </div>
                                 <div className="md:col-span-2 mt-4">
-                                    <button type="submit" className="button-primary w-100 flex items-center justify-center" style={{ padding: '12px', borderRadius: '10px', fontWeight: 700, fontSize: '15px' }}>
+                                    <button type="submit" className="button-primary w-full flex items-center justify-center" style={{ padding: '12px', borderRadius: '10px', fontWeight: 700, fontSize: '15px' }}>
                                         Send Message <ArrowRight size={16} className="ml-2" />
                                     </button>
                                 </div>

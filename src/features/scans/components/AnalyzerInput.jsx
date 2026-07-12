@@ -9,8 +9,10 @@ import {
     Clipboard, 
     Trash2, 
     UploadCloud, 
-    X 
+    X,
+    AlertCircle
 } from 'lucide-react';
+import { m } from 'motion/react';
 
 export function AnalyzerInput({
     jobText,
@@ -68,8 +70,8 @@ export function AnalyzerInput({
         <div className="mb-6">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-4 bg-[var(--surface-elevated)] border border-[var(--hairline)] rounded-xl p-1 h-auto">
-                    <TabsTrigger value="text" className="py-2.5 rounded-lg text-xs font-bold data-[state=active]:bg-blue-500 data-[state=active]:text-white transition-all flex items-center gap-2"><FileText size={14}/> Text Analysis</TabsTrigger>
-                    <TabsTrigger value="image" className="py-2.5 rounded-lg text-xs font-bold data-[state=active]:bg-purple-500 data-[state=active]:text-white transition-all flex items-center gap-2"><ImageIcon size={14}/> Poster Upload</TabsTrigger>
+                    <TabsTrigger value="text" className="py-2.5 rounded-lg text-xs font-bold data-[state=active]:bg-blue-500 data-[state=active]:text-white transition flex items-center gap-2"><FileText size={14}/> Text Analysis</TabsTrigger>
+                    <TabsTrigger value="image" className="py-2.5 rounded-lg text-xs font-bold data-[state=active]:bg-purple-500 data-[state=active]:text-white transition flex items-center gap-2"><ImageIcon size={14}/> Poster Upload</TabsTrigger>
                 </TabsList>
             
             <TabsContent value="text" className="mt-0 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -84,20 +86,36 @@ export function AnalyzerInput({
                         <span className="font-bold text-sm tracking-tight">Job Description</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <button type="button" className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--surface-elevated)] text-[var(--muted)] hover:text-blue-400 transition-all text-[11px] font-bold uppercase tracking-wider border border-[var(--hairline)]" onClick={handlePaste} title="Paste from Clipboard">
+                        <button type="button" className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--surface-elevated)] text-[var(--muted)] hover:text-blue-400 transition text-[11px] font-bold uppercase tracking-wider border border-[var(--hairline)]" onClick={handlePaste} title="Paste from Clipboard">
                             <Clipboard size={12} /> Paste
                         </button>
-                        <button type="button" className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--surface-elevated)] text-[var(--muted)] hover:text-red-400 transition-all text-[11px] font-bold uppercase tracking-wider border border-[var(--hairline)]" onClick={() => setJobText('')} title="Clear Text">
+                        <button type="button" className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--surface-elevated)] text-[var(--muted)] hover:text-red-400 transition text-[11px] font-bold uppercase tracking-wider border border-[var(--hairline)]" onClick={() => setJobText('')} title="Clear Text">
                             <Trash2 size={12} /> Clear
                         </button>
                     </div>
                 </div>
-                <Textarea
-                    className={`w-full flex-1 relative z-10 bg-[var(--surface-elevated)] text-[var(--on-dark)] placeholder-[var(--muted)] rounded-2xl p-4 text-sm leading-relaxed border focus:outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/20 transition-all resize-none h-[180px] md:h-auto md:min-h-[220px] shadow-inner ${inputError && !jobText && !posterFile ? 'border-red-500/40 shadow-[0_0_15px_rgba(239,68,68,0.15)]' : 'border-[var(--hairline)]'}`}
-                    placeholder="Paste job description here..."
-                    value={jobText}
-                    onChange={(e) => setJobText(e.target.value)}
-                />
+                <div 
+                    className={`relative flex-1 flex flex-col z-10 ${inputError && activeTab === 'text' ? 'animate-shake' : ''}`}
+                >
+                    <Textarea
+                        maxLength={10000}
+                        className={`w-full flex-1 bg-[var(--surface-elevated)] text-[var(--on-dark)] placeholder-[var(--muted)] rounded-2xl p-4 text-sm leading-relaxed border focus:outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/20 transition resize-none h-[180px] md:h-auto md:min-h-[220px] shadow-inner ${inputError && activeTab === 'text' ? 'border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.15)] ring-1 ring-red-500/20' : 'border-[var(--hairline)]'}`}
+                        placeholder="Paste job description here..."
+                        value={jobText}
+                        onChange={(e) => setJobText(e.target.value)}
+                    />
+                    
+                    <div className="flex justify-between items-center mt-3 px-1">
+                        <div className={`text-[11px] font-medium transition-colors duration-300 flex items-center gap-1.5 ${jobText.length > 9000 ? 'text-red-400' : jobText.length > 7000 ? 'text-amber-400' : 'text-[var(--muted)]'}`}>
+                            <span>{jobText.length.toLocaleString()} / 10,000 characters</span>
+                            {jobText.length > 9000 && <span className="animate-pulse">⚠️ Approaching limit</span>}
+                        </div>
+                        
+                        <div className={`text-[11px] font-bold text-red-400 transition-opacity duration-300 flex items-center gap-1 ${inputError && activeTab === 'text' ? 'opacity-100' : 'opacity-0'}`}>
+                            <AlertCircle size={12} /> Please enter a job description
+                        </div>
+                    </div>
+                </div>
             </div>
             </TabsContent>
 
@@ -118,7 +136,7 @@ export function AnalyzerInput({
                 <div className="hidden md:flex flex-col flex-1">
                     {!posterFile ? (
                         <div 
-                            className={`flex-1 relative z-10 bg-[var(--surface-elevated)] rounded-2xl border-2 border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all min-h-[220px] ${isDragging ? 'border-blue-500 bg-blue-500/5' : 'border-[var(--hairline-strong)] hover:border-blue-500/50 hover:bg-[rgba(var(--primary-rgb),0.02)]'} ${inputError && !jobText && !posterFile ? 'border-red-500/40 bg-red-500/5' : ''}`}
+                            className={`flex-1 relative z-10 bg-[var(--surface-elevated)] rounded-2xl border-2 border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer transition min-h-[220px] ${isDragging ? 'border-blue-500 bg-blue-500/5' : 'border-[var(--hairline-strong)] hover:border-blue-500/50 hover:bg-[rgba(var(--primary-rgb),0.02)]'} ${inputError && activeTab === 'image' ? 'animate-shake border-red-500/50 bg-red-500/5 shadow-[0_0_15px_rgba(239,68,68,0.15)]' : ''}`}
                             onDragOver={handleDragOver}
                             onDragLeave={handleDragLeave}
                             onDrop={handleDrop}
@@ -132,11 +150,15 @@ export function AnalyzerInput({
                                 accept="image/png, image/jpeg, image/jpg, image/webp" 
                                 onChange={(e) => handleFileSelect(e.target.files?.[0])}
                             />
-                            <div className="w-14 h-14 rounded-full bg-[var(--surface-card)] border border-[var(--hairline)] flex items-center justify-center mb-4 shadow-sm text-[var(--muted)]">
+                            <div className={`w-14 h-14 rounded-full bg-[var(--surface-card)] border flex items-center justify-center mb-4 shadow-sm transition-colors ${inputError && activeTab === 'image' ? 'border-red-500/30 text-red-400' : 'border-[var(--hairline)] text-[var(--muted)]'}`}>
                                 <UploadCloud size={24} />
                             </div>
-                            <h4 className="font-bold text-[13px] text-[var(--on-dark)] mb-1">Drag & Drop Upload Area</h4>
-                            <p className="text-[11px] text-[var(--muted)] px-4">Supported: PNG, JPG, WEBP<br/>Maximum size: 10 MB</p>
+                            <h4 className={`font-bold text-[13px] mb-1 transition-colors ${inputError && activeTab === 'image' ? 'text-red-400' : 'text-[var(--on-dark)]'}`}>Drag & Drop Upload Area</h4>
+                            <p className="text-[11px] text-[var(--muted)] px-4">Supported: PNG, JPG, WEBP<br/>Maximum size: 5 MB</p>
+                            
+                            <div className={`mt-3 text-[11px] font-bold text-red-400 transition-opacity duration-300 flex items-center gap-1 ${inputError && activeTab === 'image' ? 'opacity-100' : 'opacity-0'}`}>
+                                <AlertCircle size={12} /> Please upload an image
+                            </div>
                         </div>
                     ) : (
                         <div className="flex-1 relative z-10 bg-[var(--surface-elevated)] rounded-2xl border border-[var(--hairline)] p-4 flex flex-col min-h-[220px]">
@@ -170,13 +192,13 @@ export function AnalyzerInput({
                     {!posterFile ? (
                         <button
                             type="button"
-                            className={`w-full flex items-center justify-center gap-2.5 py-4 px-4 bg-[var(--surface-elevated)] border-2 border-dashed rounded-2xl text-[var(--muted)] active:scale-[0.98] transition-all min-h-[56px] ${
-                                inputError && !jobText && !posterFile ? 'border-red-500/40 bg-red-500/5' : 'border-[var(--hairline-strong)]'
+                            className={`w-full flex items-center justify-center gap-2.5 py-4 px-4 bg-[var(--surface-elevated)] border-2 border-dashed rounded-2xl text-[var(--muted)] active:scale-[0.98] transition min-h-[56px] ${
+                                inputError && activeTab === 'image' ? 'animate-shake border-red-500/50 bg-red-500/5 shadow-[0_0_15px_rgba(239,68,68,0.15)] text-red-400' : 'border-[var(--hairline-strong)]'
                             }`}
                             onClick={() => document.getElementById('mobile-file-input').click()}
                         >
-                            <UploadCloud size={18} className="text-blue-400" />
-                            <span className="text-xs font-black uppercase tracking-wider">Upload Job Poster</span>
+                            <UploadCloud size={18} className={inputError && activeTab === 'image' ? 'text-red-400' : 'text-blue-400'} />
+                            <span className="text-xs font-black uppercase tracking-wider">{inputError && activeTab === 'image' ? 'Upload Required' : 'Upload Job Poster'}</span>
                         </button>
                     ) : (
                         <div className="flex items-center gap-3 p-3 bg-[var(--surface-elevated)] border border-[var(--hairline)] rounded-2xl">

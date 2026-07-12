@@ -5,11 +5,11 @@ import { useJob } from '@/core/providers/providers';
 import { useToast } from "@/core/ui/use-toast";
 
 export const loadingMessages = [
-    "Initializing multimodal AI engine...",
-    "Running OCR extraction and pattern matching...",
-    "Evaluating credibility and consistency...",
-    "Analyzing security and scam indicators...",
-    "Generating final trust assessment..."
+    "Parsing Job Description",
+    "OCR Processing",
+    "Employer Verification",
+    "AI Trust Analysis",
+    "Waiting for AI response..."
 ];
 
 export function useAnalyzer() {

@@ -56,8 +56,14 @@ export const geminiService = {
 
     let lastErrorMsg = 'Unknown Error';
     
-    for (let i = 0; i < FALLBACK_CHAIN.length; i++) {
-      const modelName = FALLBACK_CHAIN[i];
+    const CHAT_FALLBACK_CHAIN = [
+      'gemini-3.1-flash-lite', // Primary for chat (fast)
+      'gemini-3.5-flash',      // Fallback
+      'gemini-2.5-flash'       // Final fallback
+    ];
+
+    for (let i = 0; i < CHAT_FALLBACK_CHAIN.length; i++) {
+      const modelName = CHAT_FALLBACK_CHAIN[i];
       const startTime = Date.now();
       
       try {

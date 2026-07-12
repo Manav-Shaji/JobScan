@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+
 import dynamic from 'next/dynamic';
 const TrustScore = dynamic(() => import('@/app/(landing)/features').then(mod => mod.TrustScore));
 const SignupWall = dynamic(() => import('@/app/(landing)/features').then(mod => mod.SignupWall));
@@ -25,6 +27,19 @@ const ChatWidget = dynamic(() => import('@/core/ui/ChatWidget').then(mod => mod.
 
 export default function Analyzer() {
     const { state, setters, handlers, scanLimit } = useAnalyzer();
+    const resultsRef = useRef(null);
+
+    // Auto-scroll to results when they are revealed
+    useEffect(() => {
+        if (state.revealStats && resultsRef.current) {
+            // Wait for the loading skeleton's exit animation to finish 
+            // before scrolling, otherwise it calculates height incorrectly and leaves a gap
+            const timer = setTimeout(() => {
+                resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 350);
+            return () => clearTimeout(timer);
+        }
+    }, [state.revealStats]);
 
     const {
         jobText, posterFile, posterPreview, activeTab, loading,
@@ -85,7 +100,7 @@ export default function Analyzer() {
                 {!isLoggedIn ? (
                     <div className="flex items-center gap-2">
                         {[...Array(FREE_SCAN_LIMIT)].map((_, i) => (
-                            <div key={i} className={`w-2.5 h-2.5 rounded-full transition-all duration-300 \${
+                            <div key={i} className={`w-2.5 h-2.5 rounded-full transition duration-300 \${
                                 i < scanCount ? (remainingScans <= 1 ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]') : 'bg-[var(--hairline)]'
                             }`}></div>
                         ))}
@@ -111,7 +126,7 @@ export default function Analyzer() {
 
             {/* SECTION 3: Analyze Button (Desktop Only) */}
             <div className="mb-8 hidden md:block">
-                <button type="button" className="w-full relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 hover:from-blue-500 hover:to-sky-500 text-white py-4 rounded-2xl font-black text-sm tracking-widest shadow-[0_4px_20px_rgba(59,130,246,0.15)] hover:shadow-[0_4px_25px_rgba(59,130,246,0.25)] hover:scale-[1.002] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                <button type="button" className="w-full relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 hover:from-blue-500 hover:to-sky-500 text-white py-4 rounded-2xl font-black text-sm tracking-widest shadow-[0_4px_20px_rgba(59,130,246,0.15)] hover:shadow-[0_4px_25px_rgba(59,130,246,0.25)] hover:scale-[1.002] transition flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                     onClick={handleAnalyze}
                     disabled={loading}
                 >
@@ -126,8 +141,9 @@ export default function Analyzer() {
             {loading && (
                 <m.div key="analyzer-loading-state" variants={scaleUp} initial="hidden" animate="visible" exit="exit" className="glass-card premium-card-edge rounded-2xl p-5 md:p-6 shadow-xl relative overflow-hidden border border-blue-500/20 soft-glow mb-6">
                     <div className="text-center mb-5">
-                        <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 mx-auto mb-3 shadow-[0_0_20px_rgba(59,130,246,0.15)]">
-                            <Fingerprint size={24} className="animate-pulse text-blue-400" />
+                        <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 mx-auto mb-3 shadow-[0_0_20px_rgba(59,130,246,0.15)] relative overflow-hidden group">
+                            <Fingerprint size={24} className="text-blue-400 opacity-80" />
+                            <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-transparent to-blue-400/30 border-b border-blue-400 animate-scan-laser"></div>
                         </div>
                         <h3 className="text-base font-black text-[var(--on-dark)] mb-0 tracking-tight flex items-center justify-center gap-1.5">
                             <Terminal size={14} className="text-blue-500" /> Analysis Active
@@ -138,8 +154,9 @@ export default function Analyzer() {
                             const isCompleted = completedStages.includes(i);
                             const isActive = activeStage === i;
                             return (
-                                <div key={i} className={`flex items-center justify-between p-2.5 rounded-xl border transition-all duration-300 \${isActive ? 'bg-blue-500/10 border-blue-500/30 text-blue-400 shadow-[0_0_12px_rgba(59,130,246,0.1)] scale-[1.01]' : isCompleted ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-400/90' : 'bg-[rgba(var(--primary-rgb),0.03)] border-[var(--hairline)] text-[var(--muted)] opacity-40'}`}>
-                                    <div className="flex items-center gap-2.5">
+                                <div key={i} className={`flex items-center justify-between p-2.5 rounded-xl border transition duration-300 ${isActive ? 'bg-blue-500/15 border-blue-500/40 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.2)] scale-[1.02] relative overflow-hidden' : isCompleted ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-400/90' : 'bg-[rgba(var(--primary-rgb),0.03)] border-[var(--hairline)] text-[var(--muted)] opacity-40'}`}>
+                                    {isActive && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/10 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>}
+                                    <div className="flex items-center gap-2.5 relative z-10">
                                         {isCompleted ? <CheckCircle size={14} className="text-emerald-500" /> : isActive ? <Cpu size={14} className="animate-spin text-blue-400" /> : <Lock size={14} className="text-[var(--muted)]" />}
                                         <span className="text-[11px] font-semibold">{msg}</span>
                                     </div>
@@ -151,11 +168,14 @@ export default function Analyzer() {
                         })}
                     </div>
                     <div className="w-48 h-1 bg-[var(--hairline)] rounded-full mx-auto overflow-hidden border border-[var(--hairline-strong)]">
-                        <div className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-500 rounded-full transition-all duration-300 ease-out" style={{ width: `\${Math.min(100, ((activeStage) / loadingMessages.length) * 100)}%` }}></div>
+                        <div className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-500 rounded-full transition duration-300 ease-out" style={{ width: `\${Math.min(100, ((activeStage) / loadingMessages.length) * 100)}%` }}></div>
                     </div>
                 </m.div>
             )}
             </AnimatePresence>
+
+            {/* --- Scroll Anchor --- */}
+            <div ref={resultsRef} className="scroll-mt-[100px] md:scroll-mt-[140px]"></div>
 
             {/* --- Results View --- */}
             <AnalyzerDesktopResults 
@@ -185,7 +205,7 @@ export default function Analyzer() {
                 className="md:hidden fixed left-0 right-0 z-40 bg-[var(--canvas)]/80 backdrop-blur-md border-t border-[var(--hairline)] p-3.5 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]"
                 style={{ bottom: 'calc(64px + env(safe-area-inset-bottom, 0px))' }}
             >
-                <button type="button" className="w-full relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 active:scale-[0.98] text-white py-3.5 rounded-xl font-black text-xs tracking-widest transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                <button type="button" className="w-full relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 active:scale-[0.98] text-white py-3.5 rounded-xl font-black text-xs tracking-widest transition flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                     onClick={handleAnalyze}
                     disabled={loading}
                 >

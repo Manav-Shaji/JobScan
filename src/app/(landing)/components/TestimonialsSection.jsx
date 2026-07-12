@@ -42,7 +42,7 @@ export function TestimonialsSection() {
                 <m.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}>
                     {testimonials.map((t, i) => (
                         <m.div key={i} variants={slideUp} className={`h-full ${i === 1 ? 'testimonial-stagger-2' : ''}`}>
-                            <div className="glass-card testimonial-card h-full flex flex-col justify-between p-6 transition-all hover-lift" style={{ 
+                            <div className="glass-card testimonial-card h-full flex flex-col justify-between p-6 transition hover-lift" style={{ 
                                 borderRadius: '24px', 
                                 border: '1px solid var(--hairline-strong)',
                                 background: 'rgba(var(--surface-card-rgb), 0.3)',
@@ -58,7 +58,7 @@ export function TestimonialsSection() {
                                         style={{ borderRadius: '18px', objectFit: 'cover', border: '2px solid rgba(var(--cta-rgb), 0.3)' }} 
                                     />
                                     <div>
-                                        <h5 className="mb-0" style={{ fontWeight: 800, fontSize: '18px', color: 'var(--on-dark)' }}>{t.name}</h5>
+                                        <h3 className="mb-0" style={{ fontWeight: 800, fontSize: '18px', color: 'var(--on-dark)' }}>{t.name}</h3>
                                         <div className="text-[var(--text-secondary)]" style={{ fontSize: '13px', fontWeight: 600 }}>{t.role}</div>
                                         <div className="stars mt-2 flex" style={{ color: '#F59E0B' }} aria-label="5 stars rating" role="img">
                                             <Star className="mr-1" size={14} fill="currentColor" aria-hidden="true" />
@@ -82,7 +82,7 @@ export function TestimonialsSection() {
                 
                 <div className="mt-5 pt-5">
                     <div className="glass-card py-4 px-2" style={{ borderRadius: '24px', background: 'rgba(var(--surface-elevated-rgb), 0.3)', border: '1px solid var(--hairline)', textAlign: 'center' }}>
-                        <p className="text-[var(--muted)] mb-4 small text-uppercase font-bold" style={{ letterSpacing: '3px', opacity: 0.6 }}>
+                        <p className="text-[var(--text-secondary)] mb-4 small text-uppercase font-bold" style={{ letterSpacing: '3px' }}>
                             Featured & Trusted By Industry Leaders
                         </p>
                         <div className="flex flex-wrap justify-center items-center gap-5 px-4">
