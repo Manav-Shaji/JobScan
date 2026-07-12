@@ -68,7 +68,7 @@ const Switch = React.forwardRef<
 Switch.displayName = SwitchPrimitives.Root.displayName
 
 // --- Textarea ---
-export interface TextareaProps
+interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
@@ -166,8 +166,8 @@ SelectItem.displayName = SelectPrimitive.Item.displayName
 
 export {
   Input,
-  Label, labelVariants,
+  Label,
   Switch,
   Textarea,
-  Select, SelectGroup, SelectValue, SelectTrigger, SelectContent, SelectItem
+  Select, SelectValue, SelectTrigger, SelectContent, SelectItem
 }

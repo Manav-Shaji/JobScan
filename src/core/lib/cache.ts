@@ -26,9 +26,6 @@ export class MemoryCache<T = any> {
     }
   }
 
-  /**
-   * Put value in cache with a TTL
-   */
   set(key: string, value: T, ttlMs?: number): void {
     const ttl = ttlMs ?? this.defaultTtlMs;
     this.store.set(key, {
@@ -37,9 +34,6 @@ export class MemoryCache<T = any> {
     });
   }
 
-  /**
-   * Retrieve valid cached value. Returns null if missing or expired.
-   */
   get(key: string): T | null {
     const entry = this.store.get(key);
     if (!entry) return null;

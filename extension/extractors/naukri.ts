@@ -1,54 +1,41 @@
-/* eslint-disable */
-import { JobData, JobExtractor } from '../types';
+import { BaseExtractor, ExtractedDOM } from './base';
 
-export class NaukriExtractor implements JobExtractor {
+export class NaukriExtractor extends BaseExtractor {
   canHandle(url: string): boolean {
     return url.includes('naukri.com');
   }
 
-  async extract(): Promise<JobData | null> {
-    try {
-      const titleEl = document.querySelector('.jd-header-title') || 
-                      document.querySelector('h1.title') || 
-                      document.querySelector('.job-title') || 
-                      document.querySelector('h1');
-                      
-      const companyEl = document.querySelector('.jd-header-comp-name a') || 
-                        document.querySelector('.jd-header-comp-name') || 
-                        document.querySelector('.company-name') ||
-                        document.querySelector('.company-name-text') ||
-                        document.querySelector('.com-name');
-                        
-      const locEl = document.querySelector('.loc') || 
-                    document.querySelector('.location') || 
-                    document.querySelector('.job-location') ||
-                    document.querySelector('.loc-wrap');
-                    
-      const descEl = document.querySelector('.job-desc') || 
-                     document.querySelector('.dang-inner-html') || 
-                     document.querySelector('[class*="job-desc"]') ||
-                     document.querySelector('.jobDescription');
-                     
-      const salaryEl = document.querySelector('.salary') || 
-                       document.querySelector('.sal') ||
-                       document.querySelector('.salary-wrap');
+  protected getTitleSplitChar(): string {
+    return '-';
+  }
 
-      let title = titleEl?.textContent?.trim();
-      if (!title) {
-        title = document.title.split('|')[0].trim() || 'Unknown Job Title';
-      }
+  protected extractDOM(): ExtractedDOM {
+    const titleEl = document.querySelector('.jd-header-title') ||
+                    document.querySelector('[class*="title"]') ||
+                    document.querySelector('[class*="job-title"]') ||
+                    document.querySelector('h1');
 
-      return {
-        title: title,
-        company: companyEl?.textContent?.trim() || 'Unknown Company',
-        location: locEl?.textContent?.trim() || '',
-        salary: salaryEl?.textContent?.trim() || '',
-        description: descEl?.textContent?.trim() || 'No description extracted. Please use OCR as a fallback.',
-        url: window.location.href
-      };
-    } catch (error) {
-      console.error('Naukri extraction failed:', error);
-      return null;
-    }
+    const companyEl = document.querySelector('.jd-header-comp-name a') ||
+                      document.querySelector('[class*="comp-name"]') ||
+                      document.querySelector('[class*="company-name"]') ||
+                      document.querySelector('a[href*="/company/"]');
+
+    const locEl = document.querySelector('.loc') ||
+                  document.querySelector('[class*="location"]') ||
+                  document.querySelector('[class*="loc-wrap"]');
+
+    const descEl = document.querySelector('.job-desc') ||
+                   document.querySelector('.dang-inner-html') ||
+                   document.querySelector('[class*="job-desc"]') ||
+                   document.querySelector('.jobDescription');
+
+    const salaryEl = document.querySelector('.salary') ||
+                     document.querySelector('.sal') ||
+                     document.querySelector('.salary-wrap');
+
+    const mainContainer = document.querySelector('.leftSec, .job-desc, .styles_job-desc-container__txpYf') as HTMLElement;
+    const aboutCompanyEl = document.querySelector('.about-company, .company-profile, [class*="about-company"], [class*="company-profile"]') as HTMLElement;
+
+    return { titleEl, companyEl, locEl, descEl, salaryEl, mainContainer, aboutCompanyEl };
   }
 }

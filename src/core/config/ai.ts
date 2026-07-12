@@ -1,6 +1,5 @@
 import { logger } from '@/core/lib/logger';
-
-export const SUPPORTED_MODELS = [
+const SUPPORTED_MODELS = [
   'gemini-3.5-flash',
   'gemini-3.1-flash-lite',
   'gemini-2.5-flash'
@@ -15,17 +14,17 @@ const AI_MODELS = {
 // Validate environment models against supported whitelist
 function getValidatedModel(envVar: string | undefined, defaultModel: string, role: string): string {
   if (!envVar) return defaultModel;
-  
+
   if (SUPPORTED_MODELS.includes(envVar)) {
     return envVar;
   }
-  
+
   logger.warn(`Unsupported model configured for ${role}`, {
     configured: envVar,
     fallbackTo: defaultModel,
     supported: SUPPORTED_MODELS.join(', ')
   });
-  
+
   return defaultModel;
 }
 

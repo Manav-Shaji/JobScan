@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { JobExtractor } from '../types';
+import { JobExtractor } from '@/extension/types';
 import { LinkedInExtractor } from './linkedin';
 import { NaukriExtractor } from './naukri';
 import { IndeedExtractor } from './indeed';

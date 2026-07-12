@@ -1,4 +1,4 @@
-import { Pool } from 'pg';
+import { Pool, QueryResultRow } from 'pg';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const isNextBuild = process.env.NEXT_PHASE === 'phase-production-build';
@@ -23,7 +23,12 @@ if (isProduction && !isNextBuild) {
   }
 }
 
-let pool;
+// Add pgPool to NodeJS global scope for connection pooling across hot reloads
+declare global {
+  var pgPool: Pool | undefined;
+}
+
+let pool: Pool;
 if (!global.pgPool) {
   global.pgPool = new Pool({
     user: process.env.DB_USER || 'devuser',
@@ -39,5 +44,5 @@ if (!global.pgPool) {
 }
 pool = global.pgPool;
 
-export const query = (text, params) => pool.query(text, params);
+export const query = <T extends QueryResultRow = any>(text: string, params?: any[]) => pool.query<T>(text, params);
 export { pool };

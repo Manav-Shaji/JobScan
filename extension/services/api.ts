@@ -103,17 +103,14 @@ export async function analyzeJob(
   posterMimeType?: string
 ) {
   try {
-    const fullDescription = jobData
-      ? `
-Title: ${jobData.title || ''}
-Company: ${jobData.company || ''}
-Location: ${jobData.location || ''}
-Salary: ${jobData.salary || ''}
-
-Description:
-${jobData.description || ''}
-`
-      : '';
+    let fullDescription = '';
+    if (jobData) {
+      if (jobData.title) fullDescription += `Title: ${jobData.title}\n`;
+      if (jobData.company) fullDescription += `Company: ${jobData.company}\n`;
+      if (jobData.location) fullDescription += `Location: ${jobData.location}\n`;
+      if (jobData.salary) fullDescription += `Salary: ${jobData.salary}\n\n`;
+      if (jobData.description) fullDescription += `Description:\n${jobData.description}\n`;
+    }
 
     const API_BASE = await getApiBaseUrl();
     const res = await fetch(`${API_BASE}/analyze`, {

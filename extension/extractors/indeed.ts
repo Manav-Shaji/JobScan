@@ -1,56 +1,39 @@
-/* eslint-disable */
-import { JobData, JobExtractor } from '../types';
+import { BaseExtractor, ExtractedDOM } from './base';
 
-export class IndeedExtractor implements JobExtractor {
+export class IndeedExtractor extends BaseExtractor {
   canHandle(url: string): boolean {
-    return url.includes('indeed.com/viewjob') || 
-           url.includes('indeed.com/rc/clk') || 
-           url.includes('indeed.com/jobs');
+    return url.includes('indeed.com');
   }
 
-  async extract(): Promise<JobData | null> {
-    try {
-      const titleEl = document.querySelector('.jobsearch-JobInfoHeader-title') || 
-                      document.querySelector('h2.jobsearch-JobInfoHeader-title span') || 
-                      document.querySelector('h2.jobTitle') ||
-                      document.querySelector('[data-testid="jobsearch-JobInfoHeader-title"]') ||
-                      document.querySelector('h1');
+  protected getTitleSplitChar(): string {
+    return '-';
+  }
+
+  protected extractDOM(): ExtractedDOM {
+    const titleEl = document.querySelector('.jobsearch-JobInfoHeader-title') || 
+                    document.querySelector('h1.jobsearch-JobInfoHeader-title') ||
+                    document.querySelector('h1');
+
+    const companyEl = document.querySelector('[data-company-name="true"]') || 
+                      document.querySelector('.jobsearch-CompanyInfoContainer a') ||
+                      document.querySelector('.jobsearch-JobInfoHeader-subtitle div') ||
+                      document.querySelector('[data-testid="inlineHeader-companyName"]');
                       
-      const companyEl = document.querySelector('div[data-company-name]') || 
-                        document.querySelector('[data-testid="inlineHeader-companyName"]') ||
-                        document.querySelector('.jobsearch-CompanyInfoContainer') ||
-                        document.querySelector('.companyName');
-                        
-      const locEl = document.querySelector('div[data-job-location]') || 
-                    document.querySelector('[data-testid="inlineHeader-companyLocation"]') ||
-                    document.querySelector('.companyLocation');
-                    
-      const descEl = document.querySelector('#jobDescriptionText') || 
-                     document.querySelector('.jobsearch-jobDescriptionText') ||
-                     document.querySelector('.jobsearch-JobComponent-description');
-                     
-      const salaryEl = document.querySelector('#salaryInfoAndJobType') || 
-                       document.querySelector('.salary-snippet-container') ||
-                       document.querySelector('[data-testid="jobsearch-JobDescription-salary"]');
+    const locEl = document.querySelector('div[data-job-location]') || 
+                  document.querySelector('[data-testid="inlineHeader-companyLocation"]') ||
+                  document.querySelector('[class*="companyLocation"]');
+                  
+    const descEl = document.querySelector('#jobDescriptionText') || 
+                   document.querySelector('.jobsearch-jobDescriptionText') ||
+                   document.querySelector('.jobsearch-JobComponent-description');
+                   
+    const salaryEl = document.querySelector('#salaryInfoAndJobType') || 
+                     document.querySelector('.salary-snippet-container') ||
+                     document.querySelector('[data-testid="jobsearch-JobDescription-salary"]');
 
-      // Use document title as an absolute fallback for the job title
-      let title = titleEl?.textContent?.trim();
-      if (!title) {
-        // Indeed titles are often "Job Title - Location - Company - Indeed.com"
-        title = document.title.split('-')[0].trim() || 'Unknown Job Title';
-      }
+    const mainContainer = document.querySelector('.jobsearch-ViewJobLayout-jobDisplay, #jobDescriptionText, .jobsearch-JobComponent') as HTMLElement;
+    const aboutCompanyEl = document.querySelector('#companyInfo, [data-testid="aboutCompany"]') as HTMLElement;
 
-      return {
-        title: title,
-        company: companyEl?.textContent?.trim() || 'Unknown Company',
-        location: locEl?.textContent?.trim() || '',
-        salary: salaryEl?.textContent?.trim() || '',
-        description: descEl?.textContent?.trim() || 'No description extracted. Please use OCR as a fallback.',
-        url: window.location.href
-      };
-    } catch (error) {
-      console.error('Indeed extraction failed:', error);
-      return null;
-    }
+    return { titleEl, companyEl, locEl, descEl, salaryEl, mainContainer, aboutCompanyEl };
   }
 }

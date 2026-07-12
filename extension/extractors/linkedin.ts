@@ -1,51 +1,35 @@
-/* eslint-disable */
-import { JobData, JobExtractor } from '../types';
+import { BaseExtractor, ExtractedDOM } from './base';
 
-export class LinkedInExtractor implements JobExtractor {
+export class LinkedInExtractor extends BaseExtractor {
   canHandle(url: string): boolean {
-    return url.includes('linkedin.com/jobs/view/') || 
-           url.includes('linkedin.com/jobs/collections/') || 
-           url.includes('linkedin.com/jobs/search/');
+    return url.includes('linkedin.com/jobs');
   }
 
-  async extract(): Promise<JobData | null> {
-    try {
-      // Find the main job details container
-      const titleEl = document.querySelector('.job-details-jobs-unified-top-card__job-title, .top-card-layout__title');
-      const companyEl = document.querySelector('.job-details-jobs-unified-top-card__company-name, .topcard__org-name-link');
-      const locationEl = document.querySelector('.job-details-jobs-unified-top-card__bullet, .topcard__flavor--bullet');
-      const descEl = document.querySelector('#job-details, .show-more-less-html__markup');
+  protected getTitleSplitChar(): string {
+    return ' hiring ';
+  }
 
-      if (!titleEl || !companyEl) {
-        return null;
-      }
+  protected extractDOM(): ExtractedDOM {
+    const titleEl = document.querySelector('.job-details-jobs-unified-top-card__job-title') || 
+                    document.querySelector('.top-card-layout__title') ||
+                    document.querySelector('h1');
 
-      const title = titleEl.textContent?.trim() || '';
-      const company = companyEl.textContent?.trim() || '';
-      const location = locationEl?.textContent?.trim() || '';
-      const description = descEl?.textContent?.trim() || '';
+    const companyEl = document.querySelector('.job-details-jobs-unified-top-card__company-name a') ||
+                      document.querySelector('.topcard__org-name-link') ||
+                      document.querySelector('.job-details-jobs-unified-top-card__company-name');
 
-      // Salary might be in another bullet point
-      let salary = '';
-      const bullets = document.querySelectorAll('.job-details-jobs-unified-top-card__job-insight');
-      bullets.forEach(b => {
-        const text = b.textContent?.trim() || '';
-        if (text.includes('$') || text.includes('₹') || text.toLowerCase().includes('salary')) {
-          salary = text;
-        }
-      });
+    const locEl = document.querySelector('.job-details-jobs-unified-top-card__primary-description span') ||
+                  document.querySelector('.topcard__flavor--bullet');
 
-      return {
-        title,
-        company,
-        location,
-        salary,
-        description,
-        url: window.location.href
-      };
-    } catch (error) {
-      console.error('LinkedIn extraction failed:', error);
-      return null;
-    }
+    const descEl = document.querySelector('#job-details') ||
+                   document.querySelector('.jobs-description__content') ||
+                   document.querySelector('.description__text');
+
+    const salaryEl = document.querySelector('.job-details-jobs-unified-top-card__job-insight span') || null;
+
+    const mainContainer = document.querySelector('.jobs-search__job-details--container, .job-view-layout, #job-details') as HTMLElement;
+    const aboutCompanyEl = document.querySelector('.jobs-company__box, [data-test-id="about-us"]') as HTMLElement;
+
+    return { titleEl, companyEl, locEl, descEl, salaryEl, mainContainer, aboutCompanyEl };
   }
 }

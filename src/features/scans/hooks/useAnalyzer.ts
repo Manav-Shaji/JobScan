@@ -124,8 +124,8 @@ export function useAnalyzer() {
             toast({ title: "Invalid File", description: "Only JPG, PNG, and WEBP are supported.", variant: "destructive" });
             return;
         }
-        if (file.size > 10 * 1024 * 1024) {
-            toast({ title: "File Too Large", description: "Maximum file size is 10 MB.", variant: "destructive" });
+        if (file.size > 5 * 1024 * 1024) {
+            toast({ title: "File Too Large", description: "Maximum file size is 5 MB.", variant: "destructive" });
             return;
         }
         setPosterFile(file);
@@ -145,8 +145,29 @@ export function useAnalyzer() {
 
         if (!textToAnalyze.trim() && !fileToAnalyze) {
             setInputError(true);
+            toast({
+                title: "Input Required",
+                description: activeTab === 'text' ? "Please paste a job description first." : "Please upload a poster image first.",
+                variant: "destructive"
+            });
             setTimeout(() => setInputError(false), 1000);
             return;
+        }
+
+        if (activeTab === 'text' && textToAnalyze.trim()) {
+            const charCount = textToAnalyze.trim().length;
+            if (charCount < 10) {
+                setInputError(true);
+                toast({ title: "Input Too Short", description: "Job description must be at least 10 characters long.", variant: "destructive" });
+                setTimeout(() => setInputError(false), 1000);
+                return;
+            }
+            if (charCount > 10000) {
+                setInputError(true);
+                toast({ title: "Input Too Long", description: "Job description exceeds the 10,000 character limit. Please shorten it.", variant: "destructive" });
+                setTimeout(() => setInputError(false), 1000);
+                return;
+            }
         }
 
         if (!checkCanScan()) return;

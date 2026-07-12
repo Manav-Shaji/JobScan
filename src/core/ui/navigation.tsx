@@ -153,6 +153,6 @@ const TabsContent = React.forwardRef<
 TabsContent.displayName = TabsPrimitive.Content.displayName
 
 export {
-  Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious,
+  Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious,
   Tabs, TabsList, TabsTrigger, TabsContent
 }

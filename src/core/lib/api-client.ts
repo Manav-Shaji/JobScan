@@ -1,14 +1,15 @@
 // --- API Client ---
 const API_BASE = '/api';
 
-export async function analyzeJobDescription(jobDescription, posterFile = null) {
-  let body, headers = {};
+async function analyzeJobDescription(jobDescription: string, posterFile: File | null = null): Promise<any> {
+  let body: BodyInit;
+  let headers: HeadersInit = {};
   
   if (posterFile) {
-    body = new FormData();
-    body.append('jobDescription', jobDescription || '');
-    body.append('poster', posterFile);
-    // Let browser set Content-Type for FormData (includes boundary)
+    const formData = new FormData();
+    formData.append('jobDescription', jobDescription || '');
+    formData.append('poster', posterFile);
+    body = formData;
   } else {
     body = JSON.stringify({ jobDescription });
     headers = { 'Content-Type': 'application/json' };
@@ -27,14 +28,14 @@ export async function analyzeJobDescription(jobDescription, posterFile = null) {
   return payload;
 }
 
-export async function getAnalysisHistory() {
+async function getAnalysisHistory(): Promise<any[]> {
   try {
     const res = await fetch(`${API_BASE}/history`);
     return res.ok ? await res.json() : [];
   } catch (err) { return []; }
 }
 
-export async function getAnalysisStats() {
+async function getAnalysisStats(): Promise<any> {
   const defaultStats = { totalScans: 0, scamsDetected: 0, avgTrustScore: 0 };
   try {
     const res = await fetch(`${API_BASE}/stats`);
@@ -42,7 +43,7 @@ export async function getAnalysisStats() {
   } catch (err) { return defaultStats; }
 }
 
-export async function sendChatMessage(message, context) {
+async function sendChatMessage(message: string, context: any): Promise<any> {
   const res = await fetch(`${API_BASE}/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -52,7 +53,7 @@ export async function sendChatMessage(message, context) {
   return data?.success ? data.data : data;
 }
 
-export async function getChatHistory() {
+async function getChatHistory(): Promise<any[]> {
   try {
     const res = await fetch(`${API_BASE}/chat`);
     if (res.status === 401) return [];
@@ -61,7 +62,7 @@ export async function getChatHistory() {
   } catch (err) { return []; }
 }
 
-export async function reportScam(scanId, reason) {
+async function reportScam(scanId: any, reason: string): Promise<any> {
   const body = {
     scanId: typeof scanId === 'object' && scanId !== null ? (scanId.scanId || scanId.id) : scanId,
     reason: reason || 'Community Flagged'

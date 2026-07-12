@@ -171,7 +171,7 @@ function Skeleton({
 
 export {
   Accordion, AccordionItem, AccordionTrigger, AccordionContent,
-  Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent,
+  Card, CardContent,
   Separator,
   Skeleton
 }

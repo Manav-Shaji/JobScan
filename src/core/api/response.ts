@@ -25,7 +25,7 @@ export function badRequest(message = 'Bad request') {
 
 // --- Response Helpers ---
 
-export interface StandardApiResponse<T = any> {
+interface StandardApiResponse<T = any> {
   success: boolean;
   message: string;
   data: T | null;

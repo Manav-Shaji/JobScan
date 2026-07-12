@@ -43,7 +43,7 @@ function safeIdParam(req: Request, key = 'id') {
 
 // --- Standardized Route Lifecycle Wrapper ---
 
-export interface RateLimitConfig {
+interface RateLimitConfig {
   key: string;
   limit: number;
   windowMs: number;
@@ -61,10 +61,6 @@ export interface RouteHandlerConfig<TBody = any> {
   }) => Promise<any>;
 }
 
-/**
- * Higher-Order Function that wraps Next.js App Router endpoints.
- * Centralizes authentication, rate limiting, request validation, execution logging, and error handling.
- */
 export function createRouteHandler<TBody = any>(config: RouteHandlerConfig<TBody>) {
   return async (req: Request) => {
     const startTime = Date.now();

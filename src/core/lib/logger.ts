@@ -2,13 +2,11 @@ import 'server-only';
 import fs from 'fs';
 import path from 'path';
 
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 const LOGS_DIR = path.join(process.cwd(), 'logs');
 
 function appendLog(filename: string, level: string, message: string, meta?: any) {
-  // Vercel's serverless file system is read-only — skip file writes in production.
-  // All logs are captured by Vercel from console output instead.
   if (process.env.NODE_ENV === 'production') return;
 
   try {

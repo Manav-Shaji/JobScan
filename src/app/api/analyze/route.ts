@@ -8,7 +8,7 @@ export const POST = createRouteHandler({
   rateLimit: { key: 'analyze', limit: 10, windowMs: 60 * 1000 },
   async handler({ req, user }) {
     const contentType = req.headers.get('content-type') || '';
-    
+
     let jobDescription = '';
     let posterBase64 = undefined;
     let posterMimeType = undefined;
@@ -19,11 +19,11 @@ export const POST = createRouteHandler({
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await req.formData();
-      jobDescription = formData.get('jobDescription') || '';
+      jobDescription = formData.get('jobDescription')?.toString() || '';
       const file = formData.get('poster');
 
       if (file && typeof file !== 'string') {
-        if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+        if (!(ALLOWED_MIME_TYPES as readonly string[]).includes(file.type)) {
           return new Response(JSON.stringify({ error: 'Unsupported file type. Use JPG, PNG, or WEBP' }), {
             status: 415,
             headers: { 'Content-Type': 'application/json' }
@@ -65,11 +65,11 @@ export const POST = createRouteHandler({
     const validated = scanSchema.parse({ jobDescription, posterBase64, posterMimeType });
 
     return await analyzeJob(
-      validated.jobDescription || '', 
-      user?.id || null, 
-      validated.posterBase64, 
-      validated.posterMimeType, 
-      null 
+      validated.jobDescription || '',
+      user?.id || null,
+      validated.posterBase64,
+      validated.posterMimeType,
+      null
     );
   }
 });

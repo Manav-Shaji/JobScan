@@ -6,7 +6,7 @@ const FREE_SCAN_LIMIT = 3;
 const STORAGE_KEY = 'jobscan_free_scans';
 
 export function useScanLimit() {
-  const { user } = useAuth();
+  const { user } = useAuth() as any;
   const [scanCount, setScanCount] = useState(0);
   const [showSignupWall, setShowSignupWall] = useState(false);
   const scanCountRef = useRef(0);

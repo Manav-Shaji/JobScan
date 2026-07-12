@@ -30,13 +30,13 @@ OUTPUT:
 - extractedText: Empty if image not provided.
 - redFlags & positiveSignals: Concise.`;
 
-export const ClampedScore = z.any().transform(v => {
+const ClampedScore = z.any().transform(v => {
     const num = Number(v);
     if (isNaN(num)) return 50;
     return Math.max(0, Math.min(100, Math.round(num)));
 });
 
-export const RiskEnum = z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).catch('MEDIUM');
+const RiskEnum = z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).catch('MEDIUM');
 
 export const ResponseSchema = z.object({
   overallTrustScore: ClampedScore,

@@ -18,6 +18,18 @@ import dynamic from 'next/dynamic';
 
 const TrustScore = dynamic(() => import('@/app/(landing)/features').then(mod => mod.TrustScore));
 
+interface AnalyzerMobileResultsProps {
+    result: any;
+    showBottomSheet: boolean;
+    setShowBottomSheet: (show: boolean) => void;
+    sheetTranslateY: number;
+    handleSheetTouchStart: (e: any) => void;
+    handleSheetTouchMove: (e: any) => void;
+    handleSheetTouchEnd: () => void;
+    isDraggingSheet: boolean;
+    handleReport: () => void;
+}
+
 export function AnalyzerMobileResults({
     result,
     showBottomSheet,
@@ -28,7 +40,7 @@ export function AnalyzerMobileResults({
     handleSheetTouchEnd,
     isDraggingSheet,
     handleReport
-}) {
+}: AnalyzerMobileResultsProps) {
     if (!result || result.error) return null;
 
     return (
