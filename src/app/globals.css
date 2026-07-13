@@ -69,11 +69,11 @@
   /* Text Colors */
   --on-dark: #020617; 
   --body: #334155; 
-  --muted: #64748B; 
+  --brand-muted: #64748B; 
   --text-secondary: #475569;
   
   /* Accents */
-  --primary: #0F172A; 
+  --brand-primary: #0F172A; 
   --cta: #0369A1; 
   --cta-hover: #075985;
   
@@ -124,10 +124,10 @@
   
   --on-dark: #F8FAFC; 
   --body: #CBD5E1; 
-  --muted: #94A3B8; 
+  --brand-muted: #94A3B8; 
   --text-secondary: #94A3B8;
   
-  --primary: #FFFFFF; 
+  --brand-primary: #FFFFFF; 
   --cta: #0EA5E9; 
   --cta-hover: #38BDF8; 
   
@@ -159,7 +159,7 @@
 
 .btn-premium-secondary:hover {
   background: rgba(var(--primary-rgb), 0.1) !important;
-  border-color: var(--muted) !important;
+  border-color: var(--brand-muted) !important;
   transform: translateY(-1px) !important;
 }
 
@@ -191,7 +191,7 @@ body {
 
 /* Stunning Gradients */
 .text-gradient {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--cta) 100%);
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--cta) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -755,7 +755,7 @@ a:hover {
 
 .signup-wall-subtitle {
     font-size: 14px;
-    color: var(--muted);
+    color: var(--brand-muted);
     line-height: 1.6;
     margin-bottom: 24px;
     font-weight: 500;
@@ -820,7 +820,7 @@ a:hover {
 
 .signup-wall-login-link {
     font-size: 13px;
-    color: var(--muted);
+    color: var(--brand-muted);
     font-weight: 500;
     text-decoration: none;
 }
