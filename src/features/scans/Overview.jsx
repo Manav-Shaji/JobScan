@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * Component: Overview
+ * 
+ * Purpose:
+ * Displays the main dashboard overview with aggregated statistics.
+ * 
+ * Responsibilities:
+ * • Render high-level scam metrics
+ * • Implement pull-to-refresh logic
+ * • Show recent scan activities
+ * 
+ * Used By:
+ * • /dashboard/page.jsx
+ * ------------------------------------------------------------
+ */
+
 import { Search, ShieldAlert, ShieldCheck, Activity, FileText, AlertTriangle, Cpu, Terminal, Shield, User, RefreshCw, History, Settings } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { Skeleton } from "@/core/ui/layout";

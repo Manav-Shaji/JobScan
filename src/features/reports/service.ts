@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: service.ts
+ * 
+ * Purpose:
+ * Service layer and database access for scam reports.
+ * 
+ * Responsibilities:
+ * • Define report validation schemas
+ * • Insert community scam reports into database
+ * 
+ * Used By:
+ * • API Route: /api/reports
+ * ------------------------------------------------------------
+ */
+
 import 'server-only';
 import { z } from 'zod';
 import { query } from '@/core/db/client';

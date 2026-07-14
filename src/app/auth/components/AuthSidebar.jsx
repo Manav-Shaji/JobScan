@@ -1,4 +1,19 @@
-import { ShieldCheck } from 'lucide-react';
+/**
+ * ------------------------------------------------------------
+ * Component: AuthSidebar
+ * 
+ * Purpose:
+ * Decorative sidebar presented alongside authentication forms.
+ * 
+ * Responsibilities:
+ * • Display branding, value propositions, and dynamic visuals
+ * 
+ * Used By:
+ * • Authentication Page Layout
+ * ------------------------------------------------------------
+ */
+
+import { ShieldCheck, Zap, Lock, ScanLine, Brain, History } from 'lucide-react';
 
 export function AuthSidebar({ mode }) {
     return (

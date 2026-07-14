@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: registry.ts
+ * 
+ * Purpose:
+ * Central registry for job board content extractors.
+ * 
+ * Responsibilities:
+ * • Map URL patterns to their respective Extractor classes
+ * • Provide a factory method to instantiate the correct extractor
+ * 
+ * Used By:
+ * • Extension Content Scripts
+ * ------------------------------------------------------------
+ */
+
 /* eslint-disable */
 import { JobExtractor } from '@/extension/types';
 import { LinkedInExtractor } from './linkedin';

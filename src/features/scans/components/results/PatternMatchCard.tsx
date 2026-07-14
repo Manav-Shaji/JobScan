@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * Component: PatternMatchCard
+ * 
+ * Purpose:
+ * Displays known scam patterns matched against the job description.
+ * 
+ * Responsibilities:
+ * • Render pattern names and confidence levels
+ * • Highlight specific scam archetypes (e.g., advance fee fraud)
+ * 
+ * Used By:
+ * • Desktop & Mobile Results Components
+ * ------------------------------------------------------------
+ */
+
 import { m } from 'motion/react';
 import { Fingerprint } from 'lucide-react';
 import { slideUp } from '@/core/motion';

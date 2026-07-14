@@ -1,4 +1,21 @@
 import 'server-only';
+/**
+ * ------------------------------------------------------------
+ * File: repository.ts
+ * 
+ * Purpose:
+ * Database access layer for user accounts and statistics.
+ * 
+ * Responsibilities:
+ * • Manage user profiles (name, email, password)
+ * • Fetch aggregated user statistics
+ * • Manage account deletion and data retention
+ * 
+ * Used By:
+ * • User Services
+ * ------------------------------------------------------------
+ */
+
 import { query } from '@/core/db/client';
 
 const CHECK_USER_EXISTS = `

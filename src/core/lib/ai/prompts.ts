@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * File: prompts.ts
+ * 
+ * Purpose:
+ * System instructions and prompts for the Gemini AI model.
+ * 
+ * Responsibilities:
+ * • Define strict JSON schema expectations for scam analysis
+ * • Outline scoring rubrics and risk level categories
+ * • Provide prompt injection defenses
+ * 
+ * Used By:
+ * • AI Core Engine
+ * ------------------------------------------------------------
+ */
+
 import { z } from 'zod';
 
 export const jobScanSystemInstruction = `You are the JobScan AI, an advanced scam detection engine. Analyze the JSON payload. Return ONLY valid JSON matching the schema. Do NOT return markdown or explanations.

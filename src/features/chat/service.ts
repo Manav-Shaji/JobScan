@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: service.ts
+ * 
+ * Purpose:
+ * Business logic for conversational chat features.
+ * 
+ * Responsibilities:
+ * • Handle chat message persistence
+ * • Communicate with AI for conversational responses
+ * 
+ * Used By:
+ * • Chat API Routes
+ * ------------------------------------------------------------
+ */
+
 import 'server-only';
 import crypto from 'crypto';
 import { z } from 'zod';

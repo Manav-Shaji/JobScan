@@ -1,3 +1,21 @@
+/**
+ * ------------------------------------------------------------
+ * File: repository.ts
+ * 
+ * Purpose:
+ * Database access layer for job scan results.
+ * 
+ * Responsibilities:
+ * • Insert new scan results
+ * • Find cached scans by content hash
+ * • Delete user scan records
+ * 
+ * Used By:
+ * • Scan Service (/api/analyze)
+ * • History API Routes
+ * ------------------------------------------------------------
+ */
+
 import 'server-only';
 import crypto from 'crypto';
 import { query } from '@/core/db/client';
@@ -138,6 +156,21 @@ export async function insertScanResult(
     };
   } catch (error) {
     logger.error('Database error inserting scan result', error, { userId, hash });
+    throw error;
+  }
+}
+
+export async function deleteScanResult(userId: string, scanId: string) {
+  try {
+    const DELETE_SCAN = `
+      DELETE FROM job_scans
+      WHERE id = $1 AND user_id = $2
+      RETURNING id
+    `;
+    const res = await query(DELETE_SCAN, [scanId, userId]);
+    return (res.rowCount ?? 0) > 0;
+  } catch (error) {
+    logger.error('Database error deleting scan result', error, { userId, scanId });
     throw error;
   }
 }

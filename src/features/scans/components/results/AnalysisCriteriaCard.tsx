@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * Component: AnalysisCriteriaCard
+ * 
+ * Purpose:
+ * Displays the detailed scoring breakdown across multiple criteria.
+ * 
+ * Responsibilities:
+ * • Render progress bars for Contact, Employer, Salary, and Linguistic trust
+ * • Visually distinguish safe vs. risky sub-scores
+ * 
+ * Used By:
+ * • Desktop Results Component
+ * ------------------------------------------------------------
+ */
+
 import { m } from 'motion/react';
 import { Briefcase } from 'lucide-react';
 import { slideUp } from '@/core/motion';

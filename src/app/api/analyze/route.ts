@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * API Route: route.ts
+ * 
+ * Purpose:
+ * Handles incoming scan analysis requests by processing file uploads or base64 data and initiating the job analysis service.
+ * 
+ * Responsibilities:
+ * • Validate file types and size limits for job posters.
+ * • Parse and sanitize request data before invoking the scan service.
+ * 
+ * Used By:
+ * • Scan Feature Module
+ * ------------------------------------------------------------
+ */
+
 import { createRouteHandler } from '@/core/api/route-utils';
 import { scanSchema } from '@/features/scans/validation';
 import { analyzeJob } from '@/features/scans/service';

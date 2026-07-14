@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: base.ts
+ * 
+ * Purpose:
+ * Base class definition for job board extractors.
+ * 
+ * Responsibilities:
+ * • Define the abstract interface for extracting job details
+ * • Provide common utility methods for DOM parsing
+ * 
+ * Used By:
+ * • Specific Job Board Extractors
+ * ------------------------------------------------------------
+ */
+
 import { JobData, JobExtractor } from '@/extension/types';
 
 export function extractJsonLd(): any {

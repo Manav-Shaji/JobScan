@@ -1,3 +1,18 @@
+/**
+ * ------------------------------------------------------------
+ * Component: Settings
+ * 
+ * Purpose:
+ * Settings interface for the Chrome Extension side panel.
+ * 
+ * Responsibilities:
+ * • Allow users to configure extension behavior (e.g., auto-scan)
+ * 
+ * Used By:
+ * • Side Panel App Component
+ * ------------------------------------------------------------
+ */
+
 import React from 'react';
 import { Switch, Label, Separator } from '@/extension/ui';
 

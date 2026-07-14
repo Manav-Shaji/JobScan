@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * Component: ExtractedTextCard
+ * 
+ * Purpose:
+ * Displays raw text extracted from uploaded images (OCR).
+ * 
+ * Responsibilities:
+ * • Render a scrollable preview of raw extracted text
+ * • Hide gracefully if no text is provided
+ * 
+ * Used By:
+ * • Desktop & Mobile Results Components
+ * ------------------------------------------------------------
+ */
+
 import { m } from 'motion/react';
 import { FileSearch } from 'lucide-react';
 import { slideUp } from '@/core/motion';

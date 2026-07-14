@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * API Route: route.ts
+ * 
+ * Purpose:
+ * Retrieves the historical activity log for the authenticated user with support for pagination.
+ * 
+ * Responsibilities:
+ * • Parses request parameters for limit and pagination offsets.
+ * • Fetches user history records using the dedicated service layer.
+ * 
+ * Used By:
+ * • User Dashboard Module
+ * ------------------------------------------------------------
+ */
+
 import { createRouteHandler } from '@/core/api/route-utils';
 import { getUserHistory } from '@/features/users/service';
 

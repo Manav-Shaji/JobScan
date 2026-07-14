@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: background.ts
+ * 
+ * Purpose:
+ * Background service worker for the Chrome Extension.
+ * 
+ * Responsibilities:
+ * • Manage side panel state and behavior across tabs
+ * • Listen to installation events and tab updates
+ * 
+ * Used By:
+ * • Chrome Extension Runtime
+ * ------------------------------------------------------------
+ */
+
 /* eslint-disable */
 
 export default defineBackground(() => {

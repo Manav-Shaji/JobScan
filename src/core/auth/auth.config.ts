@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * File: auth.config.ts
+ * 
+ * Purpose:
+ * NextAuth configuration object and session callbacks.
+ * 
+ * Responsibilities:
+ * • Define authentication pages (login, signup)
+ * • Configure JWT manipulation and expiration
+ * • Ensure user ID propagates into the session object
+ * 
+ * Used By:
+ * • NextAuth Initialization
+ * ------------------------------------------------------------
+ */
+
 export const authConfig = {
     pages: {
         signIn: '/auth',

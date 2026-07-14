@@ -1,10 +1,35 @@
-import { FileText, Search, Filter, ChevronDown, Calendar, AlertTriangle, MoreVertical, Briefcase } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+/**
+ * ------------------------------------------------------------
+ * Component: History
+ * 
+ * Purpose:
+ * Displays a tabular view of past job scan results.
+ * 
+ * Responsibilities:
+ * • Render scan history table with sorting and filtering
+ * • Display trust scores visually
+ * • Handle scan deletion
+ * 
+ * Used By:
+ * • /dashboard/history/page.jsx
+ * ------------------------------------------------------------
+ */
+
+import { FileText, Search, Filter, ChevronDown, Calendar, AlertTriangle, MoreVertical, Briefcase, Eye, Trash2, RotateCw } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { useReactTable, getCoreRowModel, getPaginationRowModel, getFilteredRowModel } from '@tanstack/react-table';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/core/ui/forms";
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious, PaginationLink } from "@/core/ui/navigation";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/core/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/core/ui/dialog";
 import { m, AnimatePresence } from 'motion/react';
 import { staggerContainer, slideUp } from '@/core/motion';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import api from '@/core/lib/api-client';
+import { queryKeys } from '@/core/lib/query-keys';
+import { useToast } from "@/core/ui/use-toast";
 
 const formatDate = (dateString) => {
   if (!dateString) return { date: 'N/A', time: '' };
@@ -62,30 +87,102 @@ const filterOptions = [
   { value: 'caution', label: 'Caution' },
 ];
 
-export function History({ fullHistory, loading }) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState('all');
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  
-  const filteredHistory = fullHistory?.filter(h => {
-    const term = searchTerm.toLowerCase();
-    const matchesSearch = (
-      (h.content?.toLowerCase().includes(term)) ||
-      (h.title?.toLowerCase().includes(term)) ||
-      (h.type?.toLowerCase().includes(term))
-    );
-    if (!matchesSearch) return false;
-    if (filterType === 'all') return true;
-    if (filterType === 'scam') return h.type === 'scam' || (h.score ?? 100) < 50;
-    if (filterType === 'safe') return h.type === 'safe' || (h.score ?? 0) >= 70;
-    if (filterType === 'caution') return h.type === 'caution' || ((h.score ?? 0) >= 50 && (h.score ?? 0) < 70);
-    return true;
-  }) || [];
+const HistoryActions = ({ scan, onRescan, onDelete, onViewDetails }) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <button type="button" aria-label="More options" className="text-[var(--muted)] hover:text-[var(--on-dark)] p-1 rounded transition-colors focus:outline-none">
+        <MoreVertical size={16} />
+      </button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="end" className="w-40">
+      <DropdownMenuItem onSelect={() => setTimeout(() => onViewDetails(scan), 10)}>
+        <Eye className="w-4 h-4 mr-2" /> View Details
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={() => onRescan(scan.content)}>
+        <RotateCw className="w-4 h-4 mr-2" /> Re-Scan
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={() => onDelete(scan.id)} className="text-red-400 hover:text-red-500 hover:bg-red-500/10 focus:text-red-500 focus:bg-red-500/10">
+        <Trash2 className="w-4 h-4 mr-2" /> Delete
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
 
-  const totalPages = Math.ceil(filteredHistory.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedHistory = filteredHistory.slice(startIndex, startIndex + itemsPerPage);
+export function History({ fullHistory, loading }) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [filterType, setFilterType] = useState('all');
+  const [selectedScan, setSelectedScan] = useState(null);
+
+  const deleteMutation = useMutation({
+    mutationFn: async (scanId) => {
+      return api.deleteScan(scanId);
+    },
+    onSuccess: () => {
+      toast({ title: 'Scan Deleted', description: 'The scan was successfully removed from your history.' });
+      queryClient.invalidateQueries({ queryKey: queryKeys.scans.history });
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.stats });
+    },
+    onError: () => {
+      toast({ title: 'Deletion Failed', description: 'There was an error deleting the scan.', variant: 'destructive' });
+    }
+  });
+
+  const handleRescan = (content) => {
+    sessionStorage.setItem('jobscan_rescan_text', content || '');
+    router.push('/dashboard?tab=analyzer');
+  };
+
+  const columns = useMemo(() => [
+    {
+      id: 'searchable',
+      accessorFn: (row) => `${row.title || ''} ${row.content || ''} ${row.type || ''}`,
+    },
+    {
+      id: 'riskLevel',
+      accessorFn: (row) => {
+        const score = row.score ?? 0;
+        if (row.type === 'scam' || score < 50) return 'scam';
+        if (row.type === 'caution' || (score >= 50 && score < 70)) return 'caution';
+        return 'safe';
+      },
+      filterFn: (row, columnId, filterValue) => {
+        if (filterValue === 'all') return true;
+        return row.getValue(columnId) === filterValue;
+      }
+    }
+  ], []);
+
+  const columnFilters = useMemo(() => {
+    if (filterType === 'all') return [];
+    return [{ id: 'riskLevel', value: filterType }];
+  }, [filterType]);
+
+  const table = useReactTable({
+    data: fullHistory || [],
+    columns,
+    state: {
+      globalFilter,
+      columnFilters,
+    },
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: 'includesString',
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 10,
+      }
+    }
+  });
+
+  const paginatedRows = table.getRowModel().rows;
+  const filteredLength = table.getFilteredRowModel().rows.length;
+  const paginationState = table.getState().pagination;
 
   if (loading) {
     return (
@@ -136,13 +233,13 @@ export function History({ fullHistory, loading }) {
               type="text" 
               aria-label="Search archives"
               placeholder="Search content or title..." 
-              value={searchTerm}
-              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              value={globalFilter}
+              onChange={(e) => { setGlobalFilter(e.target.value); table.setPageIndex(0); }}
               className="w-full bg-[var(--surface-elevated)] border border-[var(--hairline)] rounded-xl pl-9 pr-4 h-12 md:h-auto md:py-1.5 text-xs text-[var(--on-dark)] placeholder-[var(--muted)] focus:outline-none focus:border-blue-500/60 transition-colors"
             />
           </div>
           <div className="w-full md:w-[180px]">
-            <Select value={filterType} onValueChange={(val) => { setFilterType(val); setCurrentPage(1); }}>
+            <Select value={filterType} onValueChange={(val) => { setFilterType(val); table.setPageIndex(0); }}>
               <SelectTrigger className="h-12 md:h-auto md:py-1.5 bg-[var(--surface-elevated)] border-[var(--hairline)] text-xs">
                 <div className="flex items-center gap-1.5">
                   <Filter size={13} />
@@ -172,7 +269,8 @@ export function History({ fullHistory, loading }) {
       {/* --- Table Content --- */}
       <m.div variants={staggerContainer} initial="hidden" animate="visible" className="divide-y divide-[var(--hairline)]">
         <AnimatePresence mode="popLayout">
-        {paginatedHistory.map((h, i) => {
+        {paginatedRows.map((row, i) => {
+          const h = row.original;
           const { date, time } = formatDate(h.createdAt);
           const score = h.score ?? 0;
           const isScam = h.type === 'scam' || score < 50;
@@ -227,9 +325,7 @@ export function History({ fullHistory, loading }) {
                     {isScam ? <AlertTriangle size={12} className="text-red-500" /> : null}
                     {isScam ? 'SCAM THREAT' : isCaution ? 'CAUTION' : 'SECURE'}
                   </div>
-                  <button type="button" aria-label="More options" className="text-[var(--muted)] hover:text-[var(--on-dark)] p-1 rounded transition-colors">
-                    <MoreVertical size={16} />
-                  </button>
+                  <HistoryActions scan={h} onRescan={handleRescan} onDelete={(id) => deleteMutation.mutate(id)} onViewDetails={setSelectedScan} />
                 </div>
               </div>
 
@@ -274,27 +370,28 @@ export function History({ fullHistory, loading }) {
                     {isScam ? <AlertTriangle size={12} className="text-red-500" /> : null}
                     {isScam ? 'SCAM' : isCaution ? 'CAUTION' : 'SECURE'}
                   </div>
+                  <HistoryActions scan={h} onRescan={handleRescan} onDelete={(id) => deleteMutation.mutate(id)} onViewDetails={setSelectedScan} />
                 </div>
               </div>
             </m.div>
           );
         })}
 
-        {filteredHistory.length === 0 && (
+        {filteredLength === 0 && (
           <div className="p-12 flex flex-col items-center justify-center text-center text-[var(--muted)] min-h-[300px]">
             <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[var(--surface-elevated)] to-[rgba(var(--primary-rgb),0.02)] border border-[var(--hairline)] flex items-center justify-center mb-5 shadow-inner relative group">
               <div className="absolute inset-0 bg-blue-500/5 rounded-3xl blur-xl group-hover:bg-blue-500/10 transition-colors duration-500"></div>
               <Briefcase size={32} className="text-blue-500/60 relative z-10" />
             </div>
             <h4 className="font-black text-sm mb-2 text-[var(--on-dark)] tracking-tight">
-              {searchTerm ? 'No Results Found' : 'No Scan History Yet'}
+              {globalFilter ? 'No Results Found' : 'No Scan History Yet'}
             </h4>
             <p className="text-xs text-[var(--muted)] leading-relaxed max-w-xs mx-auto mb-6">
-              {searchTerm 
+              {globalFilter 
                 ? 'Try adjusting your search terms or filters to find what you are looking for.' 
                 : 'Analyze your first job posting to start building your history and tracking potential threats.'}
             </p>
-            {!searchTerm && (
+            {!globalFilter && (
               <Link href="/dashboard/analyzer" className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-500 hover:to-sky-500 text-white font-bold text-[11px] tracking-wider uppercase transition shadow-[0_4px_15px_rgba(59,130,246,0.2)] hover:shadow-[0_4px_20px_rgba(59,130,246,0.3)] active:scale-[0.98]">
                 Analyze a Job
               </Link>
@@ -307,37 +404,78 @@ export function History({ fullHistory, loading }) {
       {/* --- Footer Pagination Controls --- */}
       <div className="px-4 md:px-6 py-4.5 border-t border-[var(--hairline)] flex items-center justify-between bg-[rgba(var(--primary-rgb),0.01)] text-xs">
         <div className="text-[10px] md:text-[11px] font-medium text-[var(--muted)]">
-          Showing {filteredHistory.length > 0 ? startIndex + 1 : 0} to {Math.min(startIndex + itemsPerPage, filteredHistory.length)} of {filteredHistory.length} archives
+          Showing {filteredLength > 0 ? (paginationState.pageIndex * paginationState.pageSize) + 1 : 0} to {Math.min((paginationState.pageIndex + 1) * paginationState.pageSize, filteredLength)} of {filteredLength} archives
         </div>
         
-        {totalPages > 0 && (
+        {table.getPageCount() > 0 && (
           <Pagination className="justify-end w-auto mx-0">
             <PaginationContent className="gap-1 md:gap-2">
               <PaginationItem>
                 <PaginationPrevious 
                   href="#"
-                  onClick={(e) => { e.preventDefault(); setCurrentPage(p => Math.max(1, p - 1)); }}
-                  className={`h-8 px-3 py-0 flex items-center justify-center rounded-lg border cursor-pointer ${currentPage === 1 ? 'border-[var(--hairline)] text-[var(--muted)] pointer-events-none opacity-50' : 'border-[var(--hairline)] text-[var(--on-dark)] hover:bg-white/5 transition-colors'}`}
+                  onClick={(e) => { e.preventDefault(); table.previousPage(); }}
+                  className={`h-8 px-3 py-0 flex items-center justify-center rounded-lg border cursor-pointer ${!table.getCanPreviousPage() ? 'border-[var(--hairline)] text-[var(--muted)] pointer-events-none opacity-50' : 'border-[var(--hairline)] text-[var(--on-dark)] hover:bg-white/5 transition-colors'}`}
                 />
               </PaginationItem>
               
               <PaginationItem>
                 <PaginationLink href="#" onClick={(e) => e.preventDefault()} isActive className="h-8 min-w-[32px] rounded-lg border border-blue-500/30 bg-blue-500/10 text-blue-400 font-black text-xs">
-                  {currentPage}
+                  {paginationState.pageIndex + 1}
                 </PaginationLink>
               </PaginationItem>
 
               <PaginationItem>
                 <PaginationNext 
                   href="#"
-                  onClick={(e) => { e.preventDefault(); setCurrentPage(p => Math.min(totalPages, p + 1)); }}
-                  className={`h-8 px-3 py-0 flex items-center justify-center rounded-lg border cursor-pointer ${currentPage >= totalPages ? 'border-[var(--hairline)] text-[var(--muted)] pointer-events-none opacity-50' : 'border-[var(--hairline)] text-[var(--on-dark)] hover:bg-white/5 transition-colors'}`}
+                  onClick={(e) => { e.preventDefault(); table.nextPage(); }}
+                  className={`h-8 px-3 py-0 flex items-center justify-center rounded-lg border cursor-pointer ${!table.getCanNextPage() ? 'border-[var(--hairline)] text-[var(--muted)] pointer-events-none opacity-50' : 'border-[var(--hairline)] text-[var(--on-dark)] hover:bg-white/5 transition-colors'}`}
                 />
               </PaginationItem>
             </PaginationContent>
           </Pagination>
         )}
       </div>
+
+      {/* Dialog for View Details */}
+      <Dialog open={!!selectedScan} onOpenChange={(open) => !open && setSelectedScan(null)}>
+        <DialogContent className="max-w-2xl bg-[var(--surface-elevated)] border-[var(--hairline)] text-[var(--on-dark)]">
+          <DialogHeader>
+            <DialogTitle>Scan Details</DialogTitle>
+            <DialogDescription>
+              A complete breakdown of the analyzed content.
+            </DialogDescription>
+          </DialogHeader>
+          {selectedScan && (
+             <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
+                   <h3 className="text-xs font-bold text-[var(--muted)] mb-2 uppercase">Trust Score</h3>
+                   <div className="flex items-center gap-4">
+                      <ScoreCircle score={selectedScan.score} />
+                      <div className="flex-1">
+                         <div className="text-sm font-semibold text-[var(--on-dark)] mb-1">
+                            {selectedScan.type === 'scam' || selectedScan.score < 50 ? 'SCAM THREAT DETECTED' : selectedScan.type === 'caution' || (selectedScan.score >= 50 && selectedScan.score < 70) ? 'CAUTION ADVISED' : 'APPEARS LEGITIMATE'}
+                         </div>
+                      </div>
+                   </div>
+                </div>
+                
+                {selectedScan.patternName && selectedScan.patternName !== 'None' && (
+                  <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/10">
+                     <h3 className="text-xs font-bold text-amber-500 mb-2 uppercase">Pattern Detected</h3>
+                     <p className="text-sm text-amber-400 mb-0">{selectedScan.patternName}</p>
+                  </div>
+                )}
+                
+                <div>
+                   <h3 className="text-xs font-bold text-[var(--muted)] mb-2 uppercase">Analyzed Content</h3>
+                   <div className="p-4 rounded-xl bg-black/20 border border-[var(--hairline)] text-sm text-[var(--on-dark)] whitespace-pre-wrap break-words">
+                      {selectedScan.content || 'No text content available.'}
+                   </div>
+                </div>
+             </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

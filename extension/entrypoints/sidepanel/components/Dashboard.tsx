@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * Component: Dashboard
+ * 
+ * Purpose:
+ * Main analysis view in the extension side panel.
+ * 
+ * Responsibilities:
+ * • Trigger content scripts to extract job postings from the active tab
+ * • Display loading states and the final analysis report
+ * 
+ * Used By:
+ * • Side Panel App Component
+ * ------------------------------------------------------------
+ */
+
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent, Skeleton, Alert } from '@/extension/ui';
 import { getRiskColor } from './utils';

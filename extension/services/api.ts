@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: api.ts
+ * 
+ * Purpose:
+ * API client for the Chrome Extension to communicate with the Next.js backend.
+ * 
+ * Responsibilities:
+ * • Handle authentication token storage and retrieval
+ * • Send job descriptions to the backend for analysis
+ * 
+ * Used By:
+ * • Extension UI and Background Scripts
+ * ------------------------------------------------------------
+ */
+
 /* eslint-disable */
 
 // --- Environment Detection ---
@@ -70,8 +86,8 @@ async function getApiBaseUrl(): Promise<string> {
   }
 
   // Check user settings / detected URL first
-  const { customApiUrl } = await chrome.storage.local.get(['customApiUrl']);
-  if (customApiUrl && customApiUrl.trim() !== '') {
+  const { customApiUrl } = (await chrome.storage.local.get(['customApiUrl'])) as { customApiUrl?: string };
+  if (customApiUrl && typeof customApiUrl === 'string' && customApiUrl.trim() !== '') {
     const url = customApiUrl.endsWith('/api') ? customApiUrl : `${customApiUrl}/api`;
     const isAvailable = await checkUrl(url);
     if (isAvailable) {

@@ -1251,3 +1251,24 @@ html {
 .animate-scan-laser {
   animation: scan-laser 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
+
+/* --- View Transition API Animations --- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Ensure the Dark theme is ALWAYS on top, whether it's expanding or contracting */
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 9999;
+}
+[data-theme="dark"]::view-transition-old(root) {
+  z-index: 9999;
+}
+[data-theme="dark"]::view-transition-new(root) {
+  z-index: 1;
+}

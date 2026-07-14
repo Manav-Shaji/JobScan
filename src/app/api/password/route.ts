@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * API Route: /api/password
+ * 
+ * Purpose:
+ * Handles secure user password updates and validation.
+ * 
+ * Responsibilities:
+ * • Validate old password hash
+ * • Hash new password with bcrypt
+ * • Rate limit change requests
+ * 
+ * Used By:
+ * • Settings Profile View
+ * ------------------------------------------------------------
+ */
+
 import bcrypt from 'bcryptjs';
 import { createRouteHandler } from '@/core/api/route-utils';
 import { updatePasswordSchema } from '@/features/users/validation';

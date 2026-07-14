@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * Component: ThemeProvider & AppProviders
+ * 
+ * Purpose:
+ * Global context providers for theme, authentication, and application state.
+ * 
+ * Responsibilities:
+ * • Manage global light/dark theme state with View Transitions API
+ * • Wrap application in SessionProvider, AuthProvider, and PwaProvider
+ * 
+ * Used By:
+ * • Root Layout
+ * ------------------------------------------------------------
+ */
+
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
@@ -35,8 +51,57 @@ function ThemeProvider({ children }) {
     }
   }, [theme, mounted]);
 
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+  const toggleTheme = (event) => {
+    const isDark = theme === 'light';
+    
+    if (!document.startViewTransition) {
+        setTheme(isDark ? 'dark' : 'light');
+        return;
+    }
+
+    // Default to center of screen if no event provided
+    let x = window.innerWidth / 2;
+    let y = window.innerHeight / 2;
+    
+    // Capture exact mouse click coordinates if available
+    if (event && event.clientX !== undefined) {
+        x = event.clientX;
+        y = event.clientY;
+    }
+
+    // Calculate maximum radius to ensure full screen coverage
+    const endRadius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+    );
+
+    const transition = document.startViewTransition(() => {
+        if (isDark) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+        }
+        setTheme(isDark ? 'dark' : 'light');
+    });
+
+    transition.ready.then(() => {
+        const clipPath = [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+        ];
+        document.documentElement.animate(
+            {
+                clipPath: isDark ? clipPath : [...clipPath].reverse(),
+            },
+            {
+                duration: 500,
+                easing: 'ease-in-out',
+                pseudoElement: isDark
+                    ? '::view-transition-new(root)'
+                    : '::view-transition-old(root)',
+            }
+        );
+    });
   };
 
   const value = { theme, toggleTheme };
@@ -75,23 +140,26 @@ export function useJob() {
 // --- Root Provider ---
 
 import { MotionConfig, LazyMotion, domAnimation } from 'motion/react';
+import QueryProvider from '@/core/providers/query-provider';
 
 export default function Providers({ children }) {
   return (
-    <LazyMotion features={domAnimation} strict>
-      <MotionConfig reducedMotion="user">
-        <SessionProvider>
-          <ThemeProvider>
-            <AuthProvider>
-              <JobProvider>
-                <PwaProvider>
-                  {children}
-                </PwaProvider>
-              </JobProvider>
-            </AuthProvider>
-          </ThemeProvider>
-        </SessionProvider>
-      </MotionConfig>
-    </LazyMotion>
+    <QueryProvider>
+      <LazyMotion features={domAnimation} strict>
+        <MotionConfig reducedMotion="user">
+          <SessionProvider>
+            <ThemeProvider>
+              <AuthProvider>
+                <JobProvider>
+                  <PwaProvider>
+                    {children}
+                  </PwaProvider>
+                </JobProvider>
+              </AuthProvider>
+            </ThemeProvider>
+          </SessionProvider>
+        </MotionConfig>
+      </LazyMotion>
+    </QueryProvider>
   );
 }

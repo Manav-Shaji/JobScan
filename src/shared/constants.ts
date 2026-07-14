@@ -18,6 +18,21 @@ const CACHE_KEYS = {
   USER_RATE_LIMIT: 'user',
 } as const;
 
+/**
+ * ------------------------------------------------------------
+ * File: constants.ts
+ * 
+ * Purpose:
+ * Global application constants and configuration values.
+ * 
+ * Responsibilities:
+ * • Centralize static string literals and configuration numbers
+ * 
+ * Used By:
+ * • Entire Application
+ * ------------------------------------------------------------
+ */
+
 export const UPLOAD_LIMITS = {
   MAX_FILE_SIZE_BYTES: 5 * 1024 * 1024, // 5MB
   MAX_BASE64_LENGTH: 7000000,

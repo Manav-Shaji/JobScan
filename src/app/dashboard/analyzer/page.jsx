@@ -18,6 +18,21 @@ import {
 } from 'lucide-react';
 import { m, AnimatePresence } from 'motion/react';
 import { scaleUp } from '@/core/motion';
+/**
+ * ------------------------------------------------------------
+ * File: page.jsx
+ * 
+ * Purpose:
+ * Dedicated route for the Job Analyzer tool.
+ * 
+ * Responsibilities:
+ * • Serve the primary interface for users to submit jobs for scanning
+ * 
+ * Used By:
+ * • Next.js App Router (/dashboard/analyzer route)
+ * ------------------------------------------------------------
+ */
+
 import { AnalyzerInput } from '@/features/scans/components/AnalyzerInput';
 import { useAnalyzer, loadingMessages } from '@/features/scans/hooks/useAnalyzer';
 
@@ -40,6 +55,17 @@ export default function Analyzer() {
             return () => clearTimeout(timer);
         }
     }, [state.revealStats]);
+
+    // Check for rescan intent from history
+    useEffect(() => {
+        const rescanText = sessionStorage.getItem('jobscan_rescan_text');
+        if (rescanText) {
+            setters.setJobText(rescanText);
+            setters.setActiveTab('text');
+            sessionStorage.removeItem('jobscan_rescan_text');
+            handlers.handleAnalyze(rescanText);
+        }
+    }, []);
 
     const {
         jobText, posterFile, posterPreview, activeTab, loading,

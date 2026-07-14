@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: page.jsx
+ * 
+ * Purpose:
+ * Renders the main landing page layout by composing various modular sections.
+ * 
+ * Responsibilities:
+ * • Orchestrates the sequence of sections including hero, features, and testimonials.
+ * • Implements dynamic imports for performance optimization.
+ * 
+ * Used By:
+ * • App Router
+ * ------------------------------------------------------------
+ */
+
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { HowItWorks } from './components/HowItWorks';

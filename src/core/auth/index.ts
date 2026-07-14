@@ -1,3 +1,21 @@
+/**
+ * ------------------------------------------------------------
+ * File: index.ts
+ * 
+ * Purpose:
+ * Core NextAuth initialization and provider configuration.
+ * 
+ * Responsibilities:
+ * • Configure CredentialsProvider with bcrypt password verification
+ * • Handle initial login database queries
+ * • Log security events (failed logins)
+ * 
+ * Used By:
+ * • API Routes
+ * • Route Handlers
+ * ------------------------------------------------------------
+ */
+
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';

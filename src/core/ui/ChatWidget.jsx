@@ -5,6 +5,8 @@ import ReactMarkdown from 'react-markdown';
 import { useAuth } from '@/core/providers/auth-provider';
 import { useJob } from '@/core/providers/providers';
 import api from '@/core/lib/api-client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@/core/lib/query-keys';
 import { Bot, Send, X, Sparkles, MessageSquare, Loader2, Trash2 } from 'lucide-react';
 
 const MessageItem = ({ msg }) => (
@@ -57,46 +59,62 @@ export function ChatWidget() {
     if (isOpen) scrollToBottom();
   }, [messages, isOpen]);
 
-  useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const data = await api.getChatHistory();
-        if (Array.isArray(data) && data.length > 0) setMessages(data);
-      } catch (error) { console.error("Failed to fetch history:", error); }
-    };
-    if (isOpen && messages.length === 0 && user) fetchHistory();
-  }, [isOpen, messages.length, user]);
+  const queryClient = useQueryClient();
 
-  const handleSend = async (e) => {
+  const { data: chatHistory, isSuccess } = useQuery({
+    queryKey: queryKeys.chat.history,
+    queryFn: api.getChatHistory,
+    enabled: isOpen && !!user,
+  });
+
+  useEffect(() => {
+    if (isSuccess && Array.isArray(chatHistory) && chatHistory.length > 0 && messages.length === 0) {
+      setMessages(chatHistory);
+    }
+  }, [isSuccess, chatHistory, messages.length]);
+
+  const sendMessageMutation = useMutation({
+    mutationFn: (messageText) => api.sendMessage(messageText, currentJobContext),
+    onSuccess: (data) => {
+      setMessages(prev => [...prev, { role: 'assistant', content: data.content }]);
+      // Optionally invalidate chat history so it's fresh on next reload
+      queryClient.invalidateQueries({ queryKey: queryKeys.chat.history });
+    },
+    onError: (error) => {
+      console.error("Chat error:", error);
+      setMessages(prev => [...prev, { role: 'assistant', content: "Error connecting to AI. Please try again later." }]);
+    }
+  });
+
+  const clearChatMutation = useMutation({
+    mutationFn: () => api.clearChatHistory(),
+    onSuccess: () => {
+      setMessages([{ role: 'assistant', content: 'Chat history cleared. How can I help you?' }]);
+      queryClient.invalidateQueries({ queryKey: queryKeys.chat.history });
+    },
+    onError: (error) => {
+      console.error("Failed to clear chat:", error);
+    }
+  });
+
+  const handleSend = (e) => {
     e?.preventDefault();
     const messageText = input.trim();
-    if (!messageText || isLoading) return;
+    if (!messageText || sendMessageMutation.isPending) return;
 
     const userMessage = { role: 'user', content: messageText };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
-    setIsLoading(true);
-
-    try {
-      const data = await api.sendMessage(messageText, currentJobContext);
-      setMessages(prev => [...prev, { role: 'assistant', content: data.content }]);
-    } catch (error) {
-      console.error("Chat error:", error);
-      setMessages(prev => [...prev, { role: 'assistant', content: "Error connecting to AI. Please try again later." }]);
-    }
-    setIsLoading(false);
+    sendMessageMutation.mutate(messageText);
   };
 
-  const handleClearChat = async () => {
-    try {
-      await api.clearChatHistory();
-      setMessages([{ role: 'assistant', content: 'Chat history cleared. How can I help you?' }]);
-    } catch (error) {
-      console.error("Failed to clear chat:", error);
-    }
+  const handleClearChat = () => {
+    clearChatMutation.mutate();
   };
 
   if (!mounted || !user) return null;
+
+  const isChatLoading = sendMessageMutation.isPending;
 
   return (
     <>
@@ -132,7 +150,7 @@ export function ChatWidget() {
         </div>
 
         <div className="flex-1 overflow-y-auto p-5 scrollbar-thin scrollbar-thumb-slate-700">
-          {messages.length === 0 && !isLoading && (
+          {messages.length === 0 && !isChatLoading && (
             <div className="flex flex-col items-center justify-center h-full text-center px-4 animate-in fade-in zoom-in duration-500 group/empty">
               <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 mb-4 border border-blue-500/20 group-hover/empty:scale-110 group-hover/empty:bg-blue-500/20 transition duration-500">
                 <MessageSquare size={28} />
@@ -144,7 +162,7 @@ export function ChatWidget() {
             </div>
           )}
           {messages.map((msg, index) => <MessageItem key={index} msg={msg} />)}
-          {isLoading && (
+          {isChatLoading && (
             <div className="flex w-full mb-5 justify-start group">
               <div className="w-8 h-8 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 flex-shrink-0 mr-3 mt-1 group-hover:scale-110 transition-transform duration-300">
                 <Bot size={16} />
@@ -166,15 +184,15 @@ export function ChatWidget() {
               placeholder="Ask anything..." 
               value={input} 
               onChange={(e) => setInput(e.target.value)} 
-              disabled={isLoading} 
+              disabled={isChatLoading} 
               className="w-full bg-[rgba(0,0,0,0.2)] border border-[var(--hairline-strong)] text-[var(--on-dark)] rounded-xl pl-4 pr-12 py-3 text-sm focus:outline-none focus:bg-[var(--surface-elevated)] focus:border-blue-500 hover:border-blue-500/50 transition placeholder-[var(--muted)]"
             />
             <button 
               type="submit" 
               className="absolute right-2 w-8 h-8 flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white disabled:opacity-50 disabled:from-slate-700 disabled:to-slate-700 transition hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25 active:scale-95" 
-              disabled={isLoading || !input.trim()}
+              disabled={isChatLoading || !input.trim()}
             >
-              {isLoading ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+              {isChatLoading ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
             </button>
           </form>
           <div className="text-center mt-3">

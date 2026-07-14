@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * Component: TrustScoreCard
+ * 
+ * Purpose:
+ * Prominently displays the overall calculated trust score.
+ * 
+ * Responsibilities:
+ * • Render the animated TrustScore circular gauge
+ * • Provide visual hierarchy for the primary metric
+ * 
+ * Used By:
+ * • Desktop Results Component
+ * ------------------------------------------------------------
+ */
+
 import { m } from 'motion/react';
 import dynamic from 'next/dynamic';
 import { slideUp } from '@/core/motion';

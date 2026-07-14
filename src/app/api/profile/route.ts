@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * API Route: /api/profile
+ * 
+ * Purpose:
+ * Manages user profile data, retention settings, and account deletion.
+ * 
+ * Responsibilities:
+ * • Update name and email
+ * • Update data retention days
+ * • Process full account deletion requests
+ * 
+ * Used By:
+ * • Settings Profile View
+ * ------------------------------------------------------------
+ */
+
 import { createRouteHandler } from '@/core/api/route-utils';
 import { updateProfileSchema } from '@/features/users/validation';
 import { updateProfile, deleteAccount, updateRetentionDays } from '@/features/users/service';

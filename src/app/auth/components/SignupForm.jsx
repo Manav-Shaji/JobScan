@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * Component: SignupForm
+ * 
+ * Purpose:
+ * User registration form interface.
+ * 
+ * Responsibilities:
+ * • Collect name, email, and password for new accounts
+ * • Perform client-side validation for account creation
+ * • Interface with the AuthProvider to handle registration
+ * 
+ * Used By:
+ * • Authentication Page
+ * ------------------------------------------------------------
+ */
+
 'use client';
 
 import { useState } from 'react';

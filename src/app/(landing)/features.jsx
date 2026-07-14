@@ -1,5 +1,39 @@
 'use client';
 
+/**
+ * ------------------------------------------------------------
+ * Component: features.jsx
+ * 
+ * Purpose:
+ * Provides visual feedback components for job trust verification and user access gatekeeping.
+ * 
+ * Responsibilities:
+ * • TrustScore: Renders animated gauges to display and interpret security assessment results.
+ * • SignupWall: Displays a modal overlay to prompt authentication when usage limits are exceeded.
+ * 
+ * Used By:
+ * • Job Analysis Dashboard
+ * ------------------------------------------------------------
+ */
+
+
+/**
+ * ------------------------------------------------------------
+ * Component: features.jsx
+ * 
+ * Purpose:
+ * Provides UI components for displaying job trust verification scores and managing user access limitations.
+ * 
+ * Responsibilities:
+ * • TrustScore: Visualizes security analysis results with animated circular gauges.
+ * • SignupWall: Intercepts user flow when free scan limits are reached to prompt registration.
+ * 
+ * Used By:
+ * • Job Analysis Dashboard
+ * ------------------------------------------------------------
+ */
+
+
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {

@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * File: ai.ts
+ * 
+ * Purpose:
+ * Configuration and validation for AI models used in the application.
+ * 
+ * Responsibilities:
+ * • Define supported AI models and fallback chains
+ * • Validate environment variables against allowed models
+ * • Provide standard configurations for text and chat generation
+ * 
+ * Used By:
+ * • AI Core Engine
+ * ------------------------------------------------------------
+ */
+
 import { logger } from '@/core/lib/logger';
 const SUPPORTED_MODELS = [
   'gemini-3.5-flash',

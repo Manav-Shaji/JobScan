@@ -1,3 +1,18 @@
+/**
+ * ------------------------------------------------------------
+ * File: detector.ts
+ * 
+ * Purpose:
+ * Content script to detect the main web app installation.
+ * 
+ * Responsibilities:
+ * • Inject a DOM element signaling that the extension is installed
+ * 
+ * Used By:
+ * • Chrome Extension Runtime
+ * ------------------------------------------------------------
+ */
+
 export default defineContentScript({
   matches: ['*://localhost/*', '*://*.vercel.app/*'],
   main() {

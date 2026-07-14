@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: linkedin.ts
+ * 
+ * Purpose:
+ * Content extractor for LinkedIn job postings.
+ * 
+ * Responsibilities:
+ * • Parse DOM elements specific to LinkedIn's job layout
+ * • Extract title, company, and description text
+ * 
+ * Used By:
+ * • Extractor Registry
+ * ------------------------------------------------------------
+ */
+
 import { BaseExtractor, ExtractedDOM } from './base';
 
 export class LinkedInExtractor extends BaseExtractor {

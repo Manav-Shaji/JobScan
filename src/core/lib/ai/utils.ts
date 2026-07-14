@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * File: utils.ts
+ * 
+ * Purpose:
+ * Utility functions for AI response handling and error processing.
+ * 
+ * Responsibilities:
+ * • Provide promise race timeouts for AI requests
+ * • Extract and format error messages
+ * • Safely parse JSON payload responses
+ * 
+ * Used By:
+ * • AI Core Engine
+ * ------------------------------------------------------------
+ */
+
 import { ResponseSchema } from './prompts';
 import { logger } from '@/core/lib/logger';
 

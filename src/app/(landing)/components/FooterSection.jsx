@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * Component: FooterSection
+ * 
+ * Purpose:
+ * Renders the global site footer, providing navigation links, legal information, and a newsletter subscription form.
+ * 
+ * Responsibilities:
+ * • Displays organizational branding and platform mission statement.
+ * • Provides structural navigation to core product and legal pages.
+ * • Integrates a newsletter capture input for user engagement.
+ * 
+ * Used By:
+ * • Root Layout
+ * ------------------------------------------------------------
+ */
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { ThemeToggle } from '@/core/ui/ThemeToggle';

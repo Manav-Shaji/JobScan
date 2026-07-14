@@ -1,5 +1,21 @@
 "use client";
 
+/**
+ * ------------------------------------------------------------
+ * File: page.jsx
+ * 
+ * Purpose:
+ * PWA offline fallback page.
+ * 
+ * Responsibilities:
+ * • Display a helpful message when the user loses network connectivity
+ * 
+ * Used By:
+ * • Next.js App Router (/~offline route)
+ * • next-pwa offline fallback
+ * ------------------------------------------------------------
+ */
+
 import Link from "next/link";
 import { ShieldAlert, WifiOff } from "lucide-react";
 

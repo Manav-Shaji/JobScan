@@ -1,9 +1,27 @@
-import { useState } from 'react';
+/**
+ * ------------------------------------------------------------
+ * Component: Profile
+ * 
+ * Purpose:
+ * User profile management component.
+ * 
+ * Responsibilities:
+ * • Display and edit user information (name, email)
+ * • Change account password
+ * 
+ * Used By:
+ * • Dashboard Settings View
+ * ------------------------------------------------------------
+ */
+import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Label } from "@/core/ui/forms";
 import { Input } from "@/core/ui/forms";
 import { Skeleton } from "@/core/ui/layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/core/ui/navigation";
-import { User, Mail, Key, Lock, ShieldCheck, ArrowRight, Camera } from 'lucide-react';
+import { User, Mail, Key, Lock, ShieldCheck, ArrowRight, Camera, Eye, EyeOff } from 'lucide-react';
 import { m, LayoutGroup } from 'motion/react';
 
 const fadeUp = {
@@ -11,18 +29,71 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: 'easeOut' } }
 };
 
+const profileSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address")
+});
+
+const passwordSchema = z.object({
+  oldPassword: z.string().min(1, "Old password is required"),
+  newPassword: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string()
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"]
+});
+
 export function Profile({ 
-  formData, 
-  setFormData, 
-  handleSaveSettings, 
-  saving,
-  passwordData,
-  setPasswordData,
-  handleSavePassword,
-  savingPassword,
+  user,
+  updateProfileMutation,
+  updatePasswordMutation,
   loading
 }) {
   const [activeTab, setActiveTab] = useState('personal');
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const {
+    register: registerProfile,
+    handleSubmit: handleProfileSubmit,
+    reset: resetProfile,
+    formState: { errors: profileErrors }
+  } = useForm({
+    resolver: zodResolver(profileSchema),
+    defaultValues: { name: '', email: '' },
+    mode: 'onChange'
+  });
+
+  const {
+    register: registerPassword,
+    handleSubmit: handlePasswordSubmit,
+    reset: resetPassword,
+    formState: { errors: passwordErrors }
+  } = useForm({
+    resolver: zodResolver(passwordSchema),
+    defaultValues: { oldPassword: '', newPassword: '', confirmPassword: '' },
+    mode: 'onChange'
+  });
+
+  useEffect(() => {
+    if (user) {
+      resetProfile({ name: user.name || '', email: user.email || '' });
+    }
+  }, [user, resetProfile]);
+
+  const onProfileSubmit = (data) => {
+    updateProfileMutation.mutate(data);
+  };
+
+  const onPasswordSubmit = (data) => {
+    updatePasswordMutation.mutate(data, {
+      onSuccess: () => resetPassword()
+    });
+  };
+
+  const savingProfile = updateProfileMutation.isPending;
+  const savingPassword = updatePasswordMutation.isPending;
 
   if (loading) {
     return (
@@ -110,7 +181,7 @@ export function Profile({
               </div>
 
               {/* Form Section */}
-              <form onSubmit={handleSaveSettings} className="flex flex-col gap-5">
+              <form onSubmit={handleProfileSubmit(onProfileSubmit)} className="flex flex-col gap-5">
                 
                 <div className="space-y-1.5">
                   <Label htmlFor="displayName" className="text-[var(--on-dark)] font-medium text-[13px] ml-0.5">Display Name</Label>
@@ -118,13 +189,13 @@ export function Profile({
                     <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-blue-500 transition-colors pointer-events-none" />
                     <Input 
                       id="displayName"
-                      value={formData.name} 
-                      onChange={e => setFormData({...formData, name: e.target.value})} 
+                      {...registerProfile("name")}
                       placeholder="Your Full Name" 
-                      className="!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg transition"
+                      className={`!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg transition ${profileErrors.name ? '!border-red-500 !ring-red-500/20' : ''}`}
                       aria-label="Display Name"
                     />
                   </div>
+                  {profileErrors.name && <p className="text-red-500 text-xs mt-1 ml-0.5 font-medium">{profileErrors.name.message}</p>}
                 </div>
 
                 <div className="space-y-1.5">
@@ -134,13 +205,13 @@ export function Profile({
                     <Input 
                       id="emailAddress"
                       type="email"
-                      value={formData.email} 
-                      onChange={e => setFormData({...formData, email: e.target.value})} 
+                      {...registerProfile("email")}
                       placeholder="you@example.com" 
-                      className="!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg transition"
+                      className={`!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg transition ${profileErrors.email ? '!border-red-500 !ring-red-500/20' : ''}`}
                       aria-label="Email Address"
                     />
                   </div>
+                  {profileErrors.email && <p className="text-red-500 text-xs mt-1 ml-0.5 font-medium">{profileErrors.email.message}</p>}
                 </div>
 
                 {/* Footer Section */}
@@ -149,10 +220,10 @@ export function Profile({
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.98 }}
                     type="submit" 
-                    disabled={saving} 
+                    disabled={savingProfile} 
                     className="relative bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed group"
                   >
-                    {saving ? (
+                    {savingProfile ? (
                       <span className="flex items-center gap-1.5">
                         Saving... 
                         <span className="flex gap-0.5">
@@ -185,7 +256,7 @@ export function Profile({
               </div>
 
               {/* Form Section */}
-              <form onSubmit={handleSavePassword} className="flex flex-col gap-5">
+              <form onSubmit={handlePasswordSubmit(onPasswordSubmit)} className="flex flex-col gap-5">
                 
                 <div className="space-y-1.5">
                   <Label htmlFor="currentPassword" className="text-[var(--on-dark)] font-medium text-[13px] ml-0.5">Current Password</Label>
@@ -193,15 +264,22 @@ export function Profile({
                     <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-emerald-500 transition-colors pointer-events-none" />
                     <Input 
                       id="currentPassword"
-                      type="password"
-                      value={passwordData?.oldPassword || ''} 
-                      onChange={e => setPasswordData({...passwordData, oldPassword: e.target.value})} 
+                      type={showOldPassword ? "text" : "password"}
+                      {...registerPassword("oldPassword")}
                       placeholder="••••••••" 
-                      className="!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-lg transition"
+                      className={`!pl-10 !pr-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-lg transition ${passwordErrors.oldPassword ? '!border-red-500 !ring-red-500/20' : ''}`}
                       aria-label="Current Password"
-                      required
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowOldPassword(!showOldPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--on-dark)] transition-colors focus:outline-none"
+                      tabIndex={-1}
+                    >
+                      {showOldPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                   </div>
+                  {passwordErrors.oldPassword && <p className="text-red-500 text-xs mt-1 ml-0.5 font-medium">{passwordErrors.oldPassword.message}</p>}
                 </div>
 
                 <div className="space-y-1.5">
@@ -210,15 +288,22 @@ export function Profile({
                     <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-emerald-500 transition-colors pointer-events-none" />
                     <Input 
                       id="newPassword"
-                      type="password"
-                      value={passwordData?.newPassword || ''} 
-                      onChange={e => setPasswordData({...passwordData, newPassword: e.target.value})} 
+                      type={showNewPassword ? "text" : "password"}
+                      {...registerPassword("newPassword")}
                       placeholder="••••••••" 
-                      className="!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-lg transition"
+                      className={`!pl-10 !pr-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-lg transition ${passwordErrors.newPassword ? '!border-red-500 !ring-red-500/20' : ''}`}
                       aria-label="New Password"
-                      required
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--on-dark)] transition-colors focus:outline-none"
+                      tabIndex={-1}
+                    >
+                      {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                   </div>
+                  {passwordErrors.newPassword && <p className="text-red-500 text-xs mt-1 ml-0.5 font-medium">{passwordErrors.newPassword.message}</p>}
                 </div>
 
                 <div className="space-y-1.5">
@@ -227,15 +312,22 @@ export function Profile({
                     <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-emerald-500 transition-colors pointer-events-none" />
                     <Input 
                       id="confirmPassword"
-                      type="password"
-                      value={passwordData?.confirmPassword || ''} 
-                      onChange={e => setPasswordData({...passwordData, confirmPassword: e.target.value})} 
+                      type={showConfirmPassword ? "text" : "password"}
+                      {...registerPassword("confirmPassword")}
                       placeholder="••••••••" 
-                      className="!pl-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-lg transition"
+                      className={`!pl-10 !pr-10 h-11 bg-[rgba(0,0,0,0.1)] border-[var(--hairline-strong)] text-[var(--on-dark)] placeholder-[var(--muted)] focus:bg-[var(--surface-elevated)] focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-lg transition ${passwordErrors.confirmPassword ? '!border-red-500 !ring-red-500/20' : ''}`}
                       aria-label="Confirm New Password"
-                      required
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--on-dark)] transition-colors focus:outline-none"
+                      tabIndex={-1}
+                    >
+                      {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                   </div>
+                  {passwordErrors.confirmPassword && <p className="text-red-500 text-xs mt-1 ml-0.5 font-medium">{passwordErrors.confirmPassword.message}</p>}
                 </div>
 
                 {/* Footer Section */}

@@ -1,3 +1,21 @@
+/**
+ * ------------------------------------------------------------
+ * File: validation.ts
+ * 
+ * Purpose:
+ * Zod schemas for user authentication and profile updates.
+ * 
+ * Responsibilities:
+ * • Validate registration payloads
+ * • Validate profile updates
+ * • Validate password change requests
+ * 
+ * Used By:
+ * • API Routes
+ * • User Services
+ * ------------------------------------------------------------
+ */
+
 import { z } from 'zod';
 
 export const registerSchema = z.object({

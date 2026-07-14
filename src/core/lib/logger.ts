@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * File: logger.ts
+ * 
+ * Purpose:
+ * Custom logging utility for structured application logs.
+ * 
+ * Responsibilities:
+ * • Provide distinct logging methods (App, Security, Error)
+ * • Write JSON-formatted log entries to local files
+ * 
+ * Used By:
+ * • Core Services
+ * • AI Engine
+ * ------------------------------------------------------------
+ */
+
 import 'server-only';
 import fs from 'fs';
 import path from 'path';

@@ -1,8 +1,28 @@
+/**
+ * ------------------------------------------------------------
+ * Hook: useAnalyzer
+ * 
+ * Purpose:
+ * Core state management and orchestration hook for the job scanning process.
+ * 
+ * Responsibilities:
+ * • Manage loading stages and analysis state
+ * • Execute scan mutation via React Query
+ * • Handle error toasts and resets
+ * 
+ * Used By:
+ * • AnalyzerInput Component
+ * ------------------------------------------------------------
+ */
+
 import { useState, useEffect, useRef } from 'react';
 import api from '@/core/lib/api-client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@/core/lib/query-keys';
 import { useScanLimit } from '@/features/scans/use-scan-limit';
 import { useJob } from '@/core/providers/providers';
 import { useToast } from "@/core/ui/use-toast";
+import { useAppStore } from '@/shared/useAppStore';
 
 export const loadingMessages = [
     "Parsing Job Description",
@@ -16,17 +36,20 @@ export function useAnalyzer() {
     const { setCurrentJobContext } = useJob();
     const { toast } = useToast();
     
-    const [jobText, setJobText] = useState('');
-    const [posterFile, setPosterFile] = useState(null);
-    const [posterPreview, setPosterPreview] = useState(null);
-    const [activeTab, setActiveTab] = useState('text');
-    
+    const {
+        jobText, setJobText,
+        posterFile, setPosterFile,
+        posterPreview, setPosterPreview,
+        activeTab, setActiveTab,
+        inputError, setInputError,
+        activeStage, setActiveStage,
+        completedStages, setCompletedStages,
+        revealStats, setRevealStats,
+        resetAnalyzer
+    } = useAppStore();
+
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
-    const [inputError, setInputError] = useState(false);
-    const [activeStage, setActiveStage] = useState(0);
-    const [completedStages, setCompletedStages] = useState([]);
-    const [revealStats, setRevealStats] = useState(false);
     const [showBottomSheet, setShowBottomSheet] = useState(false);
     const [sheetTranslateY, setSheetTranslateY] = useState(0);
     const [isDraggingSheet, setIsDraggingSheet] = useState(false);
@@ -112,7 +135,7 @@ export function useAnalyzer() {
             const stageIndex = i;
             setActiveStage(stageIndex);
             await new Promise(resolve => setTimeout(resolve, 600));
-            setCompletedStages(prev => [...prev, stageIndex]);
+            setCompletedStages([...useAppStore.getState().completedStages, stageIndex]);
         }
         setActiveStage(loadingMessages.length);
     };
@@ -131,7 +154,7 @@ export function useAnalyzer() {
         setPosterFile(file);
         const reader = new FileReader();
         reader.onload = (e) => {
-            setPosterPreview(e.target.result);
+            setPosterPreview(e.target?.result as string);
             if (typeof navigator !== 'undefined' && navigator.vibrate) {
                 navigator.vibrate(20);
             }
@@ -139,9 +162,102 @@ export function useAnalyzer() {
         reader.readAsDataURL(file);
     };
 
-    const handleAnalyze = async () => {
-        const textToAnalyze = activeTab === 'text' ? jobText : '';
-        const fileToAnalyze = activeTab === 'image' ? posterFile : null;
+    const queryClient = useQueryClient();
+
+    const analyzeMutation = useMutation({
+        mutationFn: async ({ textToAnalyze, fileToAnalyze }: { textToAnalyze: string, fileToAnalyze: any }) => {
+            const payload = await Promise.all([
+                api.analyze(textToAnalyze, fileToAnalyze),
+                runStagedLoading()
+            ]).then(([res]) => res);
+            return payload;
+        },
+        onSuccess: (payload, variables: { textToAnalyze: string, fileToAnalyze: any }) => {
+            const data = payload?.success !== undefined ? payload.data : payload;
+
+            if (data?.success === false || data?.error) {
+                let userFriendlyMessage = data?.error || "Analysis failed";
+                console.warn('Analysis failed:', userFriendlyMessage);
+                setResult({ score: 0, error: userFriendlyMessage });
+                setShowBottomSheet(false);
+                toast({
+                    title: "Scan Interrupted",
+                    description: userFriendlyMessage,
+                    variant: "destructive",
+                });
+                return;
+            }
+
+            incrementScan();
+            setCurrentJobContext(variables.textToAnalyze || (data.posterText ? data.posterText : "Multimodal scan"));
+
+            // Invalidate dashboard queries so they refetch the newly added scan
+            queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.stats });
+            queryClient.invalidateQueries({ queryKey: queryKeys.scans.history });
+
+            const apiBreakdown = data?.breakdown || {};
+            const uiBreakdown = [
+                { label: 'Linguistic Patterns', value: apiBreakdown.linguistic || 0 },
+                { label: 'Employer Legitimacy', value: apiBreakdown.employer || 0 },
+                { label: 'Contact Authenticity', value: apiBreakdown.contact || 0 },
+                { label: 'Salary Realism', value: apiBreakdown.salary || 0 },
+                { label: 'Temporal Patterns', value: apiBreakdown.temporal || 0 }
+            ];
+
+            setResult({
+                id: data.id,
+                score: data.trustScore ?? data.trust_score ?? 0,
+                breakdown: uiBreakdown,
+                redFlags: data.redFlags || [],
+                positiveSignals: data.posterAnalysis?.positiveSignals || [],
+                verdict: data.verdict,
+                communityReports: data.communityReports || 0,
+                summary: data.posterAnalysis?.summary || data.summary || data.investigationNotes,
+                extractedText: data.posterText,
+                patternName: data.patternName,
+                patternConfidence: data.patternConfidence,
+                posterCredibilityScore: data.posterCredibilityScore,
+                scanType: data.scanType || (variables.fileToAnalyze && variables.textToAnalyze ? 'Combined' : variables.fileToAnalyze ? 'Poster' : 'Text'),
+                fallbackUsed: data.fallbackUsed || false,
+            });
+            setShowBottomSheet(true);
+
+            toast({
+                title: "Threat Scan Complete",
+                description: `Analysis finished with a TrustScore of ${data.trustScore ?? data.trust_score ?? 0}%`,
+                variant: data.verdict === 'scam' ? 'destructive' : 'default',
+            });
+        },
+        onError: (err) => {
+            console.warn('Analysis failed:', err.message);
+            let userFriendlyMessage = err.message || "Unable to complete threat analysis at this moment.";
+            setResult({ score: 0, error: userFriendlyMessage });
+            setShowBottomSheet(false);
+            toast({
+                title: "Scan Interrupted",
+                description: userFriendlyMessage,
+                variant: "destructive",
+            });
+        }
+    });
+
+    const reportMutation = useMutation({
+        mutationFn: async (resultId) => {
+            return api.reportScam(resultId, 'Community Flagged');
+        },
+        onSuccess: () => {
+            toast({ title: "Threat Database Updated", description: "Flagged in threat records to protect other applicants." });
+            // Invalidate specific report if needed, though mostly history
+            queryClient.invalidateQueries({ queryKey: queryKeys.scans.history });
+        },
+        onError: (err) => {
+            console.error('Report failed:', err);
+        }
+    });
+
+    const handleAnalyze = async (overrideText = null) => {
+        const textToAnalyze = typeof overrideText === 'string' ? overrideText : (activeTab === 'text' ? jobText : '');
+        const fileToAnalyze = (activeTab === 'image' && typeof overrideText !== 'string') ? posterFile : null;
 
         if (!textToAnalyze.trim() && !fileToAnalyze) {
             setInputError(true);
@@ -175,87 +291,15 @@ export function useAnalyzer() {
             navigator.vibrate(20);
         }
 
-        setLoading(true);
         setResult(null);
         setRevealStats(false);
 
-        try {
-            const payload = await Promise.all([
-                api.analyze(textToAnalyze, fileToAnalyze),
-                runStagedLoading()
-            ]).then(([res]) => res);
-
-            const data = payload?.success !== undefined ? payload.data : payload;
-
-            if (data?.success === false || data?.error) {
-                let userFriendlyMessage = data?.error || "Analysis failed";
-                console.warn('Analysis failed:', userFriendlyMessage);
-                setResult({ score: 0, error: userFriendlyMessage });
-                setShowBottomSheet(false);
-                toast({
-                    title: "Scan Interrupted",
-                    description: userFriendlyMessage,
-                    variant: "destructive",
-                });
-                setLoading(false);
-                return;
-            }
-
-            incrementScan();
-            setCurrentJobContext(jobText || (data.posterText ? data.posterText : "Multimodal scan"));
-
-            const apiBreakdown = data?.breakdown || {};
-            const uiBreakdown = [
-                { label: 'Linguistic Patterns', value: apiBreakdown.linguistic || 0 },
-                { label: 'Employer Legitimacy', value: apiBreakdown.employer || 0 },
-                { label: 'Contact Authenticity', value: apiBreakdown.contact || 0 },
-                { label: 'Salary Realism', value: apiBreakdown.salary || 0 },
-                { label: 'Temporal Patterns', value: apiBreakdown.temporal || 0 }
-            ];
-
-            setResult({
-                id: data.id,
-                score: data.trustScore ?? data.trust_score ?? 0,
-                breakdown: uiBreakdown,
-                redFlags: data.redFlags || [],
-                positiveSignals: data.posterAnalysis?.positiveSignals || [],
-                verdict: data.verdict,
-                communityReports: data.communityReports || 0,
-                summary: data.posterAnalysis?.summary || data.summary || data.investigationNotes,
-                extractedText: data.posterText,
-                patternName: data.patternName,
-                patternConfidence: data.patternConfidence,
-                posterCredibilityScore: data.posterCredibilityScore,
-                scanType: data.scanType || (fileToAnalyze && textToAnalyze ? 'Combined' : fileToAnalyze ? 'Poster' : 'Text'),
-                fallbackUsed: data.fallbackUsed || false,
-            });
-            setShowBottomSheet(true);
-
-            toast({
-                title: "Threat Scan Complete",
-                description: `Analysis finished with a TrustScore of ${data.trustScore ?? data.trust_score ?? 0}%`,
-                variant: data.verdict === 'scam' ? 'destructive' : 'default',
-            });
-        } catch (err) {
-            console.warn('Analysis failed:', err.message);
-            let userFriendlyMessage = err.message || "Unable to complete threat analysis at this moment.";
-            setResult({ score: 0, error: userFriendlyMessage });
-            setShowBottomSheet(false);
-            toast({
-                title: "Scan Interrupted",
-                description: userFriendlyMessage,
-                variant: "destructive",
-            });
-        }
-        setLoading(false);
+        analyzeMutation.mutate({ textToAnalyze, fileToAnalyze });
     };
 
     const handleReport = async () => {
         if (!result) return;
-        try {
-            await api.reportScam(result.id, 'Community Flagged');
-            toast({ title: "Threat Database Updated", description: "Flagged in threat records to protect other applicants." });
-        } catch (err) { console.error('Report failed:', err); }
+        reportMutation.mutate(result.id);
     };
 
     const handlePaste = async () => {
@@ -275,7 +319,7 @@ export function useAnalyzer() {
     };
 
     const getAnalyzeButtonText = () => {
-        if (loading) return "ANALYZING...";
+        if (analyzeMutation.isPending) return "ANALYZING...";
         if (activeTab === 'image') return "ANALYZE POSTER";
         return "ANALYZE TEXT";
     };
@@ -286,7 +330,7 @@ export function useAnalyzer() {
             posterFile,
             posterPreview,
             activeTab,
-            loading,
+            loading: analyzeMutation.isPending,
             result,
             inputError,
             activeStage,

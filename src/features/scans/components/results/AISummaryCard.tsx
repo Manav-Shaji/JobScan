@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * Component: AISummaryCard
+ * 
+ * Purpose:
+ * Displays the AI-generated natural language summary of a job scan.
+ * 
+ * Responsibilities:
+ * • Render text summary and bulleted positive signals
+ * • Handle layout and entry animations
+ * 
+ * Used By:
+ * • Desktop & Mobile Results Components
+ * ------------------------------------------------------------
+ */
+
 import { m } from 'motion/react';
 import { Search, CheckSquare } from 'lucide-react';
 import { slideUp } from '@/core/motion';

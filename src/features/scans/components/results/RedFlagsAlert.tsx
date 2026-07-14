@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * Component: RedFlagsAlert
+ * 
+ * Purpose:
+ * Highlights detected scam indicators and warnings.
+ * 
+ * Responsibilities:
+ * • Map and render a list of critical red flags
+ * • Display safe fallback if no flags are present
+ * 
+ * Used By:
+ * • Desktop & Mobile Results Components
+ * ------------------------------------------------------------
+ */
+
 import { m } from 'motion/react';
 import { AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "@/core/ui/Alert";

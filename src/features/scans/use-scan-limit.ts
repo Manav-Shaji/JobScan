@@ -1,5 +1,21 @@
 'use client';
 
+/**
+ * ------------------------------------------------------------
+ * File: use-scan-limit.ts
+ * 
+ * Purpose:
+ * Custom React hook for tracking and enforcing job scan rate limits.
+ * 
+ * Responsibilities:
+ * • Interface with the global app store to track remaining scans
+ * • Check if a user is allowed to perform a new scan
+ * 
+ * Used By:
+ * • AnalyzerInput Component
+ * ------------------------------------------------------------
+ */
+
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/core/providers/auth-provider';
 const FREE_SCAN_LIMIT = 3;

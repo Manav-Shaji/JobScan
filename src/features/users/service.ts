@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * File: service.ts
+ * 
+ * Purpose:
+ * Business logic for user management operations.
+ * 
+ * Responsibilities:
+ * • Handle profile updates
+ * • Process account deletions
+ * • Retrieve user statistics
+ * 
+ * Used By:
+ * • API Routes
+ * ------------------------------------------------------------
+ */
+
 import 'server-only';
 import { cache } from 'react';
 import { query, pool } from '@/core/db/client';
@@ -11,6 +28,7 @@ import {
   deleteUserAccount,
 } from './repository';
 
+import { deleteScanResult } from '@/features/scans/repository';
 import { deriveVerdict } from '@/features/scans/utils';
 
 export async function updateProfile(userId: string, name: string, email?: string) {
@@ -79,6 +97,17 @@ export const getUserHistory = cache(async function(userId: string, limit: number
     throw error;
   }
 });
+
+export async function deleteUserScan(userId: string, scanId: string) {
+  try {
+    logger.logApp('Deleting user scan', { userId, scanId });
+    const success = await deleteScanResult(userId, scanId);
+    return { success };
+  } catch (error) {
+    logger.error('Database error deleting user scan', error, { userId, scanId });
+    throw error;
+  }
+}
 
 export async function updateRetentionDays(userId: string, days: number) {
   try {

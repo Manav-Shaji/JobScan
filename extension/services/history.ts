@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: history.ts
+ * 
+ * Purpose:
+ * Local history management for the Chrome Extension.
+ * 
+ * Responsibilities:
+ * • Save recent scans locally in browser storage
+ * • Retrieve and format past analyses for the side panel
+ * 
+ * Used By:
+ * • Extension Side Panel
+ * ------------------------------------------------------------
+ */
+
 /* eslint-disable */
 export interface HistoryItem {
   id: string;
@@ -12,7 +28,7 @@ export interface HistoryItem {
 
 export async function getHistory(): Promise<HistoryItem[]> {
   const data = await chrome.storage.local.get(['jobHistory']);
-  return data.jobHistory || [];
+  return (data.jobHistory as HistoryItem[]) || [];
 }
 
 export async function addHistory(item: HistoryItem) {

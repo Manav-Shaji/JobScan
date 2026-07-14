@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * Component: App
+ * 
+ * Purpose:
+ * Root component for the Chrome Extension side panel.
+ * 
+ * Responsibilities:
+ * • Manage global state for the side panel (current tab, auth state)
+ * • Render the main navigation and route between Dashboard, History, Settings
+ * 
+ * Used By:
+ * • Side Panel Entrypoint
+ * ------------------------------------------------------------
+ */
+
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import { analyzeJob } from '@/extension/services/api';

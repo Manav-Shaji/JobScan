@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * File: engine.ts
+ * 
+ * Purpose:
+ * Core AI execution engine interfacing with the Gemini API.
+ * 
+ * Responsibilities:
+ * • Initialize Google Generative AI client
+ * • Execute model requests with system instructions
+ * • Manage request timeouts and fallback chains
+ * 
+ * Used By:
+ * • Gemini Service
+ * ------------------------------------------------------------
+ */
+
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { logger } from '@/core/lib/logger';
 import { FALLBACK_CHAIN, AI_CONFIG } from '@/core/config/ai';

@@ -1,74 +1,64 @@
+import ky from 'ky';
 import { AnalyzeResponse, HistoryResponse, ChatResponse, DashboardStats } from '@/types/api';
 
 // --- API Client ---
-const API_BASE = '/api';
+const apiClient = ky.create({
+  prefix: '/api',
+  timeout: 60000
+});
 
 async function analyzeJobDescription(jobDescription: string, posterFile: File | null = null): Promise<AnalyzeResponse> {
-  let body: BodyInit;
-  let headers: HeadersInit = {};
-  
-  if (posterFile) {
-    const formData = new FormData();
-    formData.append('jobDescription', jobDescription || '');
-    formData.append('poster', posterFile);
-    body = formData;
-  } else {
-    body = JSON.stringify({ jobDescription });
-    headers = { 'Content-Type': 'application/json' };
+  try {
+    if (posterFile) {
+      const formData = new FormData();
+      formData.append('jobDescription', jobDescription || '');
+      formData.append('poster', posterFile);
+      return await apiClient.post('analyze', { body: formData }).json();
+    } else {
+      return await apiClient.post('analyze', { json: { jobDescription } }).json();
+    }
+  } catch (error: any) {
+    if (error.name === 'HTTPError') {
+      const payload = await error.response.json().catch(() => null);
+      throw new Error(payload?.message || 'Failed to analyze job description.');
+    }
+    throw error;
   }
-
-  const res = await fetch(`${API_BASE}/analyze`, {
-    method: 'POST',
-    headers,
-    body,
-  });
-  
-  const payload = await res.json().catch(() => null);
-  if (!res.ok) {
-    throw new Error(payload?.message || 'Failed to analyze job description.');
-  }
-  return payload;
 }
 
 async function getAnalysisHistory(): Promise<HistoryResponse[]> {
   try {
-    const res = await fetch(`${API_BASE}/history`);
-    return res.ok ? await res.json() : [];
-  } catch (err) { return []; }
+    return await apiClient.get('history').json();
+  } catch (err) {
+    return [];
+  }
 }
 
 async function getAnalysisStats(): Promise<DashboardStats> {
   const defaultStats = { totalScans: 0, scamsDetected: 0, avgTrustScore: 0 };
   try {
-    const res = await fetch(`${API_BASE}/stats`);
-    return res.ok ? await res.json() : defaultStats;
-  } catch (err) { return defaultStats; }
+    return await apiClient.get('stats').json();
+  } catch (err) {
+    return defaultStats;
+  }
 }
 
 async function sendChatMessage(message: string, context: any): Promise<any> {
-  const res = await fetch(`${API_BASE}/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message, context }),
-  });
-  const data = await res.json();
+  const data: any = await apiClient.post('chat', { json: { message, context } }).json();
   return data?.success ? data.data : data;
 }
 
 async function getChatHistory(): Promise<any[]> {
   try {
-    const res = await fetch(`${API_BASE}/chat`);
-    if (res.status === 401) return [];
-    const data = await res.json();
+    const data: any = await apiClient.get('chat').json();
     return data?.success ? data.data : data;
-  } catch (err) { return []; }
+  } catch (err) {
+    return [];
+  }
 }
 
 async function clearChatHistory(): Promise<any> {
-  const res = await fetch(`${API_BASE}/chat`, {
-    method: 'DELETE',
-  });
-  return res.json();
+  return await apiClient.delete('chat').json();
 }
 
 async function reportScam(scanId: any, reason: string): Promise<any> {
@@ -76,14 +66,28 @@ async function reportScam(scanId: any, reason: string): Promise<any> {
     scanId: typeof scanId === 'object' && scanId !== null ? (scanId.scanId || scanId.id) : scanId,
     reason: reason || 'Community Flagged'
   };
-
-  const res = await fetch(`${API_BASE}/reports`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-  return res.json();
+  return await apiClient.post('reports', { json: body }).json();
 }
+
+async function deleteScan(scanId: string): Promise<any> {
+  return await apiClient.delete(`history/${scanId}`).json();
+}
+
+/**
+ * ------------------------------------------------------------
+ * File: api-client.ts
+ * 
+ * Purpose:
+ * Centralized API client for frontend requests.
+ * 
+ * Responsibilities:
+ * • Wrapper around native fetch API for consistent usage
+ * • Handle JSON serialization, request headers, and error parsing
+ * 
+ * Used By:
+ * • React Query Mutations and Queries
+ * ------------------------------------------------------------
+ */
 
 const api = {
   analyze: analyzeJobDescription,
@@ -93,6 +97,7 @@ const api = {
   getChatHistory: getChatHistory,
   clearChatHistory: clearChatHistory,
   reportScam: reportScam,
+  deleteScan: deleteScan,
 };
 
 export default api;

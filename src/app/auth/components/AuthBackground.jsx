@@ -2,6 +2,21 @@
 
 import { useState } from 'react';
 
+/**
+ * ------------------------------------------------------------
+ * Component: AuthBackground
+ * 
+ * Purpose:
+ * Animated background element for the authentication page.
+ * 
+ * Responsibilities:
+ * • Render immersive background gradients and floating shapes
+ * 
+ * Used By:
+ * • Authentication Page Layout
+ * ------------------------------------------------------------
+ */
+
 export function AuthBackground() {
     const [particles] = useState(() => 
         Array.from({ length: 15 }).map((_, i) => ({

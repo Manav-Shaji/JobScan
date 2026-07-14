@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * Component: Settings
+ * 
+ * Purpose:
+ * Renders the user settings dashboard panel.
+ * 
+ * Responsibilities:
+ * • Display theme preferences
+ * • Manage PWA and extension integrations
+ * • Handle account deletion confirmations
+ * 
+ * Used By:
+ * • /dashboard/settings/page.jsx (or similar)
+ * ------------------------------------------------------------
+ */
+
 import { Switch } from "@/core/ui/forms";
 import { Skeleton } from "@/core/ui/layout";
 import { Separator } from "@/core/ui/layout";
@@ -11,7 +28,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { m } from 'motion/react';
 import { staggerContainer, slideUp } from '@/core/motion';
 
-export function Settings({ formData, setFormData, loading }) {
+export function Settings({ loading }) {
   const { theme, toggleTheme } = useTheme();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const { toast } = useToast();
@@ -226,13 +243,13 @@ export function Settings({ formData, setFormData, loading }) {
               <div className="text-[var(--muted)] text-xs mt-0.5">Choose your preferred visual mode</div>
             </div>
             <div className="flex bg-[var(--surface-card)] border border-[var(--hairline)] rounded-lg p-1 gap-1">
-              <button type="button" onClick={() => theme === 'dark' && toggleTheme()}
+              <button type="button" onClick={(e) => theme === 'dark' && toggleTheme(e)}
                 className={`p-1.5 rounded-md ${theme === 'light' ? 'bg-[var(--surface-elevated)] text-[var(--on-dark)] shadow-sm' : 'text-[var(--muted)] hover:text-[var(--on-dark)]'}`} 
                 title="Light Mode"
               >
-                <Sun size={16} />
+                <Sun size={18} />
               </button>
-              <button type="button" onClick={() => theme === 'light' && toggleTheme()}
+              <button type="button" onClick={(e) => theme === 'light' && toggleTheme(e)}
                 className={`p-1.5 rounded-md ${theme === 'dark' ? 'bg-[var(--surface-elevated)] text-[var(--on-dark)] shadow-sm' : 'text-[var(--muted)] hover:text-[var(--on-dark)]'}`} 
                 title="Dark Mode"
               >

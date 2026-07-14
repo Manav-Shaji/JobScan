@@ -38,7 +38,7 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
             }}
             className={className}
         >
-            <button type="button" onClick={toggleTheme}
+            <button type="button" onClick={(e) => toggleTheme(e)}
                 className="p-0 flex items-center justify-center"
                 style={{
                     width: '100%',

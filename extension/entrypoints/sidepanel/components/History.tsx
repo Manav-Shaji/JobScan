@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * Component: History
+ * 
+ * Purpose:
+ * Displays past job analysis results in the extension side panel.
+ * 
+ * Responsibilities:
+ * • Fetch history data from local storage
+ * • Render a list of previously scanned jobs
+ * 
+ * Used By:
+ * • Side Panel App Component
+ * ------------------------------------------------------------
+ */
+
 import React from 'react';
 import { Card, CardContent } from '@/extension/ui';
 import { getRiskColor } from './utils';

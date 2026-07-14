@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * Component: AuthProvider
+ * 
+ * Purpose:
+ * Custom context provider wrapping NextAuth session logic.
+ * 
+ * Responsibilities:
+ * • Provide unified login, logout, and registration methods
+ * • Expose loading states and current user data
+ * 
+ * Used By:
+ * • AppProviders
+ * ------------------------------------------------------------
+ */
+
 'use client';
 
 import React, { createContext, useContext } from 'react';

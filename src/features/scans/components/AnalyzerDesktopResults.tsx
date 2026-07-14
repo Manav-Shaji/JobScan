@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * Component: AnalyzerDesktopResults
+ * 
+ * Purpose:
+ * Desktop-optimized view for comprehensive job scan results.
+ * 
+ * Responsibilities:
+ * • Render a grid layout of analysis cards (Trust Score, Summary, etc.)
+ * • Present detailed breakdown and pattern matches side-by-side
+ * 
+ * Used By:
+ * • AnalyzerInput Component (Desktop Viewport)
+ * ------------------------------------------------------------
+ */
+
 'use client';
 
 import { m } from 'motion/react';

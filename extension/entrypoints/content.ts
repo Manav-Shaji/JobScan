@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: content.ts
+ * 
+ * Purpose:
+ * Content script injected into supported job board pages.
+ * 
+ * Responsibilities:
+ * • Listen for messages from the side panel
+ * • Delegate DOM parsing to the appropriate extractor
+ * 
+ * Used By:
+ * • Chrome Extension Runtime
+ * ------------------------------------------------------------
+ */
+
 /* eslint-disable */
 import { getExtractor } from '../extractors/registry';
 

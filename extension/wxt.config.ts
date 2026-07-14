@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: wxt.config.ts
+ * 
+ * Purpose:
+ * Configuration file for the WXT extension build tool.
+ * 
+ * Responsibilities:
+ * • Define manifest properties (permissions, host permissions)
+ * • Configure build targets and asset directories
+ * 
+ * Used By:
+ * • WXT Build Process
+ * ------------------------------------------------------------
+ */
+
 /* eslint-disable */
 import { defineConfig } from 'wxt';
 import path from 'path';

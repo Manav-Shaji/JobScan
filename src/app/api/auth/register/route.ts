@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * API Route: Registration Handler
+ * 
+ * Purpose:
+ * Handles new user registration requests by validating input and processing account creation.
+ * 
+ * Responsibilities:
+ * • Validates incoming request data against the registration schema.
+ * • Executes user registration logic and enforces rate limiting.
+ * 
+ * Used By:
+ * • Auth API Module
+ * ------------------------------------------------------------
+ */
+
 import { createRouteHandler } from '@/core/api/route-utils';
 import { registerSchema } from '@/features/users/validation';
 import { registerUser } from '@/features/users/auth.service';

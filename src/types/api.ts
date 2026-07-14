@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: api.ts
+ * 
+ * Purpose:
+ * Shared TypeScript type definitions for API requests and responses.
+ * 
+ * Responsibilities:
+ * • Define data structures for frontend/backend communication
+ * 
+ * Used By:
+ * • API Routes
+ * • Frontend Services
+ * ------------------------------------------------------------
+ */
+
 export interface AnalyzeResponse {
   success: boolean;
   score?: number;

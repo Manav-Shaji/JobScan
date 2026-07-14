@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * File: cache.ts
+ * 
+ * Purpose:
+ * In-memory caching utility with TTL and periodic cleanup.
+ * 
+ * Responsibilities:
+ * • Store typed cache entries
+ * • Expire stale entries automatically
+ * 
+ * Used By:
+ * • API Routes
+ * • Feature Services
+ * ------------------------------------------------------------
+ */
+
 import 'server-only';
 
 interface CacheEntry<T> {

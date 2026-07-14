@@ -1,3 +1,21 @@
+/**
+ * ------------------------------------------------------------
+ * File: response.ts
+ * 
+ * Purpose:
+ * Standardized API response formatting and custom error classes.
+ * 
+ * Responsibilities:
+ * • Define ApiError class for structured error handling
+ * • Provide helpers for unauthorized and bad request errors
+ * • Format consistent JSON responses
+ * 
+ * Used By:
+ * • route-utils.ts
+ * • API Routes
+ * ------------------------------------------------------------
+ */
+
 import 'server-only';
 import { NextResponse } from 'next/server';
 import { ZodError } from 'zod';

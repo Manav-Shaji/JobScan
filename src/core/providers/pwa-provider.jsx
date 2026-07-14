@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * Component: PwaProvider
+ * 
+ * Purpose:
+ * Context provider managing Progressive Web App installation and interactions.
+ * 
+ * Responsibilities:
+ * • Detect standalone display mode
+ * • Manage PWA installation prompts
+ * • Check extension installation status
+ * 
+ * Used By:
+ * • AppProviders
+ * ------------------------------------------------------------
+ */
+
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';

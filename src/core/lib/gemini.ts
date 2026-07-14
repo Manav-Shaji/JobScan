@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * File: gemini.ts
+ * 
+ * Purpose:
+ * Orchestration service for multimodal job analysis using Gemini.
+ * 
+ * Responsibilities:
+ * • Handle both text and image payload processing
+ * • Execute analysis requests and map responses
+ * • Trigger local fallback analysis upon API failures
+ * 
+ * Used By:
+ * • Scan API Route (/api/analyze)
+ * ------------------------------------------------------------
+ */
+
 import 'server-only';
 import { logger } from '@/core/lib/logger';
 import { FALLBACK_CHAIN, CHAT_AI_CONFIG } from '@/core/config/ai';

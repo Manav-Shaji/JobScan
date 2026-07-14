@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * File: route-utils.ts
+ * 
+ * Purpose:
+ * Centralized higher-order function for creating API route handlers.
+ * 
+ * Responsibilities:
+ * • Abstract error handling, rate limiting, and schema validation
+ * • Enforce authentication checks (user or admin)
+ * • Standardize JSON parsing and pagination
+ * 
+ * Used By:
+ * • All API Routes
+ * ------------------------------------------------------------
+ */
+
 import 'server-only';
 import { auth } from '@/core/auth';
 import { z } from 'zod';

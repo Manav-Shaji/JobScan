@@ -1,5 +1,40 @@
 'use client';
 
+/**
+ * ------------------------------------------------------------
+ * Component: FeaturesSection
+ * 
+ * Purpose:
+ * Renders the primary value proposition section to showcase core platform benefits.
+ * It provides users with insight into the AI-driven technology and security standards.
+ * 
+ * Responsibilities:
+ * • Displays interactive feature cards with entry animations.
+ * • Highlights key platform advantages like AI analysis, speed, and data privacy.
+ * 
+ * Used By:
+ * • LandingPage
+ * ------------------------------------------------------------
+ */
+
+
+/**
+ * ------------------------------------------------------------
+ * Component: FeaturesSection
+ * 
+ * Purpose:
+ * Displays the core value propositions and key features of the JobScan platform.
+ * 
+ * Responsibilities:
+ * • Renders interactive feature cards with motion animations.
+ * • Highlights AI-powered analysis, performance, and security benefits.
+ * 
+ * Used By:
+ * • LandingPage
+ * ------------------------------------------------------------
+ */
+
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { ThemeToggle } from '@/core/ui/ThemeToggle';

@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * Component: AnalyzerMobileResults
+ * 
+ * Purpose:
+ * Mobile-optimized view for job scan results.
+ * 
+ * Responsibilities:
+ * • Render a bottom sheet/drawer containing the analysis breakdown
+ * • Adapt desktop result cards into a vertical accordion layout
+ * 
+ * Used By:
+ * • AnalyzerInput Component (Mobile Viewport)
+ * ------------------------------------------------------------
+ */
+
 'use client';
 
 import { 

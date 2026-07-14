@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: middleware.ts
+ * 
+ * Purpose:
+ * Next.js Edge Middleware for request interception and routing.
+ * 
+ * Responsibilities:
+ * • Protect authenticated routes
+ * • Redirect unauthenticated users to the login page
+ * 
+ * Used By:
+ * • Next.js App Router
+ * ------------------------------------------------------------
+ */
+
 import NextAuth from 'next-auth';
 import { authConfig } from '@/core/auth/auth.config';
 

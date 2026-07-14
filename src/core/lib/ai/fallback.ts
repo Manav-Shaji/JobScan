@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: fallback.ts
+ * 
+ * Purpose:
+ * Local fallback analysis engine for when the Gemini API is unavailable.
+ * 
+ * Responsibilities:
+ * • Perform basic regex-based scam detection (e.g. crypto, WhatsApp)
+ * • Generate approximate trust scores and risk levels
+ * 
+ * Used By:
+ * • Gemini Service
+ * ------------------------------------------------------------
+ */
+
 export function localFallbackAnalysis(jobText: string, reason: string) {
   const text = jobText.toLowerCase();
   const redFlags: string[] = [];

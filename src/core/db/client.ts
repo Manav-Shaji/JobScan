@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * File: client.ts
+ * 
+ * Purpose:
+ * PostgreSQL database client initialization and connection pooling.
+ * 
+ * Responsibilities:
+ * • Configure and export the pg Pool instance
+ * • Provide a unified query helper function
+ * • Enforce database environment variable checks in production
+ * 
+ * Used By:
+ * • Repository Data Layers
+ * ------------------------------------------------------------
+ */
+
 import { Pool, QueryResultRow } from 'pg';
 
 const isProduction = process.env.NODE_ENV === 'production';

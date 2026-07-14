@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: validation.ts
+ * 
+ * Purpose:
+ * Input validation for new job scan requests.
+ * 
+ * Responsibilities:
+ * • Ensure text payload meets minimum length requirements
+ * • Validate multimodal payload structure (image/text combinations)
+ * 
+ * Used By:
+ * • API Routes
+ * ------------------------------------------------------------
+ */
+
 import { z } from 'zod';
 
 export const scanSchema = z.object({

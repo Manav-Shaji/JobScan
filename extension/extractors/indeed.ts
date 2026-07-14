@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: indeed.ts
+ * 
+ * Purpose:
+ * Content extractor for Indeed job postings.
+ * 
+ * Responsibilities:
+ * • Parse DOM elements specific to Indeed's job layout
+ * • Extract title, company, and description text
+ * 
+ * Used By:
+ * • Extractor Registry
+ * ------------------------------------------------------------
+ */
+
 import { BaseExtractor, ExtractedDOM } from './base';
 
 export class IndeedExtractor extends BaseExtractor {

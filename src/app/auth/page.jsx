@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: page.jsx
+ * 
+ * Purpose:
+ * Authentication page for the application (Login and Signup).
+ * 
+ * Responsibilities:
+ * • Render the split-screen authentication layout
+ * • Toggle between LoginForm and SignupForm based on URL parameters
+ * 
+ * Used By:
+ * • Next.js App Router (/auth route)
+ * ------------------------------------------------------------
+ */
+
 'use client';
 
 import { useState, Suspense, useEffect } from 'react';

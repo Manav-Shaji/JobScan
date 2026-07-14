@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * Component: LoginForm
+ * 
+ * Purpose:
+ * User login form interface.
+ * 
+ * Responsibilities:
+ * • Collect email and password for existing accounts
+ * • Support "Remember Me" functionality
+ * • Interface with the AuthProvider to handle session creation
+ * 
+ * Used By:
+ * • Authentication Page
+ * ------------------------------------------------------------
+ */
+
 'use client';
 
 import { useState } from 'react';

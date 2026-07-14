@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * Component: ContactSection
+ * 
+ * Purpose:
+ * Provides a user-facing contact interface featuring support details and a message submission form.
+ * 
+ * Responsibilities:
+ * • Display company support contact information and headquarters location.
+ * • Provide a user input form for inquiries and assistance requests.
+ * 
+ * Used By:
+ * • LandingPage
+ * ------------------------------------------------------------
+ */
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { ThemeToggle } from '@/core/ui/ThemeToggle';

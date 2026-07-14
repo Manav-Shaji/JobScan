@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * API Route: route.ts
+ * 
+ * Purpose:
+ * Manages chat session operations including retrieving history, processing new messages, and clearing threads.
+ * 
+ * Responsibilities:
+ * • Authenticates and authorizes user requests for chat interactions.
+ * • Orchestrates message processing, history retrieval, and session cleanup.
+ * 
+ * Used By:
+ * • Chat Features Module
+ * ------------------------------------------------------------
+ */
+
 import { createRouteHandler } from '@/core/api/route-utils';
 import { chatSchema } from '@/features/chat/service';
 import { getChatHistory, processChatMessage, clearChatHistory } from '@/features/chat/service';

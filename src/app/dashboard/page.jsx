@@ -1,9 +1,26 @@
+/**
+ * ------------------------------------------------------------
+ * File: page.jsx
+ * 
+ * Purpose:
+ * Main dashboard overview page.
+ * 
+ * Responsibilities:
+ * • Provide a high-level summary of user activity and recent scans
+ * 
+ * Used By:
+ * • Next.js App Router (/dashboard route)
+ * ------------------------------------------------------------
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/core/providers/auth-provider';
 import api from '@/core/lib/api-client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@/core/lib/query-keys';
 import { Tabs, TabsContent } from "@/core/ui/navigation";
 import { useToast } from "@/core/ui/use-toast";
 import { Toaster } from "@/core/ui/toasts";
@@ -33,59 +50,36 @@ function DashboardContent() {
         }
     }
     
-    // --- State: Overview ---
-    const [statsData, setStatsData] = useState({ totalScans: 0, scamsDetected: 0, avgTrustScore: 0 });
-    const [recentActivities, setRecentActivities] = useState([]);
-    
-    // --- State: History ---
-    const [fullHistory, setFullHistory] = useState([]);
-    const [filter, setFilter] = useState('all');
+    const queryClient = useQueryClient();
     
     // --- State: Settings ---
-    const [formData, setFormData] = useState({ name: '', email: '', notifications: true });
-    const [passwordData, setPasswordData] = useState({ oldPassword: '', newPassword: '', confirmPassword: '' });
-    const [saving, setSaving] = useState(false);
-    const [savingPassword, setSavingPassword] = useState(false);
-    const [loading, setLoading] = useState(true);
-
     useEffect(() => {
         if (!authLoading && !user) router.replace('/dashboard/analyzer');
     }, [user, authLoading, router]);
 
     // tabParam is synced during render
 
-    useEffect(() => {
-        const doFetch = async () => {
-            if (!user) return;
-            try {
-                const [statsRes, historyRes] = await Promise.all([api.getStats(), api.getHistory()]);
-                const stats = statsRes?.success ? statsRes.data : statsRes;
-                const history = historyRes?.success ? historyRes.data : (Array.isArray(historyRes) ? historyRes : []);
+    const { data: statsRes, isLoading: statsLoading, refetch: refetchStats } = useQuery({
+        queryKey: queryKeys.dashboard.stats,
+        queryFn: api.getStats,
+        enabled: !!user,
+    });
 
-                setStatsData(stats || { totalScans: 0, scamsDetected: 0, avgTrustScore: 0 });
-                setRecentActivities(Array.isArray(history) ? history.slice(0, 5) : []);
-                setFullHistory(Array.isArray(history) ? history : []);
-                setFormData({ name: user.name || '', email: user.email || '', notifications: true });
-            } catch (err) { console.error('Data fetch failed:', err); }
-            setLoading(false);
-        };
-        
-        if (user) doFetch();
-    }, [user]);
+    const { data: historyRes, isLoading: historyLoading, refetch: refetchHistory } = useQuery({
+        queryKey: queryKeys.scans.history,
+        queryFn: api.getHistory,
+        enabled: !!user,
+    });
+
+    const statsData = statsRes?.success ? statsRes.data : statsRes || { totalScans: 0, scamsDetected: 0, avgTrustScore: 0 };
+    const historyData = historyRes?.success ? historyRes.data : (Array.isArray(historyRes) ? historyRes : []);
+    const recentActivities = historyData.slice(0, 5);
+    const fullHistory = historyData;
+    const loading = statsLoading || historyLoading;
 
     const fetchData = async () => {
         if (!user) return;
-        try {
-            const [statsRes, historyRes] = await Promise.all([api.getStats(), api.getHistory()]);
-            const stats = statsRes?.success ? statsRes.data : statsRes;
-            const history = historyRes?.success ? historyRes.data : (Array.isArray(historyRes) ? historyRes : []);
-
-            setStatsData(stats || { totalScans: 0, scamsDetected: 0, avgTrustScore: 0 });
-            setRecentActivities(Array.isArray(history) ? history.slice(0, 5) : []);
-            setFullHistory(Array.isArray(history) ? history : []);
-            setFormData({ name: user.name || '', email: user.email || '', notifications: true });
-        } catch (err) { console.error('Data fetch failed:', err); }
-        setLoading(false);
+        await Promise.all([refetchStats(), refetchHistory()]);
     };
 
     if (authLoading || !user) {
@@ -111,46 +105,33 @@ function DashboardContent() {
         );
     }
 
-    const handleSaveSettings = async (e) => {
-        e.preventDefault();
-        setSaving(true);
-        try {
-            const res = await updateProfile({ name: formData.name, email: formData.email });
+    const updateProfileMutation = useMutation({
+        mutationFn: (data) => updateProfile(data),
+        onSuccess: (res) => {
             if (res.success) {
                 toast({ title: "Profile Saved", description: "Profile updated successfully." });
             } else {
                 toast({ title: "Error", description: res.message, variant: "destructive" });
             }
-        } catch (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
-        setSaving(false);
-    };
+        },
+        onError: (error) => {
+            toast({ title: "Error", description: error.message, variant: "destructive" });
+        }
+    });
 
-    const handleSavePassword = async (e) => {
-        e.preventDefault();
-        if (!passwordData.oldPassword) {
-            toast({ title: "Error", description: "Old password is required.", variant: "destructive" });
-            return;
-        }
-        if (passwordData.newPassword !== passwordData.confirmPassword) {
-            toast({ title: "Error", description: "Passwords do not match.", variant: "destructive" });
-            return;
-        }
-        if (passwordData.newPassword.length < 6) {
-            toast({ title: "Error", description: "Password must be at least 6 characters.", variant: "destructive" });
-            return;
-        }
-        setSavingPassword(true);
-        try {
-            const res = await updatePassword(passwordData.oldPassword, passwordData.newPassword);
+    const updatePasswordMutation = useMutation({
+        mutationFn: ({ oldPassword, newPassword }) => updatePassword(oldPassword, newPassword),
+        onSuccess: (res) => {
             if (res.success) {
                 toast({ title: "Success", description: "Password updated securely." });
-                setPasswordData({ oldPassword: '', newPassword: '', confirmPassword: '' });
             } else {
                 toast({ title: "Error", description: res.message, variant: "destructive" });
             }
-        } catch (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
-        setSavingPassword(false);
-    };
+        },
+        onError: (error) => {
+            toast({ title: "Error", description: error.message, variant: "destructive" });
+        }
+    });
 
     return (
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full fade-in">
@@ -174,21 +155,16 @@ function DashboardContent() {
             {/* --- Tab: Profile --- */}
             <TabsContent value="profile">
                 <Profile 
-                    formData={formData} 
-                    setFormData={setFormData} 
-                    handleSaveSettings={handleSaveSettings} 
-                    saving={saving} 
-                    passwordData={passwordData}
-                    setPasswordData={setPasswordData}
-                    handleSavePassword={handleSavePassword}
-                    savingPassword={savingPassword}
+                    user={user}
+                    updateProfileMutation={updateProfileMutation}
+                    updatePasswordMutation={updatePasswordMutation}
                     loading={loading}
                 />
             </TabsContent>
  
             {/* --- Tab: Settings --- */}
             <TabsContent value="settings">
-                <Settings formData={formData} setFormData={setFormData} loading={loading} />
+                <Settings loading={loading} />
             </TabsContent>
         </Tabs>
     );

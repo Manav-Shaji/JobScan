@@ -1,5 +1,39 @@
 'use client';
 
+/**
+ * ------------------------------------------------------------
+ * Component: TestimonialsSection
+ * 
+ * Purpose:
+ * Renders a display of user testimonials and featured media trust badges to build social proof.
+ * 
+ * Responsibilities:
+ * • Maps and renders testimonial data cards with animation effects.
+ * • Displays a trusted-by banner showcasing industry publications.
+ * 
+ * Used By:
+ * • LandingPage
+ * ------------------------------------------------------------
+ */
+
+
+/**
+ * ------------------------------------------------------------
+ * Component: TestimonialsSection
+ * 
+ * Purpose:
+ * Renders a display of user testimonials and featured media trust badges to build social proof.
+ * 
+ * Responsibilities:
+ * • Maps and renders testimonial data cards with animation effects.
+ * • Displays a trusted-by banner showcasing industry publications.
+ * 
+ * Used By:
+ * • LandingPage
+ * ------------------------------------------------------------
+ */
+
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { ThemeToggle } from '@/core/ui/ThemeToggle';

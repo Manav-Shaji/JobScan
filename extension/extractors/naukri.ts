@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: naukri.ts
+ * 
+ * Purpose:
+ * Content extractor for Naukri job postings.
+ * 
+ * Responsibilities:
+ * • Parse DOM elements specific to Naukri's job layout
+ * • Extract title, company, and description text
+ * 
+ * Used By:
+ * • Extractor Registry
+ * ------------------------------------------------------------
+ */
+
 import { BaseExtractor, ExtractedDOM } from './base';
 
 export class NaukriExtractor extends BaseExtractor {
