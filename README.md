@@ -61,6 +61,10 @@ Built as an MCA final-year project, JobScan combines modern web technologies, ar
 - Tailwind CSS
 - Radix UI
 - Lucide Icons
+- React Query (Data Fetching)
+- Zustand (State Management)
+- Framer Motion (Animations)
+- View Transition API (Theme Toggling)
 
 ### Backend
 - Next.js API Routes

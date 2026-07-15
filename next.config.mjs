@@ -1,4 +1,5 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
+import withSerwistInit from '@serwist/next';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -59,4 +60,11 @@ const nextConfig = {
     },
 };
 
-export default withBundleAnalyzer(nextConfig);
+const withSerwist = withSerwistInit({
+  swSrc: "src/app/sw.ts",
+  swDest: "public/sw.js",
+  // Only enable in production to avoid HMR caching issues
+  disable: process.env.NODE_ENV === 'development',
+});
+
+export default withBundleAnalyzer(withSerwist(nextConfig));

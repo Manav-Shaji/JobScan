@@ -17,23 +17,6 @@
  */
 
 
-/**
- * ------------------------------------------------------------
- * Component: Navbar
- * 
- * Purpose:
- * Provides the site-wide navigation header for the JobScan application.
- * 
- * Responsibilities:
- * • Displays the brand identity and navigation links.
- * • Integrates the theme toggle functionality for UI consistency.
- * 
- * Used By:
- * • Root Layout
- * ------------------------------------------------------------
- */
-
-
 import Link from 'next/link';
 import Image from 'next/image';
 import { ThemeToggle } from '@/core/ui/ThemeToggle';

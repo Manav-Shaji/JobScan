@@ -17,23 +17,6 @@
  */
 
 
-/**
- * ------------------------------------------------------------
- * Component: HowItWorks
- * 
- * Purpose:
- * Displays an interactive, multi-step workflow guide illustrating how the job analysis and scam detection process functions.
- * 
- * Responsibilities:
- * • Renders the four-step security analysis workflow using a bento-grid layout.
- * • Orchestrates entrance animations for content elements using motion libraries.
- * 
- * Used By:
- * • LandingPage
- * ------------------------------------------------------------
- */
-
-
 import Link from 'next/link';
 import Image from 'next/image';
 import { ThemeToggle } from '@/core/ui/ThemeToggle';

@@ -18,24 +18,6 @@
  */
 
 
-/**
- * ------------------------------------------------------------
- * Component: HeroSection
- * 
- * Purpose:
- * Renders the primary landing page hero section featuring AI-driven 
- * verification tools and trust-building UI elements.
- * 
- * Responsibilities:
- * • Displays the main value proposition and call-to-action buttons.
- * • Orchestrates entrance animations for headline and floating widgets.
- * 
- * Used By:
- * • LandingPage
- * ------------------------------------------------------------
- */
-
-
 import Link from 'next/link';
 import Image from 'next/image';
 import { ThemeToggle } from '@/core/ui/ThemeToggle';

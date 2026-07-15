@@ -18,23 +18,6 @@
  */
 
 
-/**
- * ------------------------------------------------------------
- * Component: FeaturesSection
- * 
- * Purpose:
- * Displays the core value propositions and key features of the JobScan platform.
- * 
- * Responsibilities:
- * • Renders interactive feature cards with motion animations.
- * • Highlights AI-powered analysis, performance, and security benefits.
- * 
- * Used By:
- * • LandingPage
- * ------------------------------------------------------------
- */
-
-
 import Link from 'next/link';
 import Image from 'next/image';
 import { ThemeToggle } from '@/core/ui/ThemeToggle';

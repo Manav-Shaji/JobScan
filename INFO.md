@@ -78,9 +78,11 @@ Target users include active job seekers, recent graduates, remote workers, and a
 ### Frontend
 *   **Next.js 15 (App Router):** Chosen for Server-Side Rendering (SSR), SEO benefits, and unified full-stack routing.
 *   **React 19:** For building interactive user interfaces.
+*   **React Query:** Used for powerful asynchronous state management, caching, and data fetching synchronization between the UI and Next.js APIs.
 *   **Tailwind CSS:** For rapid, utility-first styling and maintaining a consistent design system.
 *   **Radix UI:** For accessible, unstyled UI primitives (dialogs, tabs, progress bars).
 *   **Lucide React:** For clean, scalable iconography.
+*   **Framer Motion:** Used for complex, physics-based component animations and gesture handling.
 
 ### Backend
 *   **Next.js API Routes:** Provides a serverless backend tightly coupled with the frontend for simplified deployment.
@@ -241,6 +243,8 @@ The frontend uses Next.js App Router (`src/app`) for page routing and `src/core/
     *   `auth-provider.jsx`: Manages user session state, login, logout, and profile updates. Wraps NextAuth's `useSession`.
     *   `pwa-provider.jsx`: Handles PWA installation prompts and service worker lifecycle events.
 *   **Components:** Modular UI elements built with Radix UI primitives and Tailwind CSS. Grouped logically under `src/core/ui/` and `src/features/`.
+*   **State Management:** Global application state (like scan limits and user settings) is managed via Zustand (`src/shared/useAppStore.ts`).
+*   **Animations & Theming:** Utilizes Framer Motion for component-level animations and the modern View Transition API for seamless circular dark/light mode toggling.
 
 ## Backend Architecture
 
@@ -508,6 +512,7 @@ Checklist:
 ## Developer Onboarding Guide
 
 *   **Where to start:** Read `src/core/db/schema.sql` to understand the data model. Next, look at `src/core/lib/gemini.ts` to understand the core feature. Finally, browse `src/app/api/analyze/route.js` to see how the pieces connect.
+*   **Code Documentation:** All core, non-UI source files contain a standardized JSDoc header detailing their `Purpose`, `Responsibilities`, and `Used By` relations to help you understand their role.
 *   **Recommended learning order:** React/Next.js App Router -> NextAuth -> PostgreSQL/`pg` -> Chrome Extension APIs (via WXT).
 *   **Important architecture decisions:** Using raw SQL instead of an ORM for explicit control. Implementing a multimodal AI provider to handle both text and images seamlessly.
 *   **Common mistakes:** Modifying database tables without updating the corresponding `SELECT`/`INSERT` queries in `src/features/`. Forgetting to add `"use client"` directives to interactive React components.

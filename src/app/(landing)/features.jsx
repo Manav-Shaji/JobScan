@@ -17,23 +17,6 @@
  */
 
 
-/**
- * ------------------------------------------------------------
- * Component: features.jsx
- * 
- * Purpose:
- * Provides UI components for displaying job trust verification scores and managing user access limitations.
- * 
- * Responsibilities:
- * • TrustScore: Visualizes security analysis results with animated circular gauges.
- * • SignupWall: Intercepts user flow when free scan limits are reached to prompt registration.
- * 
- * Used By:
- * • Job Analysis Dashboard
- * ------------------------------------------------------------
- */
-
-
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {

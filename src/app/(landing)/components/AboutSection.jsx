@@ -17,23 +17,6 @@
  */
 
 
-/**
- * ------------------------------------------------------------
- * Component: AboutSection
- * 
- * Purpose:
- * Renders the mission statement and core value proposition section of the landing page.
- * 
- * Responsibilities:
- * • Displays visual representation of the analysis engine.
- * • Highlights key security features and accuracy metrics.
- * 
- * Used By:
- * • HomePage
- * ------------------------------------------------------------
- */
-
-
 import Link from 'next/link';
 import Image from 'next/image';
 import { ThemeToggle } from '@/core/ui/ThemeToggle';
