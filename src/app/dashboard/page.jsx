@@ -63,7 +63,6 @@ function DashboardContent() {
         const duration = Date.now() - touchStartData.time;
         const velocity = Math.abs(distance / duration);
 
-        // Trigger swipe if dragged 50px OR flicked fast (>0.5px/ms) over 30px
         const isSwipe = Math.abs(distance) > 50 || (Math.abs(distance) > 30 && velocity > 0.5);
 
         if (isSwipe) {
@@ -79,9 +78,7 @@ function DashboardContent() {
             }
 
             if (nextTab) {
-                // Instantly update the UI without waiting for Next.js router
                 setActiveTab(nextTab);
-                // Silently update the URL history
                 window.history.replaceState(null, '', `/dashboard?tab=${nextTab}`);
             }
         }
@@ -92,19 +89,14 @@ function DashboardContent() {
     if (tabParam !== prevTabParam) {
         setPrevTabParam(tabParam);
         if (tabParam) {
-            // Delay state update to avoid cascading render warnings
             setTimeout(() => setActiveTab(tabParam), 0);
         }
     }
     
     const queryClient = useQueryClient();
-    
-    // --- State: Settings ---
     useEffect(() => {
         if (!authLoading && !user) router.replace('/dashboard/analyzer');
     }, [user, authLoading, router]);
-
-    // tabParam is synced during render
 
     const { data: statsRes, isLoading: statsLoading, refetch: refetchStats } = useQuery({
         queryKey: queryKeys.dashboard.stats,

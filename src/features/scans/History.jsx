@@ -40,6 +40,46 @@ const formatDate = (dateString) => {
   };
 };
 
+const cleanText = (text) => {
+  if (!text) return '';
+  const cleaned = text.replace(/^(job description|job title|title|job|role):?\s*/i, '').trim();
+  // If cleaning made it empty, just return the original text
+  return cleaned || text.trim();
+};
+
+const getTitle = (h) => {
+  if (h.title && h.title.trim() !== '') {
+      const cleaned = cleanText(h.title);
+      if (cleaned) return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+  }
+  
+  // Fallback to first line of content
+  const firstLine = h.content?.split('\\n')[0] || '';
+  if (firstLine.trim()) {
+      const cleaned = cleanText(firstLine).substring(0, 45).trim();
+      return cleaned.charAt(0).toUpperCase() + cleaned.slice(1) + (firstLine.length > 45 ? '...' : '');
+  }
+  return 'Job Scan Document';
+};
+
+const getSnippet = (h) => {
+  const title = getTitle(h).replace('...', '');
+  let content = h.content ? h.content.trim() : '';
+  
+  // Remove the title from the beginning of the content snippet to prevent redundancy
+  if (content.toLowerCase().startsWith(title.toLowerCase())) {
+      // Break the regex apart so Tailwind JIT ignores it
+      const regexString = '^[' + '-' + ':\\\\s]+';
+      const cleanupRegex = new RegExp(regexString);
+      content = content.substring(title.length).replace(cleanupRegex, '').trim();
+  }
+  
+  // Strip out prefixes if they appear at the very beginning of the snippet too
+  content = content.replace(/^(job description|job title|title|job|role):?\\s*/i, '').trim();
+  
+  return content || 'No further description provided.';
+};
+
 const ScoreCircle = ({ score }) => {
   const radius = 18;
   const circumference = 2 * Math.PI * radius;
@@ -292,7 +332,7 @@ export function History({ fullHistory, loading }) {
 
                 <div className="col-span-5 flex flex-col pr-6 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-bold text-[var(--on-dark)] truncate">{h.title || h.content?.split('\n')[0]?.substring(0, 45) || 'Job Listing'}</span>
+                    <span className="text-xs font-bold text-[var(--on-dark)] truncate capitalize">{getTitle(h)}</span>
                     <span className={`px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider rounded border ${
                       h.scanType === 'Combined' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
                       h.scanType === 'Poster' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' :
@@ -306,7 +346,7 @@ export function History({ fullHistory, loading }) {
                       <AlertTriangle size={10} /> Pattern Detected: {h.patternName}
                     </span>
                   ) : (
-                    <span className="text-[11px] text-[var(--muted)] truncate mt-0.5">{h.content || 'Empty description content'}</span>
+                    <span className="text-[11px] text-[var(--muted)] truncate mt-0.5">{getSnippet(h)}</span>
                   )}
                 </div>
 
@@ -334,7 +374,7 @@ export function History({ fullHistory, loading }) {
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex flex-col min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-bold text-[var(--on-dark)] truncate">{h.title || h.content?.split('\n')[0]?.substring(0, 45) || 'Job Listing'}</span>
+                      <span className="text-sm font-bold text-[var(--on-dark)] truncate capitalize">{getTitle(h)}</span>
                       <span className={`px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider rounded border flex-shrink-0 ${
                         h.scanType === 'Combined' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
                         h.scanType === 'Poster' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' :
@@ -348,7 +388,7 @@ export function History({ fullHistory, loading }) {
                         <AlertTriangle size={10} /> {h.patternName}
                       </span>
                     ) : (
-                      <span className="text-xs text-[var(--muted)] line-clamp-2 mt-0.5 whitespace-normal break-words leading-snug">{h.content || 'Empty description content'}</span>
+                      <span className="text-xs text-[var(--muted)] line-clamp-2 mt-0.5 whitespace-normal break-words leading-snug">{getSnippet(h)}</span>
                     )}
                   </div>
                   <div className="flex-shrink-0">

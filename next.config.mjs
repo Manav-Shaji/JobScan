@@ -55,6 +55,10 @@ const nextConfig = {
             '@radix-ui/react-toast'
         ],
     },
+    devIndicators: {
+        appIsrStatus: false,
+        buildActivity: false,
+    },
     images: {
         formats: ['image/avif', 'image/webp'],
     },
