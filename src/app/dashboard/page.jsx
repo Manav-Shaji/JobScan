@@ -41,6 +41,40 @@ function DashboardContent() {
     const { toast } = useToast();
     const [activeTab, setActiveTab] = useState(tabParam || 'overview');
     const [prevTabParam, setPrevTabParam] = useState(tabParam);
+
+    // --- Swipe Navigation Logic ---
+    const tabOrder = ['overview', 'analyzer', 'history', 'profile', 'settings'];
+    const [touchStart, setTouchStart] = useState(null);
+    const [touchEnd, setTouchEnd] = useState(null);
+    const minSwipeDistance = 50;
+
+    const handleTouchStart = (e) => {
+        setTouchEnd(null);
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const handleTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
+
+    const handleTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+        
+        if (isLeftSwipe || isRightSwipe) {
+            const currentIndex = tabOrder.indexOf(activeTab);
+            if (currentIndex === -1) return;
+            
+            if (isLeftSwipe && currentIndex < tabOrder.length - 1) {
+                const nextTab = tabOrder[currentIndex + 1];
+                router.push(`/dashboard?tab=${nextTab}`);
+            }
+            if (isRightSwipe && currentIndex > 0) {
+                const prevTab = tabOrder[currentIndex - 1];
+                router.push(`/dashboard?tab=${prevTab}`);
+            }
+        }
+    };
     
     if (tabParam !== prevTabParam) {
         setPrevTabParam(tabParam);
@@ -134,8 +168,14 @@ function DashboardContent() {
     });
 
     return (
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full fade-in">
-            <Toaster />
+        <div 
+            onTouchStart={handleTouchStart} 
+            onTouchMove={handleTouchMove} 
+            onTouchEnd={handleTouchEnd}
+            className="w-full flex-1 touch-pan-y"
+        >
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full fade-in">
+                <Toaster />
             
             {/* --- Tab: Analyzer --- */}
             <TabsContent value="analyzer">
@@ -167,6 +207,7 @@ function DashboardContent() {
                 <Settings loading={loading} />
             </TabsContent>
         </Tabs>
+        </div>
     );
 }
 
