@@ -44,36 +44,49 @@ function DashboardContent() {
 
     // --- Swipe Navigation Logic ---
     const tabOrder = ['overview', 'analyzer', 'history', 'profile', 'settings'];
-    const [touchStart, setTouchStart] = useState(null);
+    const [touchStartData, setTouchStartData] = useState(null);
     const [touchEnd, setTouchEnd] = useState(null);
-    const minSwipeDistance = 50;
 
     const handleTouchStart = (e) => {
         setTouchEnd(null);
-        setTouchStart(e.targetTouches[0].clientX);
+        setTouchStartData({ 
+            x: e.targetTouches[0].clientX, 
+            time: Date.now() 
+        });
     };
 
     const handleTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
 
     const handleTouchEnd = () => {
-        if (!touchStart || !touchEnd) return;
-        const distance = touchStart - touchEnd;
-        const isLeftSwipe = distance > minSwipeDistance;
-        const isRightSwipe = distance < -minSwipeDistance;
-        
-        if (isLeftSwipe || isRightSwipe) {
+        if (!touchStartData || !touchEnd) return;
+        const distance = touchStartData.x - touchEnd;
+        const duration = Date.now() - touchStartData.time;
+        const velocity = Math.abs(distance / duration);
+
+        // Trigger swipe if dragged 50px OR flicked fast (>0.5px/ms) over 30px
+        const isSwipe = Math.abs(distance) > 50 || (Math.abs(distance) > 30 && velocity > 0.5);
+
+        if (isSwipe) {
+            const isLeftSwipe = distance > 0;
             const currentIndex = tabOrder.indexOf(activeTab);
             if (currentIndex === -1) return;
-            
+
+            let nextTab = null;
             if (isLeftSwipe && currentIndex < tabOrder.length - 1) {
-                const nextTab = tabOrder[currentIndex + 1];
-                router.push(`/dashboard?tab=${nextTab}`);
+                nextTab = tabOrder[currentIndex + 1];
+            } else if (!isLeftSwipe && currentIndex > 0) {
+                nextTab = tabOrder[currentIndex - 1];
             }
-            if (isRightSwipe && currentIndex > 0) {
-                const prevTab = tabOrder[currentIndex - 1];
-                router.push(`/dashboard?tab=${prevTab}`);
+
+            if (nextTab) {
+                // Instantly update the UI without waiting for Next.js router
+                setActiveTab(nextTab);
+                // Silently update the URL history
+                window.history.replaceState(null, '', `/dashboard?tab=${nextTab}`);
             }
         }
+        setTouchStartData(null);
+        setTouchEnd(null);
     };
     
     if (tabParam !== prevTabParam) {
