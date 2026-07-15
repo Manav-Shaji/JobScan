@@ -116,14 +116,14 @@ PORT=3000
 DB_USER=devuser
 DB_HOST=localhost
 DB_NAME=jobscan
-DB_PASSWORD=your_password
+DB_PASSWORD=<your_db_password>
 DB_PORT=5435
 
 NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your_secret
-AUTH_SECRET=your_secret
+NEXTAUTH_SECRET=<generate_a_strong_secret_here>
+AUTH_SECRET=<generate_a_strong_secret_here>
 
-GEMINI_API_KEY=your_api_key
+GEMINI_API_KEY=<your_api_key_here>
 
 NODE_ENV=development
 CONSOLE_LOG_LEVEL=warn
