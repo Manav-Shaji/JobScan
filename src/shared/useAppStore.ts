@@ -18,8 +18,8 @@ import { create } from 'zustand';
 interface AppState {
   activeTab: 'text' | 'image';
   jobText: string;
-  posterFile: File | null;
-  posterPreview: string | null;
+  uploadFiles: File[];
+  uploadPreviews: string[];
   inputError: boolean;
   revealStats: boolean;
   activeStage: number;
@@ -27,8 +27,8 @@ interface AppState {
 
   setActiveTab: (tab: 'text' | 'image') => void;
   setJobText: (text: string) => void;
-  setPosterFile: (file: File | null) => void;
-  setPosterPreview: (preview: string | null) => void;
+  setUploadFiles: (files: File[]) => void;
+  setUploadPreviews: (previews: string[]) => void;
   setInputError: (error: boolean) => void;
   setRevealStats: (reveal: boolean) => void;
   setActiveStage: (stage: number) => void;
@@ -40,8 +40,8 @@ interface AppState {
 export const useAppStore = create<AppState>((set) => ({
   activeTab: 'text',
   jobText: '',
-  posterFile: null,
-  posterPreview: null,
+  uploadFiles: [],
+  uploadPreviews: [],
   inputError: false,
   revealStats: false,
   activeStage: 0,
@@ -49,8 +49,8 @@ export const useAppStore = create<AppState>((set) => ({
 
   setActiveTab: (tab) => set({ activeTab: tab }),
   setJobText: (text) => set({ jobText: text }),
-  setPosterFile: (file) => set({ posterFile: file }),
-  setPosterPreview: (preview) => set({ posterPreview: preview }),
+  setUploadFiles: (files) => set({ uploadFiles: files }),
+  setUploadPreviews: (previews) => set({ uploadPreviews: previews }),
   setInputError: (error) => set({ inputError: error }),
   setRevealStats: (reveal) => set({ revealStats: reveal }),
   setActiveStage: (stage) => set({ activeStage: stage }),
@@ -58,8 +58,8 @@ export const useAppStore = create<AppState>((set) => ({
 
   resetAnalyzer: () => set({
     jobText: '',
-    posterFile: null,
-    posterPreview: null,
+    uploadFiles: [],
+    uploadPreviews: [],
     inputError: false,
     revealStats: false,
     activeStage: 0,

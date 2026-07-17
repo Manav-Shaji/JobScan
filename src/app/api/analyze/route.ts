@@ -26,65 +26,69 @@ export const POST = createRouteHandler({
     const contentType = req.headers.get('content-type') || '';
 
     let jobDescription = '';
-    let posterBase64 = undefined;
-    let posterMimeType = undefined;
+    let files: { base64: string, mimeType: string }[] = [];
 
     const ALLOWED_MIME_TYPES = UPLOAD_LIMITS.ALLOWED_MIME_TYPES;
-    const MAX_FILE_SIZE = UPLOAD_LIMITS.MAX_FILE_SIZE_BYTES; // 5MB limit
-    const MAX_BASE64_LENGTH = UPLOAD_LIMITS.MAX_BASE64_LENGTH; // ~5MB of binary data
+    const MAX_FILE_SIZE = UPLOAD_LIMITS.MAX_FILE_SIZE_BYTES;
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await req.formData();
       jobDescription = formData.get('jobDescription')?.toString() || '';
-      const file = formData.get('poster');
-
-      if (file && typeof file !== 'string') {
-        if (!(ALLOWED_MIME_TYPES as readonly string[]).includes(file.type)) {
-          return new Response(JSON.stringify({ error: 'Unsupported file type. Use JPG, PNG, or WEBP' }), {
-            status: 415,
-            headers: { 'Content-Type': 'application/json' }
+      
+      // Handle multiple files
+      const formDataFiles = formData.getAll('files');
+      for (const file of formDataFiles) {
+        if (file && typeof file !== 'string') {
+          if (!(ALLOWED_MIME_TYPES as readonly string[]).includes(file.type)) {
+            return new Response(JSON.stringify({ error: 'Unsupported file type. Use JPG, PNG, WEBP, or PDF' }), {
+              status: 415,
+              headers: { 'Content-Type': 'application/json' }
+            });
+          }
+          if (file.size > MAX_FILE_SIZE) {
+            return new Response(JSON.stringify({ error: `File size exceeds 10MB limit` }), {
+              status: 413,
+              headers: { 'Content-Type': 'application/json' }
+            });
+          }
+          const buffer = Buffer.from(await file.arrayBuffer());
+          files.push({
+            mimeType: file.type,
+            base64: buffer.toString('base64')
           });
         }
-        if (file.size > MAX_FILE_SIZE) {
-          return new Response(JSON.stringify({ error: 'File size exceeds 5MB limit' }), {
-            status: 413,
-            headers: { 'Content-Type': 'application/json' }
+      }
+      
+      // Backwards compatibility for single 'poster' upload
+      const singleFile = formData.get('poster');
+      if (singleFile && typeof singleFile !== 'string') {
+          const buffer = Buffer.from(await singleFile.arrayBuffer());
+          files.push({
+            mimeType: singleFile.type,
+            base64: buffer.toString('base64')
           });
-        }
-        const buffer = Buffer.from(await file.arrayBuffer());
-        posterMimeType = file.type;
-        posterBase64 = buffer.toString('base64');
       }
     } else {
       // Fallback for purely text JSON request
       const body = await req.json().catch(() => ({}));
       jobDescription = body.jobDescription || '';
-      if (body.posterBase64) {
-        if (body.posterBase64.length > MAX_BASE64_LENGTH) {
-          return new Response(JSON.stringify({ error: 'Base64 image size exceeds 5MB limit' }), {
-            status: 413,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
-        posterBase64 = body.posterBase64;
-        posterMimeType = body.posterMimeType || 'image/jpeg';
-        if (!ALLOWED_MIME_TYPES.includes(posterMimeType)) {
-          return new Response(JSON.stringify({ error: 'Unsupported file type. Use JPG, PNG, or WEBP' }), {
-            status: 415,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
+      if (body.files && Array.isArray(body.files)) {
+        files = body.files;
+      } else if (body.posterBase64) {
+        files.push({
+          base64: body.posterBase64,
+          mimeType: body.posterMimeType || 'image/jpeg'
+        });
       }
     }
 
     // Validate using Zod schema
-    const validated = scanSchema.parse({ jobDescription, posterBase64, posterMimeType });
+    const validated = scanSchema.parse({ jobDescription, files });
 
     return await analyzeJob(
       validated.jobDescription || '',
       user?.id || null,
-      validated.posterBase64,
-      validated.posterMimeType,
+      validated.files || [],
       null
     );
   }

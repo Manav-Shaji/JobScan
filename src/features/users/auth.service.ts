@@ -1,4 +1,21 @@
 import 'server-only';
+
+/**
+ * ------------------------------------------------------------
+ * File: auth.service.ts
+ * 
+ * Purpose:
+ * Authentication service.
+ * 
+ * Responsibilities:
+ * • Handles user registration and validation
+ * • Integrates with NextAuth
+ * 
+ * Used By:
+ * • Auth API Routes
+ * ------------------------------------------------------------
+ */
+
 import { pool } from '@/core/db/client';
 import bcrypt from 'bcryptjs';
 import { findUserByEmail, createUser } from './repository';

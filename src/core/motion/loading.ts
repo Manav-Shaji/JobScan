@@ -1,3 +1,18 @@
+/**
+ * ------------------------------------------------------------
+ * File: loading.ts
+ * 
+ * Purpose:
+ * Loading animation variants.
+ * 
+ * Responsibilities:
+ * • Provides pulsing and spinning effects
+ * 
+ * Used By:
+ * • Loaders and Skeletons
+ * ------------------------------------------------------------
+ */
+
 import type { Variants } from 'motion/react';
 
 const shimmer: Variants = {

@@ -1,3 +1,18 @@
+/**
+ * ------------------------------------------------------------
+ * File: constants.ts
+ * 
+ * Purpose:
+ * Application-wide constants.
+ * 
+ * Responsibilities:
+ * • Defines standard limits, keys, and values
+ * 
+ * Used By:
+ * • Frontend and Backend modules
+ * ------------------------------------------------------------
+ */
+
 const SCAN_COOLDOWN_MS = 10 * 1000;
 
 const RISK_LEVELS = {
@@ -34,7 +49,7 @@ const CACHE_KEYS = {
  */
 
 export const UPLOAD_LIMITS = {
-  MAX_FILE_SIZE_BYTES: 5 * 1024 * 1024, // 5MB
+  MAX_FILE_SIZE_BYTES: 10 * 1024 * 1024, // 10MB
   MAX_BASE64_LENGTH: 7000000,
-  ALLOWED_MIME_TYPES: ['image/jpeg', 'image/png', 'image/webp'],
+  ALLOWED_MIME_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'],
 } as const;

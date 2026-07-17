@@ -1,5 +1,3 @@
-'use client';
-
 /**
  * ------------------------------------------------------------
  * File: use-scan-limit.ts
@@ -15,6 +13,8 @@
  * • AnalyzerInput Component
  * ------------------------------------------------------------
  */
+
+'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/core/providers/auth-provider';

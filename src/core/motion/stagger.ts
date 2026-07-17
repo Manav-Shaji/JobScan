@@ -1,3 +1,18 @@
+/**
+ * ------------------------------------------------------------
+ * File: stagger.ts
+ * 
+ * Purpose:
+ * Staggered animation variants.
+ * 
+ * Responsibilities:
+ * • Provides staggered list rendering effects
+ * 
+ * Used By:
+ * • List and Table views
+ * ------------------------------------------------------------
+ */
+
 import type { Variants } from 'motion/react';
 
 export const staggerContainer: Variants = {

@@ -68,16 +68,17 @@ export default function Analyzer() {
     }, []);
 
     const {
-        jobText, posterFile, posterPreview, activeTab, loading,
+        jobText, uploadFiles, uploadPreviews, activeTab, loading,
         result, inputError, activeStage, completedStages, revealStats,
         showBottomSheet, sheetTranslateY, isDraggingSheet
     } = state;
 
-    const { setJobText, setPosterFile, setPosterPreview, setActiveTab, setShowBottomSheet } = setters;
+    const { setJobText, setUploadFiles, setUploadPreviews, setActiveTab, setShowBottomSheet } = setters;
 
     const {
         handleSheetTouchStart, handleSheetTouchMove, handleSheetTouchEnd,
-        handleAnalyze, handleReport, handlePaste, getAnalyzeButtonText
+        handleFileSelect, handleFileRemove,
+        handleAnalyze, handleReport, handlePaste, getAnalyzeButtonText, formatText
     } = handlers;
 
     const {
@@ -140,14 +141,17 @@ export default function Analyzer() {
             <AnalyzerInput 
                 jobText={jobText}
                 setJobText={setJobText}
-                posterFile={posterFile}
-                setPosterFile={setPosterFile}
-                posterPreview={posterPreview}
-                setPosterPreview={setPosterPreview}
+                uploadFiles={uploadFiles}
+                setUploadFiles={setUploadFiles}
+                uploadPreviews={uploadPreviews}
+                setUploadPreviews={setUploadPreviews}
+                handleFileSelect={handleFileSelect}
+                handleFileRemove={handleFileRemove}
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
                 inputError={inputError}
                 handlePaste={handlePaste}
+                formatText={formatText}
             />
 
             {/* SECTION 3: Analyze Button (Desktop Only) */}

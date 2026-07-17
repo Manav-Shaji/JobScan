@@ -30,14 +30,17 @@ const ImageUploadTab = dynamic(() => import('./ImageUploadTab').then(mod => mod.
 export function AnalyzerInput({
     jobText,
     setJobText,
-    posterFile,
-    setPosterFile,
-    posterPreview,
-    setPosterPreview,
+    uploadFiles,
+    setUploadFiles,
+    uploadPreviews,
+    setUploadPreviews,
+    handleFileSelect,
+    handleFileRemove,
     activeTab,
     setActiveTab,
     inputError,
-    handlePaste
+    handlePaste,
+    formatText
 }) {
     return (
         <div className="mb-6">
@@ -57,16 +60,17 @@ export function AnalyzerInput({
                         setJobText={setJobText} 
                         inputError={inputError} 
                         activeTab={activeTab} 
-                        handlePaste={handlePaste} 
+                        handlePaste={handlePaste}
+                        formatText={formatText} 
                     />
                 </TabsContent>
 
                 <TabsContent value="image" className="mt-0 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300">
                     <ImageUploadTab 
-                        posterFile={posterFile} 
-                        setPosterFile={setPosterFile} 
-                        posterPreview={posterPreview} 
-                        setPosterPreview={setPosterPreview} 
+                        uploadFiles={uploadFiles} 
+                        uploadPreviews={uploadPreviews} 
+                        handleFileRemove={handleFileRemove}
+                        handleFileSelect={handleFileSelect}
                         activeTab={activeTab} 
                         inputError={inputError} 
                     />

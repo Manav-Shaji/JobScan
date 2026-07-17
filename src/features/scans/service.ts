@@ -1,4 +1,21 @@
 import 'server-only';
+
+/**
+ * ------------------------------------------------------------
+ * File: service.ts
+ * 
+ * Purpose:
+ * Scan orchestration service.
+ * 
+ * Responsibilities:
+ * • Connects to Gemini AI
+ * • Handles in-memory and DB caching
+ * 
+ * Used By:
+ * • /api/analyze Route
+ * ------------------------------------------------------------
+ */
+
 import crypto from 'crypto';
 import { geminiService } from '@/core/lib/gemini';
 import { findCachedScan, insertScanResult } from './repository';
@@ -24,20 +41,19 @@ function normalizeJobText(input: string) {
 export async function analyzeJob(
   jobDescription: string, 
   userId: string | null, 
-  posterBase64?: string, 
-  posterMimeType?: string, 
+  files?: { base64: string, mimeType: string }[], 
   posterUrl?: string | null
 ) {
 
-  const scanType = posterBase64 && jobDescription ? 'Combined' : posterBase64 ? 'Poster' : 'Text';
+  const scanType = files && files.length > 0 && jobDescription ? 'Combined' : files && files.length > 0 ? 'Document' : 'Text';
   
-  // Base the hash on both text and poster base64 signature with v2 prefix to invalidate older schema versions
+  // Base the hash on both text and file base64 signatures with v2 prefix to invalidate older schema versions
   const normalized = normalizeJobText(jobDescription);
   let hashSource = 'v2:' + normalized;
   
-  if (posterBase64) {
-    const imageHash = crypto.createHash('sha256').update(posterBase64).digest('hex');
-    hashSource += ':' + imageHash;
+  if (files && files.length > 0) {
+    const fileHashes = files.map(f => crypto.createHash('sha256').update(f.base64).digest('hex')).join(':');
+    hashSource += ':' + fileHashes;
   }
   
   const hash = crypto.createHash('sha256').update(hashSource).digest('hex');
@@ -49,8 +65,12 @@ export async function analyzeJob(
   }
   
   if (cached) {
-    logger.logApp('Returning cached scan result from database', { hash });
-    return cached;
+    if (cached.analysis?.fallbackUsed) {
+      logger.logApp('Ignoring cached scan result because it was a fallback', { hash });
+    } else {
+      logger.logApp('Returning cached scan result from database', { hash });
+      return cached;
+    }
   }
 
   // 2. Check in-memory pending scans to deduplicate concurrent scans for the same content
@@ -72,7 +92,7 @@ export async function analyzeJob(
 
     try {
       logger.logApp('Forwarding job data to Gemini AI for analysis...', { userId, scanType });
-      const analysis = await geminiService.analyzeJobMultimodal(jobDescription, posterBase64, posterMimeType);
+      const analysis = await geminiService.analyzeJobMultimodal(jobDescription, files);
       
       // Bubble up structured AI errors (like missing keys or exhausted retries)
       if ((analysis as any).success === false) {

@@ -1,3 +1,18 @@
+/**
+ * ------------------------------------------------------------
+ * File: slide.ts
+ * 
+ * Purpose:
+ * Slide animation variants.
+ * 
+ * Responsibilities:
+ * • Provides slide-in/out transitions
+ * 
+ * Used By:
+ * • Dialogs and Drawers
+ * ------------------------------------------------------------
+ */
+
 import { transitions } from './transitions';
 import type { Variants } from 'motion/react';
 

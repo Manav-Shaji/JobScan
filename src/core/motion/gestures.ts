@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: gestures.ts
+ * 
+ * Purpose:
+ * Framer motion gesture configurations.
+ * 
+ * Responsibilities:
+ * • Defines standard hover and tap animations
+ * • Ensures consistent interactive feedback
+ * 
+ * Used By:
+ * • UI Components
+ * ------------------------------------------------------------
+ */
+
 import { transitions } from './transitions';
 
 export const buttonGestures = {

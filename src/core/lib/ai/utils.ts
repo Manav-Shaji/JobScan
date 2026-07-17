@@ -36,7 +36,7 @@ export function extractErrorMessage(error: unknown) {
 
 export function isRecoverableError(error: unknown) {
   const message = extractErrorMessage(error).toLowerCase();
-  return /429|500|502|503|504|timeout|too many requests|rate limit|quota|reset|connection|service unavailable|gateway|temporary/.test(message);
+  return /429|500|502|503|504|timeout|timed out|too many requests|rate limit|quota|reset|connection|service unavailable|gateway|temporary/.test(message);
 }
 
 export function safeJsonPayload(raw: string) {
@@ -57,7 +57,7 @@ export function normalizeAnalysis(analysis: any) {
   
   if (!result.success) {
     logger.warn('Gemini response failed Zod validation, applying fallback normalizer', { error: result.error.message });
-    normalized = ResponseSchema.parse({}); // provides safe defaults
+    normalized = ResponseSchema.parse({}); 
   } else {
     normalized = result.data;
   }

@@ -1,3 +1,18 @@
+/**
+ * ------------------------------------------------------------
+ * File: fade.ts
+ * 
+ * Purpose:
+ * Fade animation variants.
+ * 
+ * Responsibilities:
+ * • Provides simple opacity fade in/out effects
+ * 
+ * Used By:
+ * • General UI Components
+ * ------------------------------------------------------------
+ */
+
 import { transitions } from './transitions';
 import type { Variants } from 'motion/react';
 

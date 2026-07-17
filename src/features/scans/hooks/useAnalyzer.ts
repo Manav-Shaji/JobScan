@@ -38,8 +38,8 @@ export function useAnalyzer() {
     
     const {
         jobText, setJobText,
-        posterFile, setPosterFile,
-        posterPreview, setPosterPreview,
+        uploadFiles, setUploadFiles,
+        uploadPreviews, setUploadPreviews,
         activeTab, setActiveTab,
         inputError, setInputError,
         activeStage, setActiveStage,
@@ -140,39 +140,55 @@ export function useAnalyzer() {
         setActiveStage(loadingMessages.length);
     };
 
-    const handleFileSelect = (file) => {
-        if (!file) return;
-        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-        if (!validTypes.includes(file.type)) {
-            toast({ title: "Invalid File", description: "Only JPG, PNG, and WEBP are supported.", variant: "destructive" });
-            return;
+    const handleFileSelect = (files: File[]) => {
+        if (!files || files.length === 0) return;
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'];
+        const validFiles = files.filter(f => validTypes.includes(f.type));
+        
+        if (validFiles.length !== files.length) {
+            toast({ title: "Invalid File Type", description: "Only JPG, PNG, WEBP, and PDF are supported.", variant: "destructive" });
         }
-        if (file.size > 5 * 1024 * 1024) {
-            toast({ title: "File Too Large", description: "Maximum file size is 5 MB.", variant: "destructive" });
-            return;
+        
+        const sizeValidFiles = validFiles.filter(f => f.size <= 10 * 1024 * 1024);
+        if (sizeValidFiles.length !== validFiles.length) {
+            toast({ title: "File Too Large", description: "Maximum file size is 10 MB per file.", variant: "destructive" });
         }
-        setPosterFile(file);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            setPosterPreview(e.target?.result as string);
-            if (typeof navigator !== 'undefined' && navigator.vibrate) {
-                navigator.vibrate(20);
+        
+        if (sizeValidFiles.length === 0) return;
+        
+        const newFiles = [...uploadFiles, ...sizeValidFiles].slice(0, 5); // Max 5 files
+        setUploadFiles(newFiles);
+        
+        Promise.all(sizeValidFiles.map(file => new Promise<string>((resolve) => {
+            if (file.type === 'application/pdf') {
+                resolve('pdf-icon');
+            } else {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target?.result as string);
+                reader.readAsDataURL(file);
             }
-        };
-        reader.readAsDataURL(file);
+        }))).then(previews => {
+            setUploadPreviews([...uploadPreviews, ...previews].slice(0, 5));
+            if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(20);
+        });
+    };
+
+    const handleFileRemove = (index: number) => {
+        setUploadFiles(uploadFiles.filter((_, i) => i !== index));
+        setUploadPreviews(uploadPreviews.filter((_, i) => i !== index));
     };
 
     const queryClient = useQueryClient();
 
     const analyzeMutation = useMutation({
-        mutationFn: async ({ textToAnalyze, fileToAnalyze }: { textToAnalyze: string, fileToAnalyze: any }) => {
+        mutationFn: async ({ textToAnalyze, filesToAnalyze }: { textToAnalyze: string, filesToAnalyze: File[] }) => {
             const payload = await Promise.all([
-                api.analyze(textToAnalyze, fileToAnalyze),
+                api.analyze(textToAnalyze, filesToAnalyze),
                 runStagedLoading()
             ]).then(([res]) => res);
             return payload;
         },
-        onSuccess: (payload, variables: { textToAnalyze: string, fileToAnalyze: any }) => {
+        onSuccess: (payload, variables: { textToAnalyze: string, filesToAnalyze: File[] }) => {
             const data = payload?.success !== undefined ? payload.data : payload;
 
             if (data?.success === false || data?.error) {
@@ -217,7 +233,7 @@ export function useAnalyzer() {
                 patternName: data.patternName,
                 patternConfidence: data.patternConfidence,
                 posterCredibilityScore: data.posterCredibilityScore,
-                scanType: data.scanType || (variables.fileToAnalyze && variables.textToAnalyze ? 'Combined' : variables.fileToAnalyze ? 'Poster' : 'Text'),
+                scanType: data.scanType || (variables.filesToAnalyze?.length && variables.textToAnalyze ? 'Combined' : variables.filesToAnalyze?.length ? 'Poster' : 'Text'),
                 fallbackUsed: data.fallbackUsed || false,
             });
             setShowBottomSheet(true);
@@ -257,13 +273,13 @@ export function useAnalyzer() {
 
     const handleAnalyze = async (overrideText = null) => {
         const textToAnalyze = typeof overrideText === 'string' ? overrideText : (activeTab === 'text' ? jobText : '');
-        const fileToAnalyze = (activeTab === 'image' && typeof overrideText !== 'string') ? posterFile : null;
+        const filesToAnalyze = (activeTab === 'image' && typeof overrideText !== 'string') ? uploadFiles : [];
 
-        if (!textToAnalyze.trim() && !fileToAnalyze) {
+        if (!textToAnalyze.trim() && filesToAnalyze.length === 0) {
             setInputError(true);
             toast({
                 title: "Input Required",
-                description: activeTab === 'text' ? "Please paste a job description first." : "Please upload a poster image first.",
+                description: activeTab === 'text' ? "Please paste a job description first." : "Please upload at least one document or image.",
                 variant: "destructive"
             });
             setTimeout(() => setInputError(false), 1000);
@@ -294,7 +310,7 @@ export function useAnalyzer() {
         setResult(null);
         setRevealStats(false);
 
-        analyzeMutation.mutate({ textToAnalyze, fileToAnalyze });
+        analyzeMutation.mutate({ textToAnalyze, filesToAnalyze });
     };
 
     const handleReport = async () => {
@@ -302,17 +318,25 @@ export function useAnalyzer() {
         reportMutation.mutate(result.id);
     };
 
+    const formatText = (text: string) => {
+        return text
+            .replace(/[ \t]+/g, ' ') // Normalize spaces
+            .replace(/\n\s*\n/g, '\n\n') // Normalize multiple newlines
+            .replace(/^[•●▪■]\s+/gm, '- ') // Normalize bullets
+            .trim();
+    };
+
     const handlePaste = async () => {
         try {
             const text = await navigator.clipboard.readText();
-            setJobText(text);
+            setJobText(formatText(text));
         } catch (err) { console.error('Failed to read clipboard', err); }
     };
 
     const handleClear = () => {
         setJobText('');
-        setPosterFile(null);
-        setPosterPreview(null);
+        setUploadFiles([]);
+        setUploadPreviews([]);
         setResult(null);
         setRevealStats(false);
         setShowBottomSheet(false);
@@ -320,15 +344,15 @@ export function useAnalyzer() {
 
     const getAnalyzeButtonText = () => {
         if (analyzeMutation.isPending) return "ANALYZING...";
-        if (activeTab === 'image') return "ANALYZE POSTER";
+        if (activeTab === 'image') return "ANALYZE DOCUMENT";
         return "ANALYZE TEXT";
     };
 
     return {
         state: {
             jobText,
-            posterFile,
-            posterPreview,
+            uploadFiles,
+            uploadPreviews,
             activeTab,
             loading: analyzeMutation.isPending,
             result,
@@ -342,8 +366,8 @@ export function useAnalyzer() {
         },
         setters: {
             setJobText,
-            setPosterFile,
-            setPosterPreview,
+            setUploadFiles,
+            setUploadPreviews,
             setActiveTab,
             setShowBottomSheet
         },
@@ -352,11 +376,13 @@ export function useAnalyzer() {
             handleSheetTouchMove,
             handleSheetTouchEnd,
             handleFileSelect,
+            handleFileRemove,
             handleAnalyze,
             handleReport,
             handlePaste,
             handleClear,
-            getAnalyzeButtonText
+            getAnalyzeButtonText,
+            formatText
         },
         scanLimit: {
             scanCount,

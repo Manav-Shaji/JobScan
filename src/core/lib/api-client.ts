@@ -1,3 +1,19 @@
+/**
+ * ------------------------------------------------------------
+ * File: api-client.ts
+ * 
+ * Purpose:
+ * Frontend API client wrapper.
+ * 
+ * Responsibilities:
+ * • Wraps fetch for API communication
+ * • Handles standard error parsing
+ * 
+ * Used By:
+ * • React Query Hooks
+ * ------------------------------------------------------------
+ */
+
 import ky from 'ky';
 import { AnalyzeResponse, HistoryResponse, ChatResponse, DashboardStats } from '@/types/api';
 
@@ -7,12 +23,14 @@ const apiClient = ky.create({
   timeout: 60000
 });
 
-async function analyzeJobDescription(jobDescription: string, posterFile: File | null = null): Promise<AnalyzeResponse> {
+async function analyzeJobDescription(jobDescription: string, uploadFiles: File[] = []): Promise<AnalyzeResponse> {
   try {
-    if (posterFile) {
+    if (uploadFiles && uploadFiles.length > 0) {
       const formData = new FormData();
       formData.append('jobDescription', jobDescription || '');
-      formData.append('poster', posterFile);
+      uploadFiles.forEach(file => {
+        formData.append('files', file);
+      });
       return await apiClient.post('analyze', { body: formData }).json();
     } else {
       return await apiClient.post('analyze', { json: { jobDescription } }).json();

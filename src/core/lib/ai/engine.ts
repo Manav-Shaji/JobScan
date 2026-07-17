@@ -21,7 +21,7 @@ import { FALLBACK_CHAIN, AI_CONFIG } from '@/core/config/ai';
 import { jobScanSystemInstruction, ResponseSchema } from './prompts';
 import { withTimeout, extractErrorMessage, isRecoverableError, safeJsonPayload } from './utils';
 
-export const MAX_AI_TIMEOUT_MS = 30000;
+export const MAX_AI_TIMEOUT_MS = 60000;
 
 export let genAI: GoogleGenerativeAI | null = null;
 const API_KEY = process.env.GEMINI_API_KEY;

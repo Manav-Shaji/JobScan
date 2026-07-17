@@ -1,3 +1,18 @@
+/**
+ * ------------------------------------------------------------
+ * File: scale.ts
+ * 
+ * Purpose:
+ * Scale animation variants.
+ * 
+ * Responsibilities:
+ * • Provides scaling zoom in/out effects
+ * 
+ * Used By:
+ * • Interactive Elements
+ * ------------------------------------------------------------
+ */
+
 import { transitions } from './transitions';
 import type { Variants } from 'motion/react';
 

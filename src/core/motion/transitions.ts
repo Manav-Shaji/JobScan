@@ -1,3 +1,18 @@
+/**
+ * ------------------------------------------------------------
+ * File: transitions.ts
+ * 
+ * Purpose:
+ * Common transition configurations.
+ * 
+ * Responsibilities:
+ * • Standardizes animation springs and easings
+ * 
+ * Used By:
+ * • All Motion Variants
+ * ------------------------------------------------------------
+ */
+
 import type { Transition } from 'motion/react';
 
 export const transitions: Record<string, Transition> = {

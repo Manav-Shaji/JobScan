@@ -1,4 +1,21 @@
 import 'server-only';
+
+/**
+ * ------------------------------------------------------------
+ * File: rate-limit.ts
+ * 
+ * Purpose:
+ * API rate limiting utility.
+ * 
+ * Responsibilities:
+ * • Enforces request limits on API endpoints
+ * • Prevents abuse and DDoS attacks
+ * 
+ * Used By:
+ * • API Routes
+ * ------------------------------------------------------------
+ */
+
 import { MemoryCache } from '@/core/lib/cache';
 
 interface RateLimitRecord {

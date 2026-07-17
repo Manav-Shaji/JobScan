@@ -1,3 +1,20 @@
+/**
+ * ------------------------------------------------------------
+ * File: sw.ts
+ * 
+ * Purpose:
+ * Service Worker entry point.
+ * 
+ * Responsibilities:
+ * • Handles background caching and offline support
+ * • Manages PWA capabilities
+ * 
+ * Used By:
+ * • PWA installation
+ * • Browser
+ * ------------------------------------------------------------
+ */
+
 /// <reference lib="webworker" />
 import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";

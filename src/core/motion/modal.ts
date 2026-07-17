@@ -1,3 +1,18 @@
+/**
+ * ------------------------------------------------------------
+ * File: modal.ts
+ * 
+ * Purpose:
+ * Modal animation variants.
+ * 
+ * Responsibilities:
+ * • Handles scale and opacity transitions for modals
+ * 
+ * Used By:
+ * • Dialog and Alert Components
+ * ------------------------------------------------------------
+ */
+
 import { transitions } from './transitions';
 import type { Variants } from 'motion/react';
 

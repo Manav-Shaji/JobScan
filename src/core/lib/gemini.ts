@@ -30,26 +30,28 @@ import {
 import { genAI, executeWithFallback, MAX_AI_TIMEOUT_MS } from './ai/engine';
 
 export const geminiService = {
-  async analyzeJobMultimodal(jobText: string, posterBase64?: string, posterMimeType?: string) {
+  async analyzeJobMultimodal(jobText: string, files?: { base64: string, mimeType: string }[]) {
     const parts: any[] = [];
-    const scanType = posterBase64 && jobText ? 'combined' : posterBase64 ? 'image' : 'text';
+    const scanType = files && files.length > 0 && jobText ? 'combined' : files && files.length > 0 ? 'document' : 'text';
     const userPayload = {
       jobText: jobText || "",
       scanType: scanType
     };
     parts.push({ text: JSON.stringify(userPayload) });
 
-    if (posterBase64 && posterMimeType) {
-      const allowedMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
-      if (!allowedMimeTypes.has(posterMimeType)) {
-        throw new Error('Unsupported image format. Allowed: JPEG, PNG, WEBP');
-      }
-      parts.push({
-        inlineData: {
-          data: posterBase64,
-          mimeType: posterMimeType
+    if (files && files.length > 0) {
+      const allowedMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']);
+      for (const file of files) {
+        if (!allowedMimeTypes.has(file.mimeType)) {
+          throw new Error('Unsupported format. Allowed: JPEG, PNG, WEBP, PDF');
         }
-      });
+        parts.push({
+          inlineData: {
+            data: file.base64,
+            mimeType: file.mimeType
+          }
+        });
+      }
     }
 
     if (!genAI) {
