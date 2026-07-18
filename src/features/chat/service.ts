@@ -18,7 +18,7 @@ import 'server-only';
 import crypto from 'crypto';
 import { z } from 'zod';
 import { query } from '@/core/db/client';
-import { geminiService } from '@/core/lib/gemini';
+import { geminiService } from '@/core/ai/service';
 import { logger } from '@/core/lib/logger';
 
 // --- Validation ---

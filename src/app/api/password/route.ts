@@ -19,7 +19,7 @@ import bcrypt from 'bcryptjs';
 import { createRouteHandler } from '@/core/api/route-utils';
 import { updatePasswordSchema } from '@/features/users/validation';
 import { updatePassword } from '@/features/users/service';
-import { findPasswordHashById } from '@/features/users/repository';
+import { findPasswordHashById } from '@/core/db/users.repository';
 import { ApiError } from '@/core/api/response';
 
 export const POST = createRouteHandler({

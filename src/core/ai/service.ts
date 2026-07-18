@@ -17,8 +17,8 @@
 
 import 'server-only';
 import { logger } from '@/core/lib/logger';
-import { FALLBACK_CHAIN, CHAT_AI_CONFIG } from '@/core/config/ai';
-import { localFallbackAnalysis } from './ai/fallback';
+import { FALLBACK_CHAIN, CHAT_AI_CONFIG } from './config';
+import { localFallbackAnalysis } from './fallback';
 import { 
   normalizeAnalysis, 
   buildTrustScore, 
@@ -26,8 +26,8 @@ import {
   withTimeout, 
   extractErrorMessage, 
   isRecoverableError 
-} from './ai/utils';
-import { genAI, executeWithFallback, MAX_AI_TIMEOUT_MS } from './ai/engine';
+} from './utils';
+import { genAI, executeWithFallback, MAX_AI_TIMEOUT_MS } from './engine';
 
 export const geminiService = {
   async analyzeJobMultimodal(jobText: string, files?: { base64: string, mimeType: string }[]) {

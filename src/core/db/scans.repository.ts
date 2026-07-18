@@ -39,6 +39,23 @@ const INSERT_SCAN_RESULT = `
   RETURNING *
 `;
 
+const UPDATE_SCAN_RESULT = `
+  UPDATE job_scans SET
+    scan_type = $5,
+    trust_score = $6,
+    risk_level = $7,
+    pattern_name = $8,
+    pattern_confidence = $9,
+    poster_url = $10,
+    poster_text = $11,
+    red_flags = $12,
+    positive_signals = $13,
+    analysis = $14,
+    created_at = NOW()
+  WHERE user_id = $2 AND content_hash = $4
+  RETURNING *
+`;
+
 import { deriveVerdict } from '@/features/scans/utils';
 
 function mapRowToScan(row: any) {
@@ -154,7 +171,44 @@ export async function insertScanResult(
       fallbackUsed: meta.fallbackUsed ?? false,
       analysisSource: meta.source ?? 'remote',
     };
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code === '23505') {
+      logger.warn('Duplicate scan detected, updating existing record instead', { userId, hash });
+      const positiveSignals = multimodalData?.posterAnalysis?.positiveSignals || [];
+      const analysisObj = {
+        summary: multimodalData?.posterAnalysis?.summary || '',
+        breakdown,
+        fallbackUsed: meta.fallbackUsed ?? false,
+        source: meta.source ?? 'remote',
+      };
+      
+      const upd = await query(UPDATE_SCAN_RESULT, [
+        crypto.randomUUID(), // $1 (Ignored)
+        userId, // $2
+        jobDescription, // $3 (Ignored)
+        hash, // $4
+        multimodalData?.scanType || 'Text', // $5
+        score, // $6
+        riskLevel, // $7
+        multimodalData?.patternName || null, // $8
+        multimodalData?.patternConfidence || null, // $9
+        multimodalData?.posterUrl || null, // $10
+        multimodalData?.posterText || null, // $11
+        JSON.stringify(redFlags), // $12
+        JSON.stringify(positiveSignals), // $13
+        JSON.stringify(analysisObj) // $14
+      ]);
+      
+      if (upd.rows.length > 0) {
+        return {
+          ...mapRowToScan(upd.rows[0]),
+          isCached: true,
+          fallbackUsed: meta.fallbackUsed ?? false,
+          analysisSource: meta.source ?? 'remote',
+        };
+      }
+    }
+    
     logger.error('Database error inserting scan result', error, { userId, hash });
     throw error;
   }

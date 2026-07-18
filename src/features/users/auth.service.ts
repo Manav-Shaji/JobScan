@@ -18,7 +18,7 @@ import 'server-only';
 
 import { pool } from '@/core/db/client';
 import bcrypt from 'bcryptjs';
-import { findUserByEmail, createUser } from './repository';
+import { findUserByEmail, createUser } from '@/core/db/users.repository';
 import { logger } from '@/core/lib/logger';
 
 /**

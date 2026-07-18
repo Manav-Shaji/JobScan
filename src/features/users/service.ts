@@ -26,9 +26,9 @@ import {
   fetchUserHistory,
   updateUserRetentionDays,
   deleteUserAccount,
-} from './repository';
+} from '@/core/db/users.repository';
 
-import { deleteScanResult } from '@/features/scans/repository';
+import { deleteScanResult } from '@/core/db/scans.repository';
 import { deriveVerdict } from '@/features/scans/utils';
 
 export async function updateProfile(userId: string, name: string, email?: string) {

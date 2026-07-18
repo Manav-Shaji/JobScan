@@ -17,7 +17,7 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { logger } from '@/core/lib/logger';
-import { FALLBACK_CHAIN, AI_CONFIG } from '@/core/config/ai';
+import { FALLBACK_CHAIN, AI_CONFIG } from './config';
 import { jobScanSystemInstruction, ResponseSchema } from './prompts';
 import { withTimeout, extractErrorMessage, isRecoverableError, safeJsonPayload } from './utils';
 

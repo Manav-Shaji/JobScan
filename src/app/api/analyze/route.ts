@@ -3,7 +3,8 @@
  * API Route: route.ts
  * 
  * Purpose:
- * Handles incoming scan analysis requests by processing file uploads or base64 data and initiating the job analysis service.
+ * Handles incoming scan analysis requests by processing file uploads or base64 data 
+ * and initiating the job analysis service.
  * 
  * Responsibilities:
  * • Validate file types and size limits for job posters.

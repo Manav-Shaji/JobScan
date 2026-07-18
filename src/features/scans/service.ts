@@ -17,8 +17,8 @@ import 'server-only';
  */
 
 import crypto from 'crypto';
-import { geminiService } from '@/core/lib/gemini';
-import { findCachedScan, insertScanResult } from './repository';
+import { geminiService } from '@/core/ai/service';
+import { findCachedScan, insertScanResult } from '@/core/db/scans.repository';
 import { deriveVerdict } from './utils';
 import { ApiError } from '@/core/api/response';
 import { MemoryCache } from '@/core/lib/cache';
@@ -34,10 +34,6 @@ function normalizeJobText(input: string) {
   return input.trim().replace(/\s+/g, ' ').toLowerCase();
 }
 
-/**
- * Core scanning orchestrator. Connects to Gemini AI service, evaluates trust scores,
- * utilizes in-memory deduplication caching, and records completed scans in SQL and local logs.
- */
 export async function analyzeJob(
   jobDescription: string, 
   userId: string | null, 
