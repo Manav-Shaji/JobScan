@@ -109,16 +109,13 @@ export function TrustScore({ score = 0, visible = false }) {
                         cx="100"
                         cy="100"
                         r={radius}
-                        stroke={`url(#${gradientId})`}
+                        stroke={color}
                         strokeWidth="12"
                         strokeLinecap="round"
                         fill="transparent"
                         strokeDasharray={circumference}
                         strokeDashoffset={strokeDashoffset}
-                        className="transition duration-300 ease-out"
-                        style={{ 
-                            filter: `drop-shadow(0 0 10px ${color}70)`
-                        }}
+                        className="transition-all duration-300 ease-out"
                     />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
