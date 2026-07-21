@@ -208,23 +208,35 @@ export default function Analyzer() {
             <div ref={resultsRef} className="scroll-mt-[100px] md:scroll-mt-[140px]"></div>
 
             {/* --- Results View --- */}
-            <AnalyzerDesktopResults 
-                result={result} 
-                revealStats={revealStats} 
-                handleReport={handleReport} 
-            />
-            
-            <AnalyzerMobileResults 
-                result={result}
-                showBottomSheet={showBottomSheet}
-                setShowBottomSheet={setShowBottomSheet}
-                sheetTranslateY={sheetTranslateY}
-                handleSheetTouchStart={handleSheetTouchStart}
-                handleSheetTouchMove={handleSheetTouchMove}
-                handleSheetTouchEnd={handleSheetTouchEnd}
-                isDraggingSheet={isDraggingSheet}
-                handleReport={handleReport}
-            />
+            <AnimatePresence mode="wait">
+                {result && !loading && (
+                    <m.div
+                        key="analyzer-results-wrapper"
+                        initial={{ opacity: 0, y: 24, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -20, scale: 0.97 }}
+                        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                        <AnalyzerDesktopResults 
+                            result={result} 
+                            revealStats={revealStats} 
+                            handleReport={handleReport} 
+                        />
+                        
+                        <AnalyzerMobileResults 
+                            result={result}
+                            showBottomSheet={showBottomSheet}
+                            setShowBottomSheet={setShowBottomSheet}
+                            sheetTranslateY={sheetTranslateY}
+                            handleSheetTouchStart={handleSheetTouchStart}
+                            handleSheetTouchMove={handleSheetTouchMove}
+                            handleSheetTouchEnd={handleSheetTouchEnd}
+                            isDraggingSheet={isDraggingSheet}
+                            handleReport={handleReport}
+                        />
+                    </m.div>
+                )}
+            </AnimatePresence>
 
 
 

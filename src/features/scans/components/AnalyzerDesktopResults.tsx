@@ -54,22 +54,22 @@ export function AnalyzerDesktopResults({
                 </button>
             </m.div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <m.div variants={staggerContainer} className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                 <TrustScoreCard score={result.score} />
 
-                <div className="lg:col-span-8 flex flex-col gap-4">
+                <m.div variants={staggerContainer} className="lg:col-span-8 flex flex-col gap-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <AnalysisCriteriaCard breakdown={result.breakdown} revealStats={revealStats} />
                         <PatternMatchCard patternName={result.patternName} patternConfidence={result.patternConfidence} />
                     </div>
                     <ExtractedTextCard extractedText={result.extractedText} />
-                </div>
-            </div>
+                </m.div>
+            </m.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <m.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <RedFlagsAlert redFlags={result.redFlags} />
                 <AISummaryCard summary={result.summary} positiveSignals={result.positiveSignals} />
-            </div>
+            </m.div>
         </m.div>
     );
 }

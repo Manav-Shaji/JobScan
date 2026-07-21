@@ -131,13 +131,15 @@ export function useAnalyzer() {
     const runStagedLoading = async () => {
         setCompletedStages([]);
         setActiveStage(0);
-        for (let i = 0; i < loadingMessages.length; i++) {
+        // Step through initial stages (0 to loadingMessages.length - 2)
+        for (let i = 0; i < loadingMessages.length - 1; i++) {
             const stageIndex = i;
             setActiveStage(stageIndex);
-            await new Promise(resolve => setTimeout(resolve, 600));
+            await new Promise(resolve => setTimeout(resolve, 500));
             setCompletedStages([...useAppStore.getState().completedStages, stageIndex]);
         }
-        setActiveStage(loadingMessages.length);
+        // Set final stage ("Waiting for AI response...") as ACTIVE while API is pending
+        setActiveStage(loadingMessages.length - 1);
     };
 
     const handleFileSelect = (files: File[]) => {
@@ -182,10 +184,21 @@ export function useAnalyzer() {
 
     const analyzeMutation = useMutation({
         mutationFn: async ({ textToAnalyze, filesToAnalyze }: { textToAnalyze: string, filesToAnalyze: File[] }) => {
-            const payload = await Promise.all([
-                api.analyze(textToAnalyze, filesToAnalyze),
-                runStagedLoading()
-            ]).then(([res]) => res);
+            const stagedPromise = runStagedLoading();
+            const payload = await api.analyze(textToAnalyze, filesToAnalyze);
+            
+            // Wait for initial animation stages to reach "Waiting for AI response..."
+            await stagedPromise;
+            
+            // Mark final stage ("Waiting for AI response...") as PASSED only after real API response arrives
+            const finalStageIndex = loadingMessages.length - 1;
+            const currentStages = useAppStore.getState().completedStages;
+            setCompletedStages(Array.from(new Set([...currentStages, finalStageIndex])));
+            setActiveStage(loadingMessages.length);
+            
+            // Brief 300ms pause so the user sees all checks passed before revealing results
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
             return payload;
         },
         onSuccess: (payload, variables: { textToAnalyze: string, filesToAnalyze: File[] }) => {
