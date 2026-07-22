@@ -328,10 +328,10 @@ export function Settings({ loading }) {
             <div className="border-t border-[var(--hairline)] pt-3 mt-1">
               <div className="text-xs font-bold text-[var(--on-dark)] mb-1">Developer Installation Guide:</div>
               <ol className="text-xs text-[var(--muted)] list-decimal pl-4 space-y-1">
-                <li>Download or locate the <code>extension/</code> folder in the workspace.</li>
+                <li>Run <code>npm run ext:build</code> in the workspace.</li>
                 <li>Open Chrome/Edge and navigate to <code>chrome://extensions/</code>.</li>
                 <li>Enable <strong>Developer mode</strong> (toggle top right).</li>
-                <li>Click <strong>Load unpacked</strong> and select the <code>extension/</code> directory.</li>
+                <li>Click <strong>Load unpacked</strong> and select the <code>dist-ext/chrome-mv3</code> directory.</li>
                 <li>Pin the JobScan extension for quick checks.</li>
               </ol>
             </div>

@@ -64,12 +64,15 @@ export function PwaProvider({ children }) {
 
     // 4. Detect Extension presence
     const checkExtension = () => {
-      const isPresent = document.documentElement.getAttribute('data-jobscan-extension-installed') === 'true';
+      const isPresent = 
+        document.documentElement?.getAttribute('data-jobscan-extension-installed') === 'true' ||
+        document.body?.getAttribute('data-jobscan-extension-installed') === 'true';
       setIsExtensionInstalled(isPresent);
     };
     
-    // Check immediately on mount
+    // Check immediately on mount and after tick
     checkExtension();
+    setTimeout(checkExtension, 500);
 
     // Use MutationObserver to watch for runtime extension attribute injection
     const observer = new MutationObserver((mutations) => {
@@ -80,7 +83,8 @@ export function PwaProvider({ children }) {
       });
     });
 
-    observer.observe(document.documentElement, { attributes: true });
+    if (document.documentElement) observer.observe(document.documentElement, { attributes: true });
+    if (document.body) observer.observe(document.body, { attributes: true });
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleInstallPrompt);

@@ -64,7 +64,7 @@ export default function RootLayout({ children }) {
       <head>
         <meta name="jobscan-app" content="true" />
       </head>
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning>
         <Providers>
           {children}
         </Providers>
