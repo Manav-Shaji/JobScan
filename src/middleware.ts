@@ -3,11 +3,12 @@
  * File: middleware.ts
  * 
  * Purpose:
- * Next.js Edge Middleware for request interception and routing.
+ * Next.js Edge Middleware for request interception, authentication, and security headers.
  * 
  * Responsibilities:
- * • Protect authenticated routes
- * • Redirect unauthenticated users to the login page
+ * • Protect authenticated dashboard routes
+ * • Redirect unauthenticated users safely to login with callback URL
+ * • Inject baseline HTTP security headers at the Edge boundary
  * 
  * Used By:
  * • Next.js App Router
@@ -15,33 +16,48 @@
  */
 
 import NextAuth from 'next-auth';
+import { NextResponse } from 'next/server';
 import { authConfig } from '@/core/auth/auth.config';
 
 const { auth } = NextAuth(authConfig);
+const securityHeaders = {
+    'X-Frame-Options': 'DENY',
+    'X-Content-Type-Options': 'nosniff',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'X-XSS-Protection': '1; mode=block',
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+};
 
 export default auth((req) => {
     const isLoggedIn = !!req.auth;
-    const isAuthPage = req.nextUrl.pathname.startsWith('/auth');
-    const isAppPage = req.nextUrl.pathname.startsWith('/dashboard');
+    const { pathname, search } = req.nextUrl;
 
+    const isAuthPage = pathname.startsWith('/auth');
+    const isAppPage = pathname.startsWith('/dashboard');
     if (isAuthPage) {
         if (isLoggedIn) {
-            return Response.redirect(new URL('/dashboard', req.nextUrl));
+            return NextResponse.redirect(new URL('/dashboard', req.nextUrl));
         }
-        return null;
+        const response = NextResponse.next();
+        Object.entries(securityHeaders).forEach(([k, v]) => response.headers.set(k, v));
+        return response;
     }
+    if (isAppPage && !isLoggedIn && pathname !== '/dashboard/analyzer') {
+        let from = pathname;
+        if (search) from += search;
+        const safeCallback = from.startsWith('/') && !from.startsWith('//') ? from : '/dashboard';
 
-    if (isAppPage && !isLoggedIn && req.nextUrl.pathname !== '/dashboard/analyzer') {
-        let from = req.nextUrl.pathname;
-        if (req.nextUrl.search) {
-            from += req.nextUrl.search;
-        }
-        return Response.redirect(
-            new URL(`/auth?callbackUrl=${encodeURIComponent(from)}`, req.nextUrl)
+        return NextResponse.redirect(
+            new URL(`/auth?callbackUrl=${encodeURIComponent(safeCallback)}`, req.nextUrl)
         );
     }
+    const response = NextResponse.next();
+    Object.entries(securityHeaders).forEach(([k, v]) => response.headers.set(k, v));
+    return response;
 });
 
 export const config = {
-    matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+    matcher: [
+        '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|sw.js|.*\\.(?:png|jpg|jpeg|gif|svg|webp)$).*)',
+    ],
 };

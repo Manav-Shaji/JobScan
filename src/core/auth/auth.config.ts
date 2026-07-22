@@ -25,7 +25,7 @@ export const authConfig = {
             if (user) {
                 token.id = user.id || token.sub;
                 if (user.rememberMe === false) {
-                    token.exp = Math.floor(Date.now() / 1000) + (24 * 60 * 60);
+                    token.exp = Math.floor(Date.now() / 1000) + (12 * 60 * 60);
                 }
             }
             return token;
@@ -39,6 +39,7 @@ export const authConfig = {
     },
     session: {
         strategy: 'jwt' as const,
+        maxAge: 12 * 60 * 60, // 12 hours
     },
     trustHost: true,
     providers: [],
