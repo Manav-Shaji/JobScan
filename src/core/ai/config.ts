@@ -18,14 +18,14 @@
 import { logger } from '@/core/lib/logger';
 const SUPPORTED_MODELS = [
   'gemini-3.6-flash',
-  'gemini-3.1-flash-lite',
-  'gemini-2.5-flash'
+  'gemini-3.5-flash-lite',
+  'gemini-3.1-flash-lite'
 ];
 
 const AI_MODELS = {
   PRIMARY: 'gemini-3.6-flash',
-  FAST: 'gemini-3.1-flash-lite',
-  FALLBACK: 'gemini-2.5-flash',
+  FAST: 'gemini-3.5-flash-lite',
+  FALLBACK: 'gemini-3.1-flash-lite',
 };
 
 // Validate environment models against supported whitelist

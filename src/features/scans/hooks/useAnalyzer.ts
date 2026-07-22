@@ -332,17 +332,49 @@ export function useAnalyzer() {
     };
 
     const formatText = (text: string) => {
-        return text
-            .replace(/[ \t]+/g, ' ') // Normalize spaces
-            .replace(/\n\s*\n/g, '\n\n') // Normalize multiple newlines
-            .replace(/^[•●▪■]\s+/gm, '- ') // Normalize bullets
+        if (!text) return '';
+
+        let formatted = text
+            .replace(/\r\n/g, '\n')
+            .replace(/[ \t]+/g, ' ')
+            .replace(/^[•●▪■▫*]\s*/gm, '- ');
+
+        const headerLabels = [
+            'Job Title:', 'Job Role:', 'Company:', 'Company Name:', 'Location:', 
+            'Salary:', 'Pay:', 'Experience:', 'Role:', 'Department:', 'Work Type:'
+        ];
+        headerLabels.forEach(label => {
+            const regex = new RegExp(`(?<=\\S)\\s*(${label})`, 'gi');
+            formatted = formatted.replace(regex, '\n$1');
+        });
+
+        const sectionTitles = [
+            'Job Description', 'About the Role', 'About Us', 'Role Overview', 'Overview',
+            'Responsibilities include:', 'Responsibilities', 'Key Responsibilities', 'Duties', 'What You Will Do',
+            'Requirements', 'Qualifications', 'Skills Required', 'Eligibility', 'Who We Are Looking For',
+            'Benefits', 'Perks', 'What We Offer', 'Compensation & Benefits',
+            'Hiring Process', 'Selection Process', 'How to Apply', 'Application Process',
+            'Important:', 'Note:', 'Warning:'
+        ];
+
+        sectionTitles.forEach(title => {
+            const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`(?<=\\S)[ \\t]*\\n*[ \\t]*(${escaped})`, 'gi');
+            formatted = formatted.replace(regex, '\n\n$1');
+        });
+
+        return formatted
+            .split('\n')
+            .map(line => line.trim())
+            .join('\n')
+            .replace(/\n{3,}/g, '\n\n')
             .trim();
     };
 
     const handlePaste = async () => {
         try {
             const text = await navigator.clipboard.readText();
-            setJobText(formatText(text));
+            setJobText(text);
         } catch (err) { console.error('Failed to read clipboard', err); }
     };
 

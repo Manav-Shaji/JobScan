@@ -54,17 +54,14 @@ export async function analyzeJob(
   
   const hash = crypto.createHash('sha256').update(hashSource).digest('hex');
 
-  // 1. Check Database cache (within 24 hours validity)
-  let cached = null;
-  if (userId) {
-    cached = await findCachedScan(hash, userId);
-  }
+  // 1. Check Database cache (within 24 hours validity across all users)
+  const cached = await findCachedScan(hash);
   
   if (cached) {
     if (cached.analysis?.fallbackUsed) {
       logger.logApp('Ignoring cached scan result because it was a fallback', { hash });
     } else {
-      logger.logApp('Returning cached scan result from database', { hash });
+      logger.logApp('Returning cached scan result from database across users', { hash, userId });
       return cached;
     }
   }

@@ -17,7 +17,20 @@
 import { Textarea } from "@/core/ui/forms";
 import { FileText, Clipboard, Trash2, AlertCircle } from 'lucide-react';
 
-export function TextInputTab({ jobText, setJobText, inputError, activeTab, handlePaste, formatText }) {
+export function TextInputTab({ jobText, setJobText, inputError, activeTab, handlePaste }) {
+    const handleBlur = () => {
+        if (!jobText) return;
+        const cleaned = jobText
+            .split('\n')
+            .map(line => line.trimEnd())
+            .join('\n')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim();
+        if (cleaned !== jobText) {
+            setJobText(cleaned);
+        }
+    };
+
     return (
         <div className="glass-card premium-card-edge rounded-3xl p-5 md:p-6 shadow-xl relative overflow-hidden group flex flex-col">
             <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-500/8 transition-colors duration-1000"></div>
@@ -46,14 +59,7 @@ export function TextInputTab({ jobText, setJobText, inputError, activeTab, handl
                     placeholder="Paste job description here..."
                     value={jobText}
                     onChange={(e) => setJobText(e.target.value)}
-                    onPaste={(e) => {
-                        e.preventDefault();
-                        const text = e.clipboardData.getData('text');
-                        const formatted = formatText ? formatText(text) : text;
-                        // Replace the entire value on paste for this simple textarea, 
-                        // as job descriptions are usually pasted into an empty box.
-                        setJobText(formatted);
-                    }}
+                    onBlur={handleBlur}
                 />
                 
                 <div className="flex justify-between items-center mt-3 px-1">

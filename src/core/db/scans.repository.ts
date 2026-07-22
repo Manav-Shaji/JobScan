@@ -22,11 +22,13 @@ import { query } from '@/core/db/client';
 import { logger } from '@/core/lib/logger';
 const FIND_CACHED_SCAN = `
   SELECT s.*, 
-         COALESCE(COUNT(r.id), 0) AS community_reports
+         COALESCE(COUNT(DISTINCT r.id), 0) AS community_reports
   FROM job_scans s
-  LEFT JOIN scam_reports r ON r.scan_id = s.id
-  WHERE s.content_hash = $1 AND s.user_id = $2 AND s.created_at > NOW() - INTERVAL '24 hours'
+  LEFT JOIN job_scans all_scans ON all_scans.content_hash = s.content_hash
+  LEFT JOIN scam_reports r ON r.scan_id = all_scans.id
+  WHERE s.content_hash = $1 AND s.created_at > NOW() - INTERVAL '24 hours'
   GROUP BY s.id
+  ORDER BY s.created_at DESC
   LIMIT 1
 `;
 
@@ -41,18 +43,19 @@ const INSERT_SCAN_RESULT = `
 
 const UPDATE_SCAN_RESULT = `
   UPDATE job_scans SET
-    scan_type = $5,
-    trust_score = $6,
-    risk_level = $7,
-    pattern_name = $8,
-    pattern_confidence = $9,
-    poster_url = $10,
-    poster_text = $11,
-    red_flags = $12,
-    positive_signals = $13,
-    analysis = $14,
+    content = $3,
+    scan_type = $4,
+    trust_score = $5,
+    risk_level = $6,
+    pattern_name = $7,
+    pattern_confidence = $8,
+    poster_url = $9,
+    poster_text = $10,
+    red_flags = $11,
+    positive_signals = $12,
+    analysis = $13,
     created_at = NOW()
-  WHERE user_id = $2 AND content_hash = $4
+  WHERE user_id = $1 AND content_hash = $2
   RETURNING *
 `;
 
@@ -97,9 +100,9 @@ function mapRowToScan(row: any) {
   };
 }
 
-export async function findCachedScan(hash: string, userId: string) {
+export async function findCachedScan(hash: string) {
   try {
-    const cached = await query(FIND_CACHED_SCAN, [hash, userId]);
+    const cached = await query(FIND_CACHED_SCAN, [hash]);
 
     if (cached.rows.length === 0) return null;
     const row = cached.rows[0];
@@ -183,20 +186,19 @@ export async function insertScanResult(
       };
       
       const upd = await query(UPDATE_SCAN_RESULT, [
-        crypto.randomUUID(), // $1 (Ignored)
-        userId, // $2
-        jobDescription, // $3 (Ignored)
-        hash, // $4
-        multimodalData?.scanType || 'Text', // $5
-        score, // $6
-        riskLevel, // $7
-        multimodalData?.patternName || null, // $8
-        multimodalData?.patternConfidence || null, // $9
-        multimodalData?.posterUrl || null, // $10
-        multimodalData?.posterText || null, // $11
-        JSON.stringify(redFlags), // $12
-        JSON.stringify(positiveSignals), // $13
-        JSON.stringify(analysisObj) // $14
+        userId, // $1
+        hash, // $2
+        jobDescription, // $3
+        multimodalData?.scanType || 'Text', // $4
+        score, // $5
+        riskLevel, // $6
+        multimodalData?.patternName || null, // $7
+        multimodalData?.patternConfidence || null, // $8
+        multimodalData?.posterUrl || null, // $9
+        multimodalData?.posterText || null, // $10
+        JSON.stringify(redFlags), // $11
+        JSON.stringify(positiveSignals), // $12
+        JSON.stringify(analysisObj) // $13
       ]);
       
       if (upd.rows.length > 0) {

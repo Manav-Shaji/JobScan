@@ -26,7 +26,8 @@ import {
     AlertTriangle, 
     FileSearch, 
     CheckSquare,
-    ShieldCheck
+    ShieldCheck,
+    Users
 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "@/core/ui/Alert";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/core/ui/layout";
@@ -195,14 +196,20 @@ export function AnalyzerMobileResults({
                                         {/* Red Flags Alert */}
                                         <Alert variant="destructive" className="bg-red-500/5 border-red-500/10 rounded-2xl p-4 shadow-none">
                                             <AlertTitle className="flex items-center gap-1.5 text-red-400 font-bold text-xs mb-2.5 tracking-tight">
-                                                <AlertTriangle size={12} /> Detected Red Flags ({result.redFlags?.length || 0})
+                                                <AlertTriangle size={12} /> Detected Red Flags ({(result.redFlags?.length || 0) + (result.communityReports > 0 ? 1 : 0)})
                                             </AlertTitle>
                                             <AlertDescription className="flex flex-col gap-2">
+                                                {result.communityReports > 0 && (
+                                                    <div className="px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] leading-relaxed flex items-center gap-2 font-bold">
+                                                        <Users size={12} className="flex-shrink-0" />
+                                                        <div>Flagged as a scam by {result.communityReports} community member{result.communityReports > 1 ? 's' : ''}</div>
+                                                    </div>
+                                                )}
                                                 {result.redFlags?.length > 0 ? result.redFlags.map((flag, i) => (
                                                     <div key={flag || i} className="px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] leading-relaxed flex items-start gap-2 font-medium">
                                                         <span className="status-dot red mt-1.5"></span><div className="font-medium">{flag}</div>
                                                     </div>
-                                                )) : <div className="text-[10px] text-gray-400 italic">No critical red flags identified.</div>}
+                                                )) : !result.communityReports ? <div className="text-[10px] text-gray-400 italic">No critical red flags identified.</div> : null}
                                             </AlertDescription>
                                         </Alert>
 
