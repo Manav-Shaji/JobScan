@@ -21,7 +21,7 @@ import { FALLBACK_CHAIN, AI_CONFIG } from './config';
 import { jobScanSystemInstruction, ResponseSchema } from './prompts';
 import { withTimeout, extractErrorMessage, isRecoverableError, safeJsonPayload } from './utils';
 
-export const MAX_AI_TIMEOUT_MS = 60000;
+export const MAX_AI_TIMEOUT_MS = 120000;
 
 export let genAI: GoogleGenerativeAI | null = null;
 const API_KEY = process.env.GEMINI_API_KEY;
@@ -83,39 +83,22 @@ export async function executeWithFallback(parts: any[], featureName: string) {
       const message = extractErrorMessage(error);
       const isJsonError = /Unexpected token|Unexpected end of JSON|Zod schema validation failed/.test(message) || error instanceof SyntaxError;
       
-      let shouldRetry = false;
       let reason = message;
-      
-      if (isRecoverableError(error)) {
-        shouldRetry = true;
-      } else if (isJsonError) {
-        if (!jsonRetryUsed) {
-          shouldRetry = true;
-          jsonRetryUsed = true; 
-          reason = 'Invalid JSON or Schema';
-        } else {
-          shouldRetry = false; 
-        }
-      } else {
-        shouldRetry = false;
+      if (isJsonError && !jsonRetryUsed) {
+        jsonRetryUsed = true; 
+        reason = 'Invalid JSON or Schema';
       }
 
-      if (!shouldRetry) {
-        return {
-          success: false,
-          error: "AI service temporarily unavailable.",
-          model: modelName,
-          fallbackUsed: i > 0,
-          details: message
-        };
+      if (i < FALLBACK_CHAIN.length - 1) {
+        logger.warn('AI Model Fallback', {
+          feature: featureName,
+          failedModel: modelName,
+          fallbackModel: FALLBACK_CHAIN[i + 1],
+          reason: reason
+        });
+        lastErrorMsg = message;
+        continue;
       }
-      
-      logger.warn('AI Model Fallback', {
-        feature: featureName,
-        failedModel: modelName,
-        fallbackModel: FALLBACK_CHAIN[i+1],
-        reason: reason
-      });
       
       lastErrorMsg = message;
     }

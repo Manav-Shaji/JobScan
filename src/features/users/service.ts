@@ -87,9 +87,16 @@ export const getUserHistory = cache(async function(userId: string, limit: number
     
     return rows.map((i: any) => ({
       id: i.id,
-      content: i.content,
+      content: i.content || i.poster_text || '',
+      scanType: i.scan_type || 'Text',
       score: i.trust_score,
+      riskLevel: i.risk_level,
       type: deriveVerdict(i.trust_score, i.risk_level),
+      patternName: i.pattern_name,
+      posterText: i.poster_text,
+      posterUrl: i.poster_url,
+      redFlags: i.red_flags,
+      analysis: i.analysis,
       createdAt: i.created_at,
     }));
   } catch (error) {

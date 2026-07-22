@@ -53,31 +53,37 @@ const getTitle = (h) => {
       if (cleaned) return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
   }
   
-  // Fallback to first line of content
-  const firstLine = h.content?.split('\\n')[0] || '';
+  const textContent = (h.content || h.posterText || '').trim();
+  const firstLine = textContent.split('\n')[0] || '';
   if (firstLine.trim()) {
       const cleaned = cleanText(firstLine).substring(0, 45).trim();
-      return cleaned.charAt(0).toUpperCase() + cleaned.slice(1) + (firstLine.length > 45 ? '...' : '');
+      if (cleaned) return cleaned.charAt(0).toUpperCase() + cleaned.slice(1) + (firstLine.length > 45 ? '...' : '');
   }
-  return 'Job Scan Document';
+  return h.scanType === 'Document' || h.scanType === 'Poster' ? 'Scanned Poster Document' : 'Job Scan Document';
 };
 
 const getSnippet = (h) => {
   const title = getTitle(h).replace('...', '');
-  let content = h.content ? h.content.trim() : '';
+  let content = (h.content || h.posterText || '').trim();
   
   // Remove the title from the beginning of the content snippet to prevent redundancy
   if (content.toLowerCase().startsWith(title.toLowerCase())) {
-      // Break the regex apart so Tailwind JIT ignores it
-      const regexString = '^[' + '-' + ':\\\\s]+';
+      const regexString = '^[' + '-' + ':\\s]+';
       const cleanupRegex = new RegExp(regexString);
       content = content.substring(title.length).replace(cleanupRegex, '').trim();
   }
   
   // Strip out prefixes if they appear at the very beginning of the snippet too
-  content = content.replace(/^(job description|job title|title|job|role):?\\s*/i, '').trim();
+  content = content.replace(/^(job description|job title|title|job|role):?\s*/i, '').trim();
   
-  return content || 'No further description provided.';
+  return content || (h.scanType === 'Document' || h.scanType === 'Poster' ? 'Scanned poster image' : 'No further description provided.');
+};
+
+const getScanTypeBadgeClass = (type) => {
+  const normalized = (type || '').toLowerCase();
+  if (normalized === 'combined') return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
+  if (normalized === 'poster' || normalized === 'document') return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
+  return 'bg-slate-500/10 text-slate-400 border-slate-500/20';
 };
 
 const ScoreCircle = ({ score }) => {
@@ -333,15 +339,11 @@ export function History({ fullHistory, loading }) {
                 <div className="col-span-5 flex flex-col pr-6 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs font-bold text-[var(--on-dark)] truncate capitalize">{getTitle(h)}</span>
-                    <span className={`px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider rounded border ${
-                      h.scanType === 'Combined' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
-                      h.scanType === 'Poster' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' :
-                      'bg-slate-500/10 text-slate-400 border-slate-500/20'
-                    }`}>
+                    <span className={`px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider rounded border ${getScanTypeBadgeClass(h.scanType)}`}>
                       {h.scanType || 'Text'}
                     </span>
                   </div>
-                  {h.patternName && h.patternName !== 'None' ? (
+                  {h.patternName && h.patternName !== 'None' && h.patternName !== 'Unknown' && h.patternName !== 'Unknown Pattern' ? (
                     <span className="text-[10px] text-amber-400 truncate flex items-center gap-1 mt-0.5">
                       <AlertTriangle size={10} /> Pattern Detected: {h.patternName}
                     </span>
@@ -375,15 +377,11 @@ export function History({ fullHistory, loading }) {
                   <div className="flex flex-col min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-sm font-bold text-[var(--on-dark)] truncate capitalize">{getTitle(h)}</span>
-                      <span className={`px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider rounded border flex-shrink-0 ${
-                        h.scanType === 'Combined' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
-                        h.scanType === 'Poster' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' :
-                        'bg-slate-500/10 text-slate-400 border-slate-500/20'
-                      }`}>
+                      <span className={`px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider rounded border flex-shrink-0 ${getScanTypeBadgeClass(h.scanType)}`}>
                         {h.scanType || 'Text'}
                       </span>
                     </div>
-                    {h.patternName && h.patternName !== 'None' ? (
+                    {h.patternName && h.patternName !== 'None' && h.patternName !== 'Unknown' && h.patternName !== 'Unknown Pattern' ? (
                       <span className="text-[10px] text-amber-400 truncate flex items-center gap-1 mt-0.5">
                         <AlertTriangle size={10} /> {h.patternName}
                       </span>

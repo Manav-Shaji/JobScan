@@ -50,7 +50,7 @@ const GET_USER_STATS = `
 `;
 
 const GET_USER_HISTORY = `
-  SELECT id, content, trust_score, risk_level, created_at 
+  SELECT id, content, scan_type, trust_score, risk_level, pattern_name, poster_text, poster_url, red_flags, analysis, created_at 
   FROM job_scans 
   WHERE user_id = $1 
   ORDER BY created_at DESC 

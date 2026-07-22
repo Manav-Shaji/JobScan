@@ -15,7 +15,7 @@
  */
 
 export function localFallbackAnalysis(jobText: string, reason: string) {
-  const text = jobText.toLowerCase();
+  const text = String(jobText || '').toLowerCase();
   const redFlags: string[] = [];
 
   const suspects = [
