@@ -219,7 +219,8 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
               <m.div className="divide-y divide-[var(--hairline)] flex-1 flex flex-col" style={{ background: 'rgba(var(--primary-rgb), 0.01)' }} variants={staggerContainer} initial="hidden" animate="visible">
                 {recentActivities?.map((a, i) => {
                   const { date, time } = formatDate(a.createdAt);
-                  const isScam = a.type === 'scam';
+                  const isScam = a.type === 'scam' || (typeof a.score === 'number' && a.score < 50);
+                  const isCaution = !isScam && (a.type === 'caution' || (typeof a.score === 'number' && a.score >= 50 && a.score < 75));
 
                   return (
                     <m.div key={a.id || `recent-${i}`} variants={slideUp} className="flex items-center justify-between py-2.5 px-5 hover:bg-[rgba(var(--primary-rgb),0.04)] transition-colors group">
@@ -236,9 +237,12 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
                       <div className={`flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-md border ${
                         isScam 
                           ? 'bg-red-500/10 border-red-500/20 text-red-400' 
-                          : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                          : isCaution
+                            ? 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+                            : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
                       } font-bold text-[10px] tracking-wider`}>
                         {isScam ? <span className="relative flex h-1.5 w-1.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500"></span></span> : null}
+                        {isCaution ? <AlertTriangle size={11} className="text-amber-400" /> : null}
                         {(a.type || 'safe').toUpperCase()}
                       </div>
                     </m.div>
@@ -455,7 +459,8 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
           <div className="divide-y divide-[var(--hairline)] flex-1 overflow-y-auto max-h-[190px]">
             {recentActivities?.slice(0, 3).map((a, i) => {
               const { date } = formatDate(a.createdAt);
-              const isScam = a.type === 'scam';
+              const isScam = a.type === 'scam' || (typeof a.score === 'number' && a.score < 50);
+              const isCaution = !isScam && (a.type === 'caution' || (typeof a.score === 'number' && a.score >= 50 && a.score < 75));
 
               return (
                 <div key={a.id || `recent-mobile-${i}`} className="flex items-center justify-between py-3 px-3.5 hover:bg-[rgba(var(--primary-rgb),0.02)] transition-colors">
@@ -468,7 +473,9 @@ export function Overview({ statsData, recentActivities, loading, onRefresh }) {
                   <div className={`flex-shrink-0 px-2 py-0.5 rounded text-[8px] font-black border ${
                     isScam 
                       ? 'bg-red-500/10 border-red-500/20 text-red-400' 
-                      : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                      : isCaution
+                        ? 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+                        : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
                   } uppercase tracking-wider`}>
                     {a.type || 'safe'}
                   </div>

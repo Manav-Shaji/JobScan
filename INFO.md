@@ -213,25 +213,30 @@ PostgreSQL      Gemini AI
 
 ```text
 src/
-├── app/               # Next.js App Router structure (Routing & Pages)
-│   ├── api/           # Backend REST API routes
-│   ├── auth/          # Frontend authentication pages
-│   ├── dashboard/     # Frontend user dashboard pages
+├── app/               # Next.js App Router (Pages, API Routes, Layouts)
+│   ├── (landing)/     # Public marketing & hero page
+│   ├── api/           # Backend REST API routes (analyze, auth, chat, history, reports, stats)
+│   ├── auth/          # Authentication pages (Login / Register)
+│   ├── dashboard/     # User dashboard & interactive analyzer pages
 │   ├── ~offline/      # PWA offline fallback page
-│   └── sw.ts          # Service Worker configuration
+│   └── sw.ts          # Serwist PWA Service Worker configuration
 ├── core/              # Shared infrastructure & core services
-│   ├── auth/          # NextAuth configuration & providers
-│   ├── db/            # PostgreSQL client & SQL schema
-│   ├── lib/           # App libraries (AI Gemini, caching, logging)
-│   ├── motion/        # Animation utilities
-│   ├── providers/     # React Context providers (Theme, Job, PWA)
-│   └── ui/            # UI components (Radix, Toast, theme toggles)
+│   ├── ai/            # Gemini execution engine, model fallbacks & heuristic regex engine
+│   ├── api/           # Route handler utilities & helper wrappers
+│   ├── auth/          # NextAuth configuration, credentials provider & session callbacks
+│   ├── db/            # PostgreSQL client pool, raw SQL repositories & database schema
+│   ├── lib/           # Core utilities (API client, MemoryCache, logger)
+│   ├── motion/        # Framer Motion animation variants
+│   ├── providers/     # React Context providers (Auth, Theme, PWA)
+│   └── ui/            # Reusable UI primitives (Radix UI components, Toasts, Alerts)
 ├── features/          # Modular feature-driven vertical slices
-│   ├── scans/         # Scan history, overview page, scan services/repos
-│   └── users/         # Profile/Settings UI, auth services/repos
-└── shared/            # Common constants & typings
+│   ├── scans/         # Scan history, overview dashboard, result cards & analyzer hooks
+│   └── users/         # Profile UI, account settings & user service layer
+├── shared/            # Shared constants, global Zustand store & typings
+├── types/             # Global TypeScript type declarations
+└── middleware.ts      # Edge middleware for session & route protection
 
-extension/             # Browser Extension files
+extension/             # WXT Manifest V3 Browser Extension (DOM content script, Popup UI)
 ```
 
 ## Frontend Architecture
