@@ -28,8 +28,6 @@ Built as an MCA final-year project, JobScan combines modern web technologies, ar
   - LinkedIn
   - Indeed
   - Naukri
-  - Foundit
-  - Internshala
 - One-click trust analysis
 
 ### Progressive Web App (PWA)
@@ -74,7 +72,8 @@ Built as an MCA final-year project, JobScan combines modern web technologies, ar
 - Zod Validation
 
 ### AI & Analysis
-- Google Gemini API
+- Google Gemini API (`gemini-3.1-flash-lite`, `gemini-3.5-flash-lite`, `gemini-3.6-flash`)
+- Regex-Based Local Fallback Analysis (user-friendly summary fallback when API is unavailable)
 - OCR Processing
 - Scam Pattern Detection Engine
 

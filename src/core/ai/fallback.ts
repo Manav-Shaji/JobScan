@@ -61,7 +61,7 @@ export function localFallbackAnalysis(jobText: string, reason: string) {
     patternConfidence: redFlags.length > 2 ? 60 : 0,
     redFlags: redFlags.slice(0, 8),
     positiveSignals,
-    summary: `Local fallback analysis used because Gemini was unavailable (${reason}). Review suspicious terms before applying.`,
+    summary: 'Local fallback analysis used because Gemini was unavailable. Review suspicious terms before applying.',
     extractedText: "",
     fallbackUsed: true,
     source: 'local',

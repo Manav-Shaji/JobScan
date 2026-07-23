@@ -21,12 +21,12 @@ Target users include active job seekers, recent graduates, remote workers, and a
 ### AI Job Scam Detection
 *   **Purpose:** The core engine that evaluates job descriptions for scam indicators.
 *   **User workflow:** A user pastes a job description into the web app or uses the extension to scan a page. The system analyzes the text and returns an assessment.
-*   **Technical implementation:** Uses Google Gemini AI via `src/core/lib/gemini.ts` to analyze text against a predefined system prompt (`src/core/lib/ai/prompts.ts`). It identifies red flags, positive signals, and outputs a structured JSON response. A local, Regex-based fallback analysis is included for quota limits or API failures.
+*   **Technical implementation:** Uses Google Gemini AI via `src/core/ai/service.ts` to analyze text against a predefined system prompt (`src/core/ai/prompts.ts`). It identifies red flags, positive signals, and outputs a structured JSON response. A local, Regex-based fallback analysis (`src/core/ai/fallback.ts`) is included for quota limits or API failures, producing clean user-facing summaries.
 
 ### Gemini Analysis
 *   **Purpose:** Provides deep, contextual understanding of job listings.
 *   **User workflow:** Transparent to the user; it powers the scam detection and chat features.
-*   **Technical implementation:** Implemented using `@google/generative-ai` SDK. Primary model is `gemini-3.1-flash-lite`, falling back to `gemini-2.5-flash`. Includes timeouts, caching (`MemoryCache`), and fallback mechanisms.
+*   **Technical implementation:** Implemented using `@google/generative-ai` SDK. Primary model is `gemini-3.1-flash-lite`, falling back through `gemini-3.5-flash-lite` and `gemini-3.6-flash`. Includes timeouts, caching (`MemoryCache`), and local fallback mechanisms.
 
 ### Trust Score Generation
 *   **Purpose:** Distills complex AI analysis into an easy-to-understand metric (0-100).
@@ -205,8 +205,8 @@ PostgreSQL      Gemini AI
 
 1.  **Client Layer:** The Web UI or Browser Extension sends a request containing job text or an image.
 2.  **API Layer:** Next.js Route Handlers (`src/app/api/*`) receive requests, validate session tokens via NextAuth, and route to specific modules.
-3.  **Business Logic Layer:** Modules (`src/backend/modules/*`) handle data orchestration, validation, and enforce business rules (e.g., verifying user ownership before returning scan history).
-4.  **AI Engine:** The `gemini-provider.ts` handles communication with Google's APIs, including prompt construction, parsing, and local fallback logic.
+3.  **Business Logic / Feature Layer:** Features (`src/features/*`) and core services handle data orchestration, validation, and enforce business rules (e.g., verifying user ownership before returning scan history).
+4.  **AI Engine:** The `src/core/ai/engine.ts` and `src/core/ai/service.ts` handle communication with Google's APIs, including prompt construction, schema validation, fallback chain execution, and local fallback logic (`src/core/ai/fallback.ts`).
 5.  **Database Layer:** Raw SQL queries execute against the PostgreSQL database to persist scans, users, and reports.
 
 ## Folder Structure & Responsibilities
@@ -489,7 +489,8 @@ Checklist:
 
 *   **`package.json`**: Defines all dependencies (Next.js, Radix UI, Serwist, WXT) and project scripts.
 *   **`src/database/schema.sql`**: The single source of truth for the database structure.
-*   **`src/core/lib/gemini.ts`**: The core logic engine connecting the application to AI, containing crucial fallback and parsing logic.
+*   **`src/core/ai/service.ts` & `src/core/ai/engine.ts`**: The core AI execution engine connecting the application to Gemini, managing timeouts, model fallback chains, and structured outputs.
+*   **`src/core/ai/fallback.ts`**: The local regex-based heuristic analysis engine used when external AI APIs are unavailable.
 *   **`src/core/auth/index.ts`**: NextAuth configuration, securing the entire application.
 *   **`src/app/sw.ts`**: Service worker configuration defining PWA caching behavior.
 *   **`extension/wxt.config.ts`**: Configures the browser extension build, permissions, and host targeting.
@@ -505,13 +506,13 @@ Checklist:
 ## Troubleshooting
 
 *   **Database connection fails:** Ensure PostgreSQL is running and `DB_*` variables in `.env.local` are correct. Check if the `jobscan` database was created.
-*   **AI returns "Fallback used":** Your `GEMINI_API_KEY` is invalid, missing, or you have hit rate limits.
+*   **AI returns "Fallback used":** Your `GEMINI_API_KEY` is invalid, missing, or rate limits/quotas were exceeded. The engine falls back to local heuristic analysis with a clean user-facing summary (omitting internal technical error traces).
 *   **Extension doesn't load:** Ensure you have enabled "Developer Mode" in Chrome and loaded the correct `dist-ext` output directory.
 *   **Login fails:** Ensure `NEXTAUTH_URL` matches your exact local URL and `NEXTAUTH_SECRET` is set.
 
 ## Developer Onboarding Guide
 
-*   **Where to start:** Read `src/core/db/schema.sql` to understand the data model. Next, look at `src/core/lib/gemini.ts` to understand the core feature. Finally, browse `src/app/api/analyze/route.js` to see how the pieces connect.
+*   **Where to start:** Read `src/core/db/schema.sql` to understand the data model. Next, look at `src/core/ai/service.ts` and `src/core/ai/fallback.ts` to understand the core AI and fallback features. Finally, browse `src/app/api/analyze/route.js` to see how the pieces connect.
 *   **Code Documentation:** All core, non-UI source files contain a standardized JSDoc header detailing their `Purpose`, `Responsibilities`, and `Used By` relations to help you understand their role.
 *   **Recommended learning order:** React/Next.js App Router -> NextAuth -> PostgreSQL/`pg` -> Chrome Extension APIs (via WXT).
 *   **Important architecture decisions:** Using raw SQL instead of an ORM for explicit control. Implementing a multimodal AI provider to handle both text and images seamlessly.
